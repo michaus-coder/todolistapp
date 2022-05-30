@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class AddEditTask extends StatefulWidget {
+  const AddEditTask({Key? key}) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<AddEditTask> createState() => _AddEditTaskState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _AddEditTaskState extends State<AddEditTask> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
