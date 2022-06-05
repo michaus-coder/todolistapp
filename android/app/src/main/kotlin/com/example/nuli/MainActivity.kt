@@ -1,4 +1,4 @@
-package com.example.nuli
+package id.ac.petra.nuli
 
 import io.flutter.embedding.android.FlutterActivity
 
