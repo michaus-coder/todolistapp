@@ -37,7 +37,26 @@ class _WelcomePage2State extends State<WelcomePage2> {
                         fontWeight: FontWeight.bold),
                     textAlign: TextAlign.left,
                   ),
-                )
+                ),
+                Builder(builder: (context) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1C549D),
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    margin: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(10),
+                    child: const Text(
+                      "Get Started",
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFFFFFFFF),
+                          fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                })
               ],
             ),
           )),

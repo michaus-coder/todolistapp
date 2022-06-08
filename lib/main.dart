@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nuli/pages/WelcomePage2.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,7 +23,18 @@ class _MyAppState extends State<MyApp> {
           ),
           body: Container(
             child: Column(
-              children: [],
+              children: [
+                Builder(builder: (context) {
+                  return ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return WelcomePage2();
+                        }));
+                      },
+                      child: const Text("go to wellcomepage 2"));
+                })
+              ],
             ),
           )),
     );
