@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
         '/welcome': (context) => WelcomeScreen(),
         '/login': (context) => const LoginScreen(),
       },
-      home: new WelcomeScreen(),
+      home: new LoginScreen(),
     );
   }
 }
