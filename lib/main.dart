@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nuli/pages/WelcomePage2.dart';
+import 'package:nuli/pages/WelcomeScreen.dart';
+import 'package:nuli/pages/LoginScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,26 +18,13 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "NULI - Productive App",
-      home: Scaffold(
-          appBar: AppBar(
-            title: const Text('NULI - Productive App'),
-          ),
-          body: Container(
-            child: Column(
-              children: [
-                Builder(builder: (context) {
-                  return ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return WelcomePage2();
-                        }));
-                      },
-                      child: const Text("go to wellcomepage 2"));
-                })
-              ],
-            ),
-          )),
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/welcome',
+      routes: {
+        '/welcome': (context) => WelcomeScreen(),
+        '/login': (context) => const LoginScreen(),
+      },
+      home: new WelcomeScreen(),
     );
   }
 }
