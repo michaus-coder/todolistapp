@@ -147,7 +147,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                             ]),
                       ),
                       child: const Icon(
-                        Icons.calendar_month,
+                        Icons.calendar_month_rounded,
                         size: 25,
                       ),
                     ),
@@ -229,7 +229,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                               fontSize: 12, color: Color.fromARGB(120, 0, 0, 0)),
                         ),
                         SizedBox(
-                          width: 300,
+                          width: 250,
                           child: DropdownButton(
                             underline: Container(),
                             onChanged: (newValue) {
@@ -269,7 +269,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                             ]),
                       ),
                       child: const Icon(
-                        Icons.note_add_rounded,
+                        Icons.edit_outlined,
                         size: 25,
                       ),
                     ),
@@ -285,7 +285,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                               fontSize: 12, color: Color.fromARGB(120, 0, 0, 0)),
                         ),
                         SizedBox(
-                          width: 300,
+                          width: 250,
                           child: TextField(
                             cursorColor: const Color.fromRGBO(0, 0, 0, 0.4),
                             controller: _projectDescCtrl,

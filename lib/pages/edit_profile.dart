@@ -190,7 +190,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(60),
+                  minimumSize: const Size.fromHeight(50),
                   primary: const Color.fromARGB(255, 28, 84, 157),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50)),
@@ -210,7 +210,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   primary: const Color.fromARGB(255, 255, 255, 255),
-                  minimumSize: const Size.fromHeight(60),
+                  minimumSize: const Size.fromHeight(50),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                       side: const BorderSide(

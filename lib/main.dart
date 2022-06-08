@@ -3,6 +3,7 @@ import 'package:nuli/pages/AddEditTask.dart';
 import 'package:nuli/pages/ProjectDetail.dart';
 import 'package:nuli/pages/TaskDetail.dart';
 import 'package:nuli/pages/WelcomePage2.dart';
+import 'package:nuli/pages/SignUpScreen.dart';
 import 'package:nuli/pages/WelcomeScreen.dart';
 import 'package:nuli/pages/LoginScreen.dart';
 
@@ -23,7 +24,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "NULI - Productive App",
       debugShowCheckedModeBanner: false,
-      initialRoute: '/detail_project',
+      initialRoute: '/login',
       routes: {
         '/welcome': (context) => WelcomeScreen(),
         '/welcome2': (context) => const WelcomePage2(),
@@ -31,6 +32,7 @@ class _MyAppState extends State<MyApp> {
         '/detail_project': (context) => const ProjectDetail(),
         '/add_edit_task': (context) => const AddEditTask(),
         '/login': (context) => const LoginScreen(),
+        '/signup': (context) => const SignUpScreen(),
       },
       home: new TaskDetail(),
     );

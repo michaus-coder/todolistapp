@@ -62,7 +62,10 @@ class _AllProjectsPageState extends State<AllProjectsPage>
             Container(
               width: double.maxFinite,
               height: 300,
-              child: TabBarView(controller: _tabController, children: const [
+              child: TabBarView(
+                controller: _tabController, 
+                physics: NeverScrollableScrollPhysics(),
+                children: const [
                 Text("hi"),
                 Text("hi1"),
                 Text("hi2"),

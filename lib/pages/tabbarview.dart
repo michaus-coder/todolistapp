@@ -30,9 +30,10 @@ class _TabBarView1State extends State<TabBarView1> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       body: TabBarView(
+        physics: NeverScrollableScrollPhysics(),
         children: const <Widget>[
           HomePage(),
-          AddProjectPage(),
+          HomePage(),
           EditProfilePage(),
         ],
         controller: _tabController,
@@ -54,8 +55,8 @@ class _TabBarView1State extends State<TabBarView1> with SingleTickerProviderStat
                   )
                 ]),
             child: TabBar(
-              indicatorSize: TabBarIndicatorSize.tab,
-              // indicator: CircleTabIndicator(color: Color.fromARGB(255, 28, 84, 157), radius: 4),
+              indicator: CircularTabIndicator(
+                      color: Color.fromARGB(255, 28, 84, 157), radius: 4),
               labelColor: const Color.fromARGB(255, 28, 84, 157),
               unselectedLabelColor: const Color.fromRGBO(0, 0, 0, 0.6),
               tabs: [
@@ -100,7 +101,7 @@ class _TabBarView1State extends State<TabBarView1> with SingleTickerProviderStat
         builder: (context) {
           return Container(
             color: Color(0xFF737373),
-            height: 140,
+            height: 160,
             child: Container(
               padding:
                   EdgeInsets.only(top: 20, left: 30, right: 30, bottom: 20),
@@ -120,7 +121,7 @@ class _TabBarView1State extends State<TabBarView1> with SingleTickerProviderStat
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.rocket_launch_rounded),
+                    leading: const Icon(Icons.emoji_objects_outlined),
                     title: Text('Project'),
                     onTap: () {
                       Navigator.of(context).pop();
@@ -135,5 +136,34 @@ class _TabBarView1State extends State<TabBarView1> with SingleTickerProviderStat
             ),
           );
         });
+  }
+}
+
+
+class CircularTabIndicator extends Decoration {
+  final Color color;
+  double radius;
+
+  CircularTabIndicator({required this.color, required this.radius});
+
+  @override
+  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
+    return _CirclePainter(color: color, radius: radius);
+  }
+}
+
+class _CirclePainter extends BoxPainter {
+  final double radius;
+  late Color color;
+  _CirclePainter({required this.color, required this.radius});
+
+  @override
+  void paint(Canvas canvas, Offset offset, ImageConfiguration cfg) {
+    late Paint _paint;
+    _paint = Paint()..color = color;
+    _paint = _paint..isAntiAlias = true;
+    final Offset circleOffset =
+        offset + Offset(cfg.size!.width / 2, cfg.size!.height - radius);
+    canvas.drawCircle(circleOffset, radius, _paint);
   }
 }
