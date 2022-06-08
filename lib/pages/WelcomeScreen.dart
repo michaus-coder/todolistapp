@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nuli/pages/tabbarview.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override
@@ -15,6 +16,12 @@ class WelcomeScreen extends StatelessWidget {
             child: const Text("Start"),
             onPressed: () {
               Navigator.pushNamed(context, "/login");
+            },
+          ),
+          ElevatedButton(
+            child: const Text("Home"),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: ((context) => TabBarView1())));
             },
           ),
         ],
