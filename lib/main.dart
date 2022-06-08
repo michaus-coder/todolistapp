@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nuli/pages/SignUpScreen.dart';
 import 'package:nuli/pages/WelcomeScreen.dart';
 import 'package:nuli/pages/LoginScreen.dart';
 
@@ -19,12 +20,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "NULI - Productive App",
       debugShowCheckedModeBanner: false,
-      initialRoute: '/welcome',
+      initialRoute: '/login',
       routes: {
         '/welcome': (context) => WelcomeScreen(),
         '/login': (context) => const LoginScreen(),
+        '/signup': (context) => const SignUpScreen(),
       },
-      home: new LoginScreen(),
+      home: new WelcomeScreen(),
     );
   }
 }
