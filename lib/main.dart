@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:nuli/pages/AddEditTask.dart';
 import 'package:nuli/pages/ProjectDetail.dart';
@@ -7,7 +8,9 @@ import 'package:nuli/pages/SignUpScreen.dart';
 import 'package:nuli/pages/WelcomeScreen.dart';
 import 'package:nuli/pages/LoginScreen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

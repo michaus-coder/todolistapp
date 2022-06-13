@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nuli/dbservices.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -14,6 +15,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController _confirmPasswordController = TextEditingController();
   late bool _passwordVisible1;
   late bool _passwordVisible2;
+  bool _submitted = false;
+
+  String? get _errorEmail {
+    if (_emailController.text.isEmpty) {
+      return 'Email is required';
+    }
+    if (!RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+')
+        .hasMatch(_emailController.text)) {
+      return 'Email is invalid';
+    }
+    return null;
+  }
+
+  String? get _errorFullname {
+    if (_fullnameController.text.isEmpty) {
+      return 'Fullname is required';
+    }
+    return null;
+  }
+
+  String? get _errorPassword {
+    if (_passwordController.text.isEmpty) {
+      return 'Password is required';
+    }
+    if (_passwordController.text.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return null;
+  }
+
+  String? get _errorConfirmPassword {
+    if (_confirmPasswordController.text.isEmpty) {
+      return 'Confirm password is required';
+    }
+    if (_confirmPasswordController.text != _passwordController.text) {
+      return 'Confirm password must be same with password';
+    }
+    return null;
+  }
 
   @override
   void initState() {
@@ -23,16 +63,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   @override
+  void dispose() {
+    _emailController.dispose();
+    _fullnameController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(children: <Widget>[
-          const FittedBox(
-            child: Image(
-              image: AssetImage("assets/nuli/images/signup-image.png"),
-              height: 200,
-            ),
-            fit: BoxFit.fill,
+          const Image(
+            image: AssetImage("assets/nuli/images/signup-image.png"),
+            height: 200,
           ),
           Container(
             padding: const EdgeInsets.all(40),
@@ -57,7 +103,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       width: 30,
                     ),
                     labelText: "E-mail",
+                    errorText: _submitted ? _errorEmail : null,
                   ),
+                  onChanged: (_) {
+                    setState(() {});
+                  },
                 ),
                 TextField(
                   controller: _fullnameController,
@@ -67,7 +117,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       width: 30,
                     ),
                     labelText: "Full Name",
+                    errorText: _submitted ? _errorFullname : null,
                   ),
+                  onChanged: (_) {
+                    setState(() {});
+                  },
                 ),
                 TextField(
                   controller: _passwordController,
@@ -77,6 +131,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       width: 30,
                     ),
                     labelText: "Password",
+                    errorText: _submitted ? _errorPassword : null,
                     suffixIcon: IconButton(
                       icon: Icon(
                         _passwordVisible1
@@ -91,6 +146,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                   ),
+                  onChanged: (_) {
+                    setState(() {});
+                  },
                   obscureText: !_passwordVisible1,
                 ),
                 TextField(
@@ -101,6 +159,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       width: 30,
                     ),
                     labelText: "Confirm Password",
+                    errorText: _submitted ? _errorConfirmPassword : null,
                     suffixIcon: IconButton(
                       icon: Icon(
                         _passwordVisible2
@@ -115,6 +174,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                   ),
+                  onChanged: (_) {
+                    setState(() {});
+                  },
                   obscureText: !_passwordVisible2,
                 ),
                 const SizedBox(height: 40),
@@ -130,7 +192,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       primary: Colors.blue.shade900,
                       shadowColor: Colors.black,
                       elevation: 5),
-                  onPressed: () {},
+                  onPressed: _emailController.text.isNotEmpty &&
+                          _fullnameController.text.isNotEmpty &&
+                          _passwordController.text.isNotEmpty &&
+                          _confirmPasswordController.text.isNotEmpty
+                      ? () async {
+                          setState(() {
+                            _submitted = true;
+                          });
+                          if (_errorEmail == null ||
+                              _errorFullname == null ||
+                              _errorPassword == null ||
+                              _errorConfirmPassword == null) {
+                            print("sign up");
+                            dynamic result = await UserService.signUp(
+                              email: _emailController.text,
+                              fullname: _fullnameController.text,
+                              password: _passwordController.text,
+                            );
+                            if (result != null) {
+                              setState(() {
+                                _submitted = false;
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Sign up success"),
+                                  duration: Duration(seconds: 5),
+                                ),
+                              );
+                              Navigator.of(context).pop();
+                            }
+                          } else {
+                            print("error");
+                          }
+                        }
+                      : null,
                 ),
                 Center(
                   child: Row(

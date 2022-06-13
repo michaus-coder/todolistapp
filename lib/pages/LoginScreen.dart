@@ -23,12 +23,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(children: <Widget>[
-          const FittedBox(
-            child: Image(
-              image: AssetImage("assets/nuli/images/login-image.png"),
-              height: 300,
-            ),
-            fit: BoxFit.fill,
+          const Image(
+            image: AssetImage("assets/nuli/images/login-image.png"),
+            height: 300,
           ),
           Container(
             padding: const EdgeInsets.all(40),
