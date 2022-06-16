@@ -37,9 +37,9 @@ class UserService {
       firebase_auth.UserCredential result = await _auth
           .signInWithEmailAndPassword(email: email, password: password);
       firebase_auth.User user = result.user!;
-      return _userFromFirebase(user);
+      return true;
     } catch (e) {
-      return e.toString();
+      return false;
     }
   }
 

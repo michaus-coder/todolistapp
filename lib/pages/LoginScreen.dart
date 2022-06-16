@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nuli/dbservices.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -89,7 +90,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       primary: Colors.blue.shade900,
                       shadowColor: Colors.black,
                       elevation: 5),
-                  onPressed: () {},
+                  onPressed: () async {
+                    dynamic result = await UserService.signIn(
+                        _emailController.text, _passwordController.text);
+                    if (result == true) {
+                      Navigator.pushReplacementNamed(context, "/welcome");
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Login Successful"),
+                      ));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content:
+                            Text("Login Failed. Please check your credentials"),
+                      ));
+                    }
+                  },
                 ),
                 Center(
                   child: Row(
