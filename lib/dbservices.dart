@@ -43,6 +43,23 @@ class UserService {
     }
   }
 
+  static Future signOut() async {
+    try {
+      await _auth.signOut();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static bool isLoggedIn() {
+    firebase_auth.User? user = _auth.currentUser;
+    if (user == null) {
+      return false;
+    }
+    return true;
+  }
+
   static Future<void> storeUserToFirestore(
       {required dataclass.User user}) async {
     dataclass.User userData = dataclass.User(
