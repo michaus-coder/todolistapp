@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nuli/CustomWidget.dart';
+import 'package:nuli/dataclass.dart' as dataclass;
+import 'package:nuli/dbservices.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
@@ -9,6 +11,30 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  late dataclass.User? _user;
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() async {
+    super.initState();
+    _user = await UserService.getUserFromFirestore();
+    _firstNameController.text = _user!.firstName;
+    _lastNameController.text = _user!.lastName;
+    _emailController.text = _user!.email;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,12 +99,18 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               const SizedBox(height: 20),
-              CustomTF.textField("Email address", inputColor: Colors.red),
+              CustomTF.textField("Email address",
+                  inputColor: Colors.red, textController: _emailController),
               const SizedBox(height: 10),
               CustomTF.fullNameTextField("Full name",
-                  inputColor: Colors.yellow),
+                  inputColor: Colors.yellow,
+                  textController: _firstNameController,
+                  textController2: _lastNameController),
               const SizedBox(height: 10),
-              CustomTF.textField("Password", inputColor: Colors.yellow),
+              CustomTF.textField("Password",
+                  inputColor: Colors.yellow,
+                  isPassword: true,
+                  textController: _passwordController),
               const SizedBox(height: 40),
               Container(
                 decoration: BoxDecoration(
@@ -108,7 +140,32 @@ class _EditProfileState extends State<EditProfile> {
                       borderRadius: BorderRadius.circular(15.0),
                     ),
                   ),
-                  onPressed: () async {},
+                  onPressed: () async {
+                    await UserService.updateUserToFirestore(
+                      user: dataclass.User(
+                        email: _emailController.text,
+                        fullname:
+                            "${_firstNameController.text} ${_lastNameController.text}",
+                        uid: _user!.uid,
+                      ),
+                    )
+                        .whenComplete(() =>
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content:
+                                    Text("User profile updated successfully"),
+                              ),
+                            ))
+                        .catchError(
+                          (e) => ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text("Error occured while updating profile"),
+                            ),
+                          ),
+                        );
+                    Navigator.pop(context);
+                  },
                 ),
               ),
             ],
