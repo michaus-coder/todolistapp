@@ -203,7 +203,6 @@ class _EditProfileState extends State<EditProfile> {
                   onPressed: () {},
                 ),
               ),
-              const SizedBox(height: 20),
             ],
           ),
         ),
