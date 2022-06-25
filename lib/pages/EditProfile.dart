@@ -17,6 +17,13 @@ class _EditProfileState extends State<EditProfile> {
   final TextEditingController _passwordController = TextEditingController();
   late dataclass.User? _user;
 
+  void getUserData() async {
+    _user = await UserService.getUserFromFirestore();
+    _firstNameController.text = _user!.firstName;
+    _lastNameController.text = _user!.lastName;
+    _emailController.text = _user!.email;
+  }
+
   @override
   void dispose() {
     _firstNameController.dispose();
@@ -27,12 +34,9 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    _user = await UserService.getUserFromFirestore();
-    _firstNameController.text = _user!.firstName;
-    _lastNameController.text = _user!.lastName;
-    _emailController.text = _user!.email;
+    getUserData();
   }
 
   @override
@@ -119,7 +123,7 @@ class _EditProfileState extends State<EditProfile> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
-                    borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(30)),
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: ElevatedButton(
                   child: Align(
@@ -127,7 +131,7 @@ class _EditProfileState extends State<EditProfile> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       child: const Text(
-                        "Save",
+                        "SAVE CHANGES",
                         style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
@@ -135,9 +139,9 @@ class _EditProfileState extends State<EditProfile> {
                   style: ElevatedButton.styleFrom(
                     primary: Colors.transparent,
                     elevation: 100,
-                    shadowColor: Colors.transparent,
+                    shadowColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
                   ),
                   onPressed: () async {
@@ -168,6 +172,37 @@ class _EditProfileState extends State<EditProfile> {
                   },
                 ),
               ),
+              const SizedBox(height: 20),
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                        color: Colors.black.withOpacity(0.5), width: 2)),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: ElevatedButton(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: Text(
+                        "CANCEL",
+                        style: TextStyle(
+                            color: Colors.black.withOpacity(0.5), fontSize: 18),
+                      ),
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.transparent,
+                    elevation: 100,
+                    shadowColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  onPressed: () {},
+                ),
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
