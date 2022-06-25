@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nuli/pages/dataClassTask.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class ProjectDetail extends StatefulWidget {
@@ -9,6 +10,40 @@ class ProjectDetail extends StatefulWidget {
 }
 
 class _ProjectDetailState extends State<ProjectDetail> {
+  List<itemTask> taskList = [
+    itemTask(
+      task_name: "Task 1",
+      status: "1",
+    ),
+    itemTask(
+      task_name: "Task 2",
+      status: "0",
+    ),
+    itemTask(
+      task_name: "Task 3",
+      status: "1",
+    ),
+    itemTask(
+      task_name: "Task 4",
+      status: "1",
+    ),
+    itemTask(
+      task_name: "Task 5",
+      status: "1",
+    ),
+    itemTask(
+      task_name: "Task 6",
+      status: "1",
+    ),
+    itemTask(
+      task_name: "Task 7",
+      status: "0",
+    ),
+    itemTask(
+      task_name: "Task 8",
+      status: "0",
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -179,6 +214,99 @@ class _ProjectDetailState extends State<ProjectDetail> {
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.black)),
+                  ),
+                  ListView(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      for (var i = 0; i < taskList.length; i++)
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          child: Row(
+                            children: [
+                              if (taskList[i].status == "0") ...[
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Color(0xFFD9D9D9),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                          width: 0.5,
+                                          color: const Color(0xFF0000000))),
+                                  padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                        child: Icon(Icons.circle_outlined,
+                                            color: Color.fromARGB(
+                                                255, 238, 0, 178),
+                                            size: 30),
+                                      ),
+                                      Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 230, 0),
+                                        child: Text(
+                                          taskList[i].task_name,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Container(child: Icon(Icons.menu))
+                                    ],
+                                  ),
+                                ),
+                                // GestureDetector(
+                                //   onTap: () {
+                                //     taskList[i].status = "0";
+                                //   },
+                                // )
+                              ] else ...[
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Color(0xFFD9D9D9),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                          width: 0.5,
+                                          color: const Color(0xFF0000000))),
+                                  padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                        child: Icon(Icons.circle,
+                                            color: Color.fromARGB(
+                                                255, 238, 0, 178),
+                                            size: 30),
+                                      ),
+                                      Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 230, 0),
+                                        child: Text(
+                                          taskList[i].task_name,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Container(child: Icon(Icons.menu))
+                                    ],
+                                  ),
+                                ),
+                                // GestureDetector(
+                                //   onTap: () {
+                                //     taskList[i].status = "1";
+                                //   },
+                                // )
+                              ],
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
                 ],
               ),
