@@ -47,11 +47,14 @@ class _EditProfileState extends State<EditProfile> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Row(
-              children: const [
-                Icon(Icons.arrow_back_ios, color: Colors.grey),
-                Text("Back", style: TextStyle(color: Colors.grey)),
-              ],
+            InkWell(
+              child: Row(
+                children: const [
+                  Icon(Icons.arrow_back_ios, color: Colors.grey),
+                  Text("Back", style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+              onTap: () => Navigator.pop(context),
             ),
             const Text("Edit Profile", style: TextStyle(color: Colors.black)),
             const SizedBox(),
@@ -64,10 +67,9 @@ class _EditProfileState extends State<EditProfile> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
             children: <Widget>[
-              const SizedBox(height: 20),
               Center(
                 child: Stack(
                   children: <Widget>[
@@ -102,7 +104,6 @@ class _EditProfileState extends State<EditProfile> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
               CustomTF.textField("Email address",
                   inputColor: Colors.red, textController: _emailController),
               const SizedBox(height: 10),
@@ -115,7 +116,7 @@ class _EditProfileState extends State<EditProfile> {
                   inputColor: Colors.yellow,
                   isPassword: true,
                   textController: _passwordController),
-              const SizedBox(height: 40),
+              const SizedBox(height: 30),
               Container(
                 decoration: BoxDecoration(
                     gradient: const LinearGradient(

@@ -31,10 +31,10 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "NULI - Productive App",
       debugShowCheckedModeBanner: false,
-      initialRoute: '/welcome2',
+      initialRoute: '/welcome',
       routes: {
         '/splash': (context) => const SplashScreen(),
-        '/welcome': (context) => WelcomeScreen(),
+        '/welcome': (context) => const WelcomeScreen(),
         '/welcome2': (context) => const WelcomePage2(),
         '/home': (context) => const HomePage(),
         '/profile/edit': (context) => const EditProfile(),
