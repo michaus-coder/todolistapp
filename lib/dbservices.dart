@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nuli/dataclass.dart' as dataclass;
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart' as cloud_firestore;
+
+import 'dataclass.dart';
 
 class UserService {
   static final cloud_firestore.CollectionReference _userCollection =
@@ -60,6 +63,14 @@ class UserService {
     return true;
   }
 
+  static String getCurrentUserID() {
+    firebase_auth.User? user = _auth.currentUser;
+    if (user == null) {
+      return "";
+    }
+    return user.uid.toString();
+  }
+
   static Future<void> storeUserToFirestore(
       {required dataclass.User user}) async {
     dataclass.User userData = dataclass.User(
@@ -73,5 +84,63 @@ class UserService {
         .set(userData.toJson())
         .whenComplete(() => print('User saved'))
         .catchError((e) => print(e));
+  }
+}
+
+// CollectionReference _taskCollection = FirebaseFirestore.instance
+//     .collection('tblTask')
+//     .doc('r0003LzTzDUMPx9zle9EaNcWlCE2')
+//     .collection('myTasks');
+
+class TaskService {
+  // String uid;
+
+  // TaskService({required this.uid});
+
+  Stream<QuerySnapshot> getData(String _uid, String judul) {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+    .collection('tblTask')
+    .doc(_uid)
+    .collection('myTasks');
+
+    if (judul == "")
+      return _taskCollection.snapshots();
+    else
+      return _taskCollection
+          .orderBy("title")
+          .startAt([judul]).endAt([judul + '\uf8ff']).snapshots();
+  }
+
+  // static Future<void> addData({required Task item}) async {
+  //   // DocumentReference docRef = _taskCollection.doc(item.cTitle);
+
+  //   await docRef
+  //       .set(item.toJson())
+  //       .whenComplete(() => print("Data berhasil ditambahkan"))
+  //       .catchError((e) => print(e));
+  // }
+
+  // static Future<void> deleteData({required String judulHapus}) async {
+  //   DocumentReference docRef = tblLiked.doc(judulHapus);
+  //   await docRef
+  //       .delete()
+  //       .whenComplete(() => print("Data berhasil dihapus"))
+  //       .catchError((e) => print(e));
+  // }
+}
+
+class ProjectService {
+  Stream<QuerySnapshot> getData(String _uid, String judul) {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+    .collection('tblProject')
+    .doc(_uid)
+    .collection('myProjects');
+
+    if (judul == "")
+      return _taskCollection.snapshots();
+    else
+      return _taskCollection
+          .orderBy("title")
+          .startAt([judul]).endAt([judul + '\uf8ff']).snapshots();
   }
 }
