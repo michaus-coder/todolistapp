@@ -10,6 +10,7 @@ import 'package:nuli/pages/SignUpScreen.dart';
 import 'package:nuli/pages/WelcomeScreen.dart';
 import 'package:nuli/pages/LoginScreen.dart';
 import 'package:nuli/pages/home.dart';
+import 'package:nuli/temp.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +31,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "NULI - Productive App",
       debugShowCheckedModeBanner: false,
-      initialRoute: '/profile/edit',
+      initialRoute: '/login',
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/welcome': (context) => WelcomeScreen(),
@@ -42,6 +43,7 @@ class _MyAppState extends State<MyApp> {
         '/add_edit_task': (context) => const AddEditTask(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
+        '/temppage': (context) => const TempPage()
       },
       home: new TaskDetail(),
     );
