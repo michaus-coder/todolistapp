@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:nuli/dbservices.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -38,7 +39,24 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    bool check = await UserService.signOut();
+                    if (check) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Logout Success"),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                      Navigator.pushNamed(context, '/login');
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Sign out failed"),
+                        ),
+                      );
+                    }
+                  },
                   icon: const ImageIcon(
                     AssetImage("assets/nuli/icon/logout.png"),
                     color: Colors.white,
@@ -46,6 +64,7 @@ class _ProfileState extends State<Profile> {
                 ),
               ],
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
