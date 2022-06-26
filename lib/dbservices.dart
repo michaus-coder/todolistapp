@@ -85,6 +85,25 @@ class UserService {
         .whenComplete(() => print('User saved'))
         .catchError((e) => print(e));
   }
+
+  static Future<dynamic> getUserFromFirestore() async {
+    firebase_auth.User? user = _auth.currentUser;
+    if (user == null) {
+      return null;
+    }
+    cloud_firestore.DocumentReference userRef = _userCollection.doc(user.uid);
+    return userRef.get().then(
+        (value) => dataclass.User.fromJson(value.data as Map<String, dynamic>));
+  }
+
+  static Future<void> updateUserToFirestore(
+      {required dataclass.User user}) async {
+    cloud_firestore.DocumentReference userRef = _userCollection.doc(user.uid);
+    await userRef
+        .update(user.toJson())
+        .whenComplete(() => print('User updated'))
+        .catchError((e) => print(e));
+  }
 }
 
 // CollectionReference _taskCollection = FirebaseFirestore.instance

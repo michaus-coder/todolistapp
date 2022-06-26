@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nuli/CustomWidget.dart';
+import 'package:nuli/dataclass.dart' as dataclass;
+import 'package:nuli/dbservices.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
@@ -9,6 +11,34 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  late dataclass.User? _user;
+
+  void getUserData() async {
+    _user = await UserService.getUserFromFirestore();
+    _firstNameController.text = _user!.firstName;
+    _lastNameController.text = _user!.lastName;
+    _emailController.text = _user!.email;
+  }
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,11 +47,14 @@ class _EditProfileState extends State<EditProfile> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Row(
-              children: const [
-                Icon(Icons.arrow_back_ios, color: Colors.grey),
-                Text("Back", style: TextStyle(color: Colors.grey)),
-              ],
+            InkWell(
+              child: Row(
+                children: const [
+                  Icon(Icons.arrow_back_ios, color: Colors.grey),
+                  Text("Back", style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+              onTap: () => Navigator.pop(context),
             ),
             const Text("Edit Profile", style: TextStyle(color: Colors.black)),
             const SizedBox(),
@@ -34,10 +67,9 @@ class _EditProfileState extends State<EditProfile> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
             children: <Widget>[
-              const SizedBox(height: 20),
               Center(
                 child: Stack(
                   children: <Widget>[
@@ -72,14 +104,19 @@ class _EditProfileState extends State<EditProfile> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              CustomTF.textField("Email address", inputColor: Colors.red),
+              CustomTF.textField("Email address",
+                  inputColor: Colors.red, textController: _emailController),
               const SizedBox(height: 10),
               CustomTF.fullNameTextField("Full name",
-                  inputColor: Colors.yellow),
+                  inputColor: Colors.yellow,
+                  textController: _firstNameController,
+                  textController2: _lastNameController),
               const SizedBox(height: 10),
-              CustomTF.textField("Password", inputColor: Colors.yellow),
-              const SizedBox(height: 40),
+              CustomTF.textField("Password",
+                  inputColor: Colors.yellow,
+                  isPassword: true,
+                  textController: _passwordController),
+              const SizedBox(height: 30),
               Container(
                 decoration: BoxDecoration(
                     gradient: const LinearGradient(
@@ -87,7 +124,7 @@ class _EditProfileState extends State<EditProfile> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
-                    borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(30)),
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: ElevatedButton(
                   child: Align(
@@ -95,7 +132,7 @@ class _EditProfileState extends State<EditProfile> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       child: const Text(
-                        "Save",
+                        "SAVE CHANGES",
                         style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
@@ -103,12 +140,67 @@ class _EditProfileState extends State<EditProfile> {
                   style: ElevatedButton.styleFrom(
                     primary: Colors.transparent,
                     elevation: 100,
-                    shadowColor: Colors.transparent,
+                    shadowColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
                   ),
-                  onPressed: () async {},
+                  onPressed: () async {
+                    await UserService.updateUserToFirestore(
+                      user: dataclass.User(
+                        email: _emailController.text,
+                        fullname:
+                            "${_firstNameController.text} ${_lastNameController.text}",
+                        uid: _user!.uid,
+                      ),
+                    )
+                        .whenComplete(() =>
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content:
+                                    Text("User profile updated successfully"),
+                              ),
+                            ))
+                        .catchError(
+                          (e) => ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text("Error occured while updating profile"),
+                            ),
+                          ),
+                        );
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                        color: Colors.black.withOpacity(0.5), width: 2)),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: ElevatedButton(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: Text(
+                        "CANCEL",
+                        style: TextStyle(
+                            color: Colors.black.withOpacity(0.5), fontSize: 18),
+                      ),
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.transparent,
+                    elevation: 100,
+                    shadowColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  onPressed: () {},
                 ),
               ),
             ],
