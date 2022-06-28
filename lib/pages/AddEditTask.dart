@@ -13,12 +13,22 @@ class _AddEditTaskState extends State<AddEditTask> {
     return MaterialApp(
       title: "NULI - Productive App",
       home: Scaffold(
+          backgroundColor: const Color(0xFF1C549D),
           appBar: AppBar(
             title: const Text('NULI - Productive App'),
           ),
           body: Container(
             child: Column(
-              children: [],
+              children: [
+                Text(
+                  'Create New Task',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           )),
     );
