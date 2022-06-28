@@ -1,7 +1,5 @@
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:nuli/dbservices.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -44,7 +42,7 @@ class _ProfileState extends State<Profile> {
         backgroundColor: Colors.white,
         margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
         borderRadius: 15.0,
-        elevation: 35,
+        elevation: 45,
         onTap: (int val) {
           if (val == 0) {
             Navigator.pushNamed(context, '/home');
@@ -455,7 +453,7 @@ class _ProfileState extends State<Profile> {
                                     ),
                                     const SizedBox(height: 5),
                                     const Text(
-                                      "completed",
+                                      "done",
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 14,
