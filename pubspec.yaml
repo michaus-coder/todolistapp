@@ -31,12 +31,14 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_auth: ^3.3.19
   firebase_core: ^1.17.1
+  floating_bottom_navigation_bar: ^1.5.2
   flutter:
     sdk: flutter
   flutter_emoji: ">= 2.0.0"
   flutter_launcher_icons: ^0.9.3
   intl: ^0.17.0
   percent_indicator: ^4.2.2
+  syncfusion_flutter_charts: ^20.1.61
 
 dev_dependencies:
   flutter_lints: ^1.0.0

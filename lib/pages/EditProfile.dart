@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:nuli/CustomWidget.dart';
 import 'package:nuli/dataclass.dart' as dataclass;
@@ -95,7 +97,8 @@ class _EditProfileState extends State<EditProfile> {
                             (states) {
                               if (states.contains(MaterialState.pressed)) {
                                 return const Color(0xffF27470);
-                              } // <-- Splash color
+                              }
+                              return null; // <-- Splash color
                             },
                           ),
                         ),
