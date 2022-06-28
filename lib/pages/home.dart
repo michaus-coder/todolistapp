@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../dbservices.dart';
@@ -23,8 +24,29 @@ class _HomePageState extends State<HomePage> {
     if (progressPercentage < 50) {
       return 'Still a long way to go, you got this!';
     } else {
-      return 'Great, your progress is almost done! wkeferfwerfobfer';
+      return 'Great, your progress is almost done!';
     }
+  }
+
+  String getDateText(Timestamp t) {
+    DateTime dt = t.toDate();
+    DateFormat formatter = DateFormat('d MMMM y');
+    String hasil = formatter.format(dt);
+    return hasil;
+  }
+
+  String getTimeText(Timestamp t) {
+    DateTime dt = t.toDate();
+    var hour = dt.hour;
+    var mins = dt.minute;
+
+    String hourStr =
+        hour < 10 ? hour.toString().padLeft(2, '0') : hour.toString();
+    String minsStr =
+        mins < 10 ? mins.toString().padLeft(2, '0') : mins.toString();
+
+    String hasil = '${hourStr}:${minsStr}';
+    return hasil;
   }
 
   @override
@@ -35,7 +57,7 @@ class _HomePageState extends State<HomePage> {
 
     // Check if the user is signed in
     if (user != null) {
-      uid = user.uid; // <-- User ID
+      uid = user.uid;
     }
   }
 
@@ -157,108 +179,113 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               Container(
-                padding: EdgeInsets.all(5),
-                child: StreamBuilder<QuerySnapshot>(
-                stream: ProjectService().getData(uid, ""),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text('ERROR');
-                  } else if (snapshot.hasData || snapshot.data != null) {
-                    return Expanded(
-                        child: ListView.separated(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        DocumentSnapshot _data = snapshot.data!.docs[index];
-                        return Container(
-                          // constraints: BoxConstraints(maxWidth: 270),
-                          padding: const EdgeInsets.all(15),
-                          decoration: const BoxDecoration(
-                              gradient: LinearGradient(
-                                  begin: Alignment(1, -1),
-                                  end: Alignment(0, 0),
-                                  colors: [
-                                    Color.fromARGB(255, 250, 153, 85),
-                                    Color.fromARGB(255, 255, 255, 255)
-                                  ]),
-                              boxShadow: <BoxShadow>[
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 10,
-                                )
-                              ],
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(7))),
-                          child: Column(children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                _data['title'],
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
+                  padding: EdgeInsets.all(5),
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: ProjectService().getData(uid, ""),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text('ERROR');
+                      } else if (snapshot.hasData || snapshot.data != null) {
+                        return Expanded(
+                            child: ListView.separated(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            DocumentSnapshot _data = snapshot.data!.docs[index];
+                            return Container(
+                              // constraints: BoxConstraints(maxWidth: 270),
+                              padding: const EdgeInsets.all(15),
+                              decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment(1, -1),
+                                      end: Alignment(0, 0),
+                                      colors: [
+                                        Color.fromARGB(255, 250, 153, 85),
+                                        Color.fromARGB(255, 255, 255, 255)
+                                      ]),
+                                  boxShadow: <BoxShadow>[
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 10,
+                                    )
+                                  ],
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(7))),
+                              child: Column(children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      _data['title'],
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Icon(Icons.more_horiz),
+                                  ],
                                 ),
-                                Icon(Icons.more_horiz),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 12,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text("Progress",
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color:
-                                            Color.fromARGB(255, 28, 84, 157))),
-                                const Text("82%",
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color:
-                                            Color.fromARGB(255, 28, 84, 157)))
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 12,
-                            ),
-                            LinearPercentIndicator(
-                              padding: const EdgeInsets.all(0),
-                              lineHeight: 7,
-                              percent: 0.63,
-                              progressColor: Color.fromARGB(255, 28, 84, 157),
-                              backgroundColor: Color.fromARGB(40, 0, 0, 0),
-                              // linearStrokeCap: LinearStrokeCap.roundAll,
-                              barRadius: const Radius.circular(16),
-                            ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Due " + _data['deadline'],
-                                    style: TextStyle(fontSize: 14)),
-                                Text("7 days left",
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color: Color.fromARGB(200, 0, 0, 0)))
-                              ],
-                            ),
-                          ]),
-                        );
-                      },
-                      separatorBuilder: (context, index) =>
-                          SizedBox(height: 20.0),
-                    ));
-                  }
-                  return const Center(
+                                const SizedBox(
+                                  height: 12,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text("Progress",
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color: Color.fromARGB(
+                                                255, 28, 84, 157))),
+                                    const Text("82%",
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color: Color.fromARGB(
+                                                255, 28, 84, 157)))
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 12,
+                                ),
+                                LinearPercentIndicator(
+                                  padding: const EdgeInsets.all(0),
+                                  lineHeight: 7,
+                                  percent: 0.63,
+                                  progressColor:
+                                      Color.fromARGB(255, 28, 84, 157),
+                                  backgroundColor: Color.fromARGB(40, 0, 0, 0),
+                                  // linearStrokeCap: LinearStrokeCap.roundAll,
+                                  barRadius: const Radius.circular(16),
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("Due " + _data['deadline'],
+                                        style: TextStyle(fontSize: 14)),
+                                    Text("7 days left",
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color:
+                                                Color.fromARGB(200, 0, 0, 0)))
+                                  ],
+                                ),
+                              ]),
+                            );
+                          },
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 20.0),
+                        ));
+                      }
+                      return const Center(
                         child: CircularProgressIndicator(),
                       );
-                },
-              )),
+                    },
+                  )),
               const SizedBox(
                 height: 30,
               ),
@@ -337,7 +364,9 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                           Row(
                                             children: [
-                                              Text(_data['date_time'],
+                                              Text(
+                                                  getDateText(
+                                                      _data['date_time']),
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: Color.fromARGB(
@@ -345,7 +374,9 @@ class _HomePageState extends State<HomePage> {
                                               const SizedBox(
                                                 width: 10,
                                               ),
-                                              Text("09:00 AM",
+                                              Text(
+                                                  getTimeText(
+                                                      _data['date_time']),
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: Color.fromARGB(

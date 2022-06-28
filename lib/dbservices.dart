@@ -97,10 +97,10 @@ class TaskService {
 
   // TaskService({required this.uid});
 
-  Stream<QuerySnapshot> getData(String _uid, String judul) {
+  Stream<QuerySnapshot> getData(String uid, String judul) {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
     .collection('tblTask')
-    .doc(_uid)
+    .doc(uid)
     .collection('myTasks');
 
     if (judul == "")
@@ -111,14 +111,19 @@ class TaskService {
           .startAt([judul]).endAt([judul + '\uf8ff']).snapshots();
   }
 
-  // static Future<void> addData({required Task item}) async {
-  //   // DocumentReference docRef = _taskCollection.doc(item.cTitle);
+  static Future<void> addData(String uid, Task item) async {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+    .collection('tblTask')
+    .doc(uid)
+    .collection('myTasks');
 
-  //   await docRef
-  //       .set(item.toJson())
-  //       .whenComplete(() => print("Data berhasil ditambahkan"))
-  //       .catchError((e) => print(e));
-  // }
+    DocumentReference docRef = _taskCollection.doc('${item.title}${item.date_time.toString()}');
+
+    await docRef
+        .set(item.toJson())
+        .whenComplete(() => print("Data berhasil ditambahkan"))
+        .catchError((e) => print(e));
+  }
 
   // static Future<void> deleteData({required String judulHapus}) async {
   //   DocumentReference docRef = tblLiked.doc(judulHapus);

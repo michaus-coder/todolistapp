@@ -1,20 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/key.dart';
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/intl.dart';
+import 'package:nuli/dbservices.dart';
 
-class AddProjectPage extends StatefulWidget {
-  const AddProjectPage({Key? key}) : super(key: key);
+import '../dataclass.dart';
+
+class AddTaskPage extends StatefulWidget {
+  const AddTaskPage({Key? key}) : super(key: key);
 
   @override
-  State<AddProjectPage> createState() => _AddProjectPageState();
+  State<AddTaskPage> createState() => _AddTaskPageState();
 }
 
-class _AddProjectPageState extends State<AddProjectPage> {
+class _AddTaskPageState extends State<AddTaskPage> {
   static DateTime date = DateTime.now();
   static DateFormat formatter = DateFormat('d MMMM y');
   String curDate = formatter.format(date);
 
-  TextEditingController _projectTitleCtrl = TextEditingController();
-  TextEditingController _projectDescCtrl = TextEditingController();
+  TextEditingController _taskTitleCtrl = TextEditingController();
+  TextEditingController _taskDescCtrl = TextEditingController();
+
+  TimeOfDay time = TimeOfDay(hour: 9, minute: 0);
+
+  late String uid;
 
   String reminderChosen = "1 hour before";
   List listReminderOption = [
@@ -25,90 +36,68 @@ class _AddProjectPageState extends State<AddProjectPage> {
     "No Reminder"
   ];
 
-  List<TextEditingController> _taskCtrl = [];
-  List<TextField> _textFields = [];
+  String getTimerText() {
+    if (time == null) {
+      return 'Select time';
+    } else {
+      var hours = time.hour.toString();
+      if (time.hour < 10) {
+        hours = time.hour.toString().padLeft(2, '0');
+      }
+      var minutes = time.minute.toString();
+      if (time.minute < 10) {
+        minutes = time.minute.toString().padLeft(2, '0');
+      }
+      return ('${hours}:${minutes}');
+    }
+  }
+
+  Timestamp _dateTimeToTimestamp(DateTime dateTime) {
+    return Timestamp.fromMillisecondsSinceEpoch(
+        dateTime.millisecondsSinceEpoch);
+  }
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    _projectTitleCtrl = TextEditingController();
-    _projectDescCtrl = TextEditingController();
-  }
+    _taskTitleCtrl = TextEditingController();
+    _taskDescCtrl = TextEditingController();
 
-  @override
-  void dispose() {
-    for (final controller in _taskCtrl) {
-      controller.dispose();
+    var user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      uid = user.uid;
     }
-    super.dispose();
-    _projectTitleCtrl.dispose();
-  }
-
-  Widget _addToDoWidget() {
-    return ListTile(
-      leading: const Icon(Icons.add),
-      title: const Text('Add to do', style: TextStyle(color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),),
-      onTap: () {
-        final _controller = TextEditingController();
-        final _field = TextField(
-          autofocus: true,
-          controller: _controller,
-          decoration: const InputDecoration(
-              border: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              hintText: "To do"),
-        );
-
-
-        setState(() {
-          _taskCtrl.add(_controller);
-          _textFields.add(_field);
-        });
-      },
-    );
-  }
-
-  Widget _listView() {
-    return ListView.builder(
-        itemCount: _textFields.length,
-        itemBuilder: (context, index) {
-          return Container(
-            child:  _textFields[index],
-          );
-        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 28, 84, 157),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.black,
-            size: 16,
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 28, 84, 157),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Colors.black,
+              size: 16,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          title: const Text(
+            "Create a new task",
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+          centerTitle: true,
         ),
-        title: const Text(
-          "Create a new project",
-          style: TextStyle(color: Colors.white, fontSize: 16),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
+        body: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints:
+                BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(children: [
                 // const SizedBox(height: 20,),
                 TextField(
                   decoration: const InputDecoration(
@@ -118,19 +107,19 @@ class _AddProjectPageState extends State<AddProjectPage> {
                     errorBorder: InputBorder.none,
                     disabledBorder: InputBorder.none,
                     contentPadding: EdgeInsets.all(10),
-                    hintText: "Write project title here",
+                    hintText: "Write task title here",
                   ),
                   cursorColor: const Color.fromRGBO(0, 0, 0, 0.4),
                   autofocus: true,
                   style: const TextStyle(
                     fontSize: 20,
                   ),
-                  controller: _projectTitleCtrl,
+                  controller: _taskTitleCtrl,
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                ////////////////////////////// Deadline
+                ////////////////////////////// Date
                 Row(
                   children: [
                     Container(
@@ -158,9 +147,10 @@ class _AddProjectPageState extends State<AddProjectPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Deadline",
+                          "Date",
                           style: TextStyle(
-                              fontSize: 12, color: Color.fromARGB(120, 0, 0, 0)),
+                              fontSize: 12,
+                              color: Color.fromARGB(120, 0, 0, 0)),
                         ),
                         const SizedBox(
                           height: 8,
@@ -193,7 +183,69 @@ class _AddProjectPageState extends State<AddProjectPage> {
                   ],
                 ),
                 const SizedBox(
-                  height: 30,
+                  height: 20,
+                ),
+                ////////////////////////////// Time
+                Row(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                            begin: Alignment(-1, -1),
+                            end: Alignment(1, 1),
+                            colors: [
+                              Color.fromARGB(255, 250, 153, 85),
+                              Color.fromARGB(255, 255, 243, 201)
+                            ]),
+                      ),
+                      child: const Icon(
+                        Icons.access_time,
+                        size: 25,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Time",
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Color.fromARGB(120, 0, 0, 0)),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.all(0),
+                            primary: Colors.black,
+                            textStyle: const TextStyle(fontSize: 16),
+                          ),
+                          onPressed: () async {
+                            final initialTime = TimeOfDay(hour: 9, minute: 0);
+                            final newTime = await showTimePicker(
+                              context: context,
+                              initialTime: time ?? initialTime,
+                            );
+                            if (newTime == null) return;
+                            setState(() {
+                              time = newTime;
+                            });
+                          },
+                          child: Text(getTimerText()),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
                 ),
                 ////////////////////////////// Reminder
                 Row(
@@ -208,8 +260,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
                             begin: Alignment(-1, -1),
                             end: Alignment(1, 1),
                             colors: [
-                              Color.fromARGB(255, 250, 153, 85),
-                              Color.fromARGB(255, 255, 243, 201)
+                              Color.fromARGB(255, 242, 116, 112),
+                              Color.fromARGB(255, 255, 201, 201)
                             ]),
                       ),
                       child: const Icon(
@@ -226,7 +278,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
                         const Text(
                           "Reminder",
                           style: TextStyle(
-                              fontSize: 12, color: Color.fromARGB(120, 0, 0, 0)),
+                              fontSize: 12,
+                              color: Color.fromARGB(120, 0, 0, 0)),
                         ),
                         SizedBox(
                           width: 250,
@@ -264,8 +317,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
                             begin: Alignment(-1, -1),
                             end: Alignment(1, 1),
                             colors: [
-                              Color.fromARGB(255, 242, 116, 112),
-                              Color.fromARGB(255, 255, 201, 201)
+                              Color.fromARGB(255, 250, 153, 85),
+                              Color.fromARGB(255, 255, 243, 201)
                             ]),
                       ),
                       child: const Icon(
@@ -282,13 +335,14 @@ class _AddProjectPageState extends State<AddProjectPage> {
                         const Text(
                           "Description",
                           style: TextStyle(
-                              fontSize: 12, color: Color.fromARGB(120, 0, 0, 0)),
+                              fontSize: 12,
+                              color: Color.fromARGB(120, 0, 0, 0)),
                         ),
                         SizedBox(
                           width: 250,
                           child: TextField(
                             cursorColor: const Color.fromRGBO(0, 0, 0, 0.4),
-                            controller: _projectDescCtrl,
+                            controller: _taskDescCtrl,
                             decoration: const InputDecoration(
                               hintText: "(Optional)",
                               hintStyle: TextStyle(
@@ -309,21 +363,42 @@ class _AddProjectPageState extends State<AddProjectPage> {
                     )
                   ],
                 ),
-                const SizedBox(
-                  height: 30,
+                SizedBox(
+                  height: 25,
                 ),
-                // const Text(
-                //   "Add task",
-                //   style: TextStyle(
-                //       fontSize: 14, color: Color.fromARGB(190, 0, 0, 0)),
-                // ),
-                _addToDoWidget(),
-                Expanded(child: _listView())
-              ],
+                ////////////////////// Save Button
+                ElevatedButton(
+                  onPressed: () {
+                    if (_taskTitleCtrl.text.isNotEmpty) {
+                      DateTime dateTime = DateTime(date.year, date.month,
+                          date.day, time.hour, time.minute);
+                      var formatted = _dateTimeToTimestamp(dateTime);
+                      String taskid =
+                          _taskTitleCtrl.text + Timestamp.fromMillisecondsSinceEpoch(dateTime.millisecondsSinceEpoch).toString();
+                      Task newTask = Task(
+                          title: _taskTitleCtrl.text.toString(),
+                          date_time: dateTime,
+                          desc: _taskDescCtrl.text.toString(),
+                          reminder: reminderChosen,
+                          isdone: false);
+                      TaskService.addData(uid, newTask);
+                      Navigator.pushReplacementNamed(context, '/home');
+                    } else {
+                      const snackBar = SnackBar(
+                        content: Text('You should fill the task title'),
+                      );
+                    }
+                  },
+                  child: Text('SAVE'),
+                  style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ))),
+                )
+              ]),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
