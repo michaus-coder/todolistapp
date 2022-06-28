@@ -32,14 +32,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "NULI - Productive App",
       debugShowCheckedModeBanner: false,
-      initialRoute: '/detail_task',
+      initialRoute: '/profile',
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/welcome': (context) => const WelcomeScreen(),
         '/welcome2': (context) => const WelcomePage2(),
         '/home': (context) => const HomePage(),
         '/profile': (context) => const Profile(),
-        '/profile/edit': (context) => const EditProfile(),
         '/detail_task': (context) => const TaskDetail(),
         '/detail_project': (context) => const ProjectDetail(),
         '/add_edit_task': (context) => const AddEditTask(),

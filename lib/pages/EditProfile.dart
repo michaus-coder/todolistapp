@@ -6,7 +6,8 @@ import 'package:nuli/dataclass.dart' as dataclass;
 import 'package:nuli/dbservices.dart';
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({Key? key}) : super(key: key);
+  final dataclass.User user;
+  const EditProfile({Key? key, required this.user}) : super(key: key);
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -17,14 +18,6 @@ class _EditProfileState extends State<EditProfile> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  late dataclass.User? _user;
-
-  void getUserData() async {
-    _user = await UserService.getUserFromFirestore();
-    _firstNameController.text = _user!.firstName;
-    _lastNameController.text = _user!.lastName;
-    _emailController.text = _user!.email;
-  }
 
   @override
   void dispose() {
@@ -38,7 +31,9 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
-    getUserData();
+    _firstNameController.text = widget.user.firstName;
+    _lastNameController.text = widget.user.lastName;
+    _emailController.text = widget.user.email;
   }
 
   @override
@@ -154,7 +149,7 @@ class _EditProfileState extends State<EditProfile> {
                         email: _emailController.text,
                         fullname:
                             "${_firstNameController.text} ${_lastNameController.text}",
-                        uid: _user!.uid,
+                        uid: widget.user.uid,
                       ),
                     )
                         .whenComplete(() =>

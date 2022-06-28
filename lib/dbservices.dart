@@ -28,7 +28,10 @@ class UserService {
       firebase_auth.User user = result.user!;
       storeUserToFirestore(
           user: dataclass.User(
-              email: user.email!, fullname: fullname, uid: user.uid));
+        email: user.email!,
+        fullname: fullname,
+        uid: user.uid,
+      ));
       return _userFromFirebase(user);
     } catch (e) {
       return e.toString();
@@ -87,13 +90,17 @@ class UserService {
   }
 
   static Future<dynamic> getUserFromFirestore() async {
+    await _auth.signInWithEmailAndPassword(
+        email: "michaelwong306@gmail.com", password: "thisispassword");
     firebase_auth.User? user = _auth.currentUser;
-    if (user == null) {
-      return null;
-    }
-    cloud_firestore.DocumentReference userRef = _userCollection.doc(user.uid);
-    return userRef.get().then(
-        (value) => dataclass.User.fromJson(value.data as Map<String, dynamic>));
+    cloud_firestore.DocumentReference userRef = _userCollection.doc(user!.uid);
+    print(user);
+    User userData = await userRef
+        .get()
+        .then((value) => User.fromJson(value.data() as Map<String, dynamic>));
+
+    // return user;
+    return userData;
   }
 
   static Future<void> updateUserToFirestore(
@@ -118,9 +125,9 @@ class TaskService {
 
   Stream<QuerySnapshot> getData(String _uid, String judul) {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
-    .collection('tblTask')
-    .doc(_uid)
-    .collection('myTasks');
+        .collection('tblTask')
+        .doc(_uid)
+        .collection('myTasks');
 
     if (judul == "")
       return _taskCollection.snapshots();
@@ -151,9 +158,9 @@ class TaskService {
 class ProjectService {
   Stream<QuerySnapshot> getData(String _uid, String judul) {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
-    .collection('tblProject')
-    .doc(_uid)
-    .collection('myProjects');
+        .collection('tblProject')
+        .doc(_uid)
+        .collection('myProjects');
 
     if (judul == "")
       return _taskCollection.snapshots();
