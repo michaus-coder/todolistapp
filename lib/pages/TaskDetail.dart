@@ -14,7 +14,22 @@ class _TaskDetailState extends State<TaskDetail> {
       title: "NULI - Productive App",
       home: Scaffold(
           appBar: AppBar(
-            title: const Text('NULI - Productive App'),
+            backgroundColor: const Color.fromARGB(255, 28, 84, 157),
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+                size: 16,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: const Text(
+              "Task Detail",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+            centerTitle: true,
           ),
           body: SingleChildScrollView(
             padding: EdgeInsets.all(10),
@@ -262,39 +277,54 @@ class _TaskDetailState extends State<TaskDetail> {
                   child: Column(
                     children: [
                       Column(children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xFF1C549D),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 158, vertical: 10),
-                          margin:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          child: Text("Edit",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              )),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 248, 248, 248),
+                        GestureDetector(
+                          // When the child is tapped, show a snackbar.
+                          onTap: () {
+                            print("tapped");
+                          },
+                          // The custom button
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Color(0xFF1C549D),
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                  width: 2.0, color: const Color(0xFFF27470))),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 145, vertical: 10),
-                          margin:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          child: Text("Delete",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              )),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 158, vertical: 10),
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            child: Text("Edit",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                          ),
                         ),
+                        GestureDetector(
+                          // When the child is tapped, show a snackbar.
+                          onTap: () {
+                            print("tapped");
+                          },
+                          // The custom button
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Color.fromARGB(255, 248, 248, 248),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                    width: 2.0,
+                                    color: const Color(0xFFF27470))),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 145, vertical: 10),
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            child: Text("Delete",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                          ),
+                        )
                       ]),
                     ],
                   ),

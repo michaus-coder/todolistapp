@@ -47,7 +47,10 @@ class _AddProjectPageState extends State<AddProjectPage> {
   Widget _addToDoWidget() {
     return ListTile(
       leading: const Icon(Icons.add),
-      title: const Text('Add to do', style: TextStyle(color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),),
+      title: const Text(
+        'Add to do',
+        style: TextStyle(color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
+      ),
       onTap: () {
         final _controller = TextEditingController();
         final _field = TextField(
@@ -62,7 +65,6 @@ class _AddProjectPageState extends State<AddProjectPage> {
               hintText: "To do"),
         );
 
-
         setState(() {
           _taskCtrl.add(_controller);
           _textFields.add(_field);
@@ -76,7 +78,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
         itemCount: _textFields.length,
         itemBuilder: (context, index) {
           return Container(
-            child:  _textFields[index],
+            child: _textFields[index],
           );
         });
   }
@@ -89,7 +91,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: Colors.black,
+            color: Colors.white,
             size: 16,
           ),
           onPressed: () {
@@ -104,7 +106,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
       ),
       body: SingleChildScrollView(
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
+          constraints:
+              BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
           child: Container(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -160,7 +163,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
                         const Text(
                           "Deadline",
                           style: TextStyle(
-                              fontSize: 12, color: Color.fromARGB(120, 0, 0, 0)),
+                              fontSize: 12,
+                              color: Color.fromARGB(120, 0, 0, 0)),
                         ),
                         const SizedBox(
                           height: 8,
@@ -226,7 +230,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
                         const Text(
                           "Reminder",
                           style: TextStyle(
-                              fontSize: 12, color: Color.fromARGB(120, 0, 0, 0)),
+                              fontSize: 12,
+                              color: Color.fromARGB(120, 0, 0, 0)),
                         ),
                         SizedBox(
                           width: 250,
@@ -282,7 +287,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
                         const Text(
                           "Description",
                           style: TextStyle(
-                              fontSize: 12, color: Color.fromARGB(120, 0, 0, 0)),
+                              fontSize: 12,
+                              color: Color.fromARGB(120, 0, 0, 0)),
                         ),
                         SizedBox(
                           width: 250,
@@ -312,13 +318,23 @@ class _AddProjectPageState extends State<AddProjectPage> {
                 const SizedBox(
                   height: 30,
                 ),
-                // const Text(
-                //   "Add task",
-                //   style: TextStyle(
-                //       fontSize: 14, color: Color.fromARGB(190, 0, 0, 0)),
-                // ),
+
                 _addToDoWidget(),
-                Expanded(child: _listView())
+                Expanded(child: _listView()),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFF1C549D),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 130, vertical: 10),
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: const Text("Add task",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ),
               ],
             ),
           ),

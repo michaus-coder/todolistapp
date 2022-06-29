@@ -50,7 +50,21 @@ class _ProjectDetailState extends State<ProjectDetail> {
       title: "NULI - Productive App",
       home: Scaffold(
           appBar: AppBar(
-            title: const Text('NULI - Productive App'),
+            backgroundColor: const Color.fromARGB(255, 28, 84, 157),
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+                size: 16,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: const Text(
+              "Task Detail",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
           ),
           body: SingleChildScrollView(
             padding: EdgeInsets.all(20),
@@ -225,83 +239,89 @@ class _ProjectDetailState extends State<ProjectDetail> {
                           child: Row(
                             children: [
                               if (taskList[i].status == "0") ...[
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: Color(0xFFD9D9D9),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          width: 0.5,
-                                          color: const Color(0xFF0000000))),
-                                  padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                        child: Icon(Icons.circle_outlined,
-                                            color: Color.fromARGB(
-                                                255, 238, 0, 178),
-                                            size: 30),
-                                      ),
-                                      Container(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 0, 230, 0),
-                                        child: Text(
-                                          taskList[i].task_name,
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold),
+                                GestureDetector(
+                                  // When the child is tapped, show a snackbar.
+                                  onTap: () {
+                                    print("tapped");
+                                  },
+                                  // The custom button
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        color: Color(0xFFD9D9D9),
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            width: 0.5,
+                                            color: const Color(0xFF0000000))),
+                                    padding:
+                                        EdgeInsets.fromLTRB(10, 15, 10, 15),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                          child: Icon(Icons.circle_outlined,
+                                              color: Color.fromARGB(
+                                                  255, 238, 0, 178),
+                                              size: 30),
                                         ),
-                                      ),
-                                      Container(child: Icon(Icons.menu))
-                                    ],
+                                        Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 230, 0),
+                                          child: Text(
+                                            taskList[i].task_name,
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        Container(child: Icon(Icons.menu))
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                // GestureDetector(
-                                //   onTap: () {
-                                //     taskList[i].status = "0";
-                                //   },
-                                // )
+                                )
                               ] else ...[
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: Color(0xFFD9D9D9),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          width: 0.5,
-                                          color: const Color(0xFF0000000))),
-                                  padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                        child: Icon(Icons.circle,
-                                            color: Color.fromARGB(
-                                                255, 238, 0, 178),
-                                            size: 30),
-                                      ),
-                                      Container(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 0, 230, 0),
-                                        child: Text(
-                                          taskList[i].task_name,
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold),
+                                GestureDetector(
+                                  // When the child is tapped, show a snackbar.
+                                  onTap: () {
+                                    print("tapped");
+                                  },
+                                  // The custom button
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        color: Color(0xFFD9D9D9),
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            width: 0.5,
+                                            color: const Color(0xFF0000000))),
+                                    padding:
+                                        EdgeInsets.fromLTRB(10, 15, 10, 15),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                          child: Icon(Icons.circle,
+                                              color: Color.fromARGB(
+                                                  255, 238, 0, 178),
+                                              size: 30),
                                         ),
-                                      ),
-                                      Container(child: Icon(Icons.menu))
-                                    ],
+                                        Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 230, 0),
+                                          child: Text(
+                                            taskList[i].task_name,
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        Container(child: Icon(Icons.menu))
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                // GestureDetector(
-                                //   onTap: () {
-                                //     taskList[i].status = "1";
-                                //   },
-                                // )
+                                )
                               ],
                             ],
                           ),

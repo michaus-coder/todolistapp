@@ -8,6 +8,7 @@ import 'package:nuli/pages/WelcomePage2.dart';
 import 'package:nuli/pages/SignUpScreen.dart';
 import 'package:nuli/pages/WelcomeScreen.dart';
 import 'package:nuli/pages/LoginScreen.dart';
+import 'package:nuli/pages/add_project.dart';
 import 'package:nuli/pages/add_task.dart';
 import 'package:nuli/pages/home.dart';
 import 'package:nuli/pages/tabbarview.dart';
@@ -33,7 +34,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "NULI - Productive App",
       debugShowCheckedModeBanner: false,
-      initialRoute: '/detail_task',
+      initialRoute: '/add_project',
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/welcome': (context) => const WelcomeScreen(),
@@ -47,6 +48,7 @@ class _MyAppState extends State<MyApp> {
         '/temppage': (context) => const TempPage(),
         '/tabbarview': (context) => const TabBarView1(),
         '/add_task': (context) => const AddTaskPage(),
+        '/add_project': (context) => const AddProjectPage(),
       },
     );
   }
