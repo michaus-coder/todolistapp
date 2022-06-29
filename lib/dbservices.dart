@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:nuli/dataclass.dart' as dataclass;
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart' as cloud_firestore;
@@ -10,6 +13,8 @@ class UserService {
       cloud_firestore.FirebaseFirestore.instance.collection('tblUser');
   static final firebase_auth.FirebaseAuth _auth =
       firebase_auth.FirebaseAuth.instance;
+  static final FirebaseStorage _storage =
+      FirebaseStorage.instanceFor(bucket: "gs://nuli-todolist.appspot.com");
 
   static firebase_auth.User? _userFromFirebase(firebase_auth.User? user) {
     if (user == null) {
@@ -31,6 +36,7 @@ class UserService {
         email: user.email!,
         fullname: fullname,
         uid: user.uid,
+        photoUrl: "",
       ));
       return _userFromFirebase(user);
     } catch (e) {
@@ -40,9 +46,7 @@ class UserService {
 
   static Future signIn(String email, String password) async {
     try {
-      firebase_auth.UserCredential result = await _auth
-          .signInWithEmailAndPassword(email: email, password: password);
-      firebase_auth.User user = result.user!;
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
       return true;
     } catch (e) {
       return false;
@@ -80,6 +84,7 @@ class UserService {
       email: user.email,
       fullname: user.fullname,
       uid: user.uid,
+      photoUrl: user.photoUrl,
     );
     cloud_firestore.DocumentReference userRef = _userCollection.doc(user.uid);
 
@@ -89,18 +94,45 @@ class UserService {
         .catchError((e) => print(e));
   }
 
+  static Future<String> getDownloadUrl(String uid) async {
+    var defaultStorageRef = _storage.ref().child("users/images/default.png");
+    String url = await defaultStorageRef.getDownloadURL();
+    var storageRef = _storage.ref().child("users/images/$uid.png");
+    await storageRef.getDownloadURL().then((value) {
+      if (value.isNotEmpty) {
+        url = value;
+      }
+    }).catchError((e) {});
+    return url;
+  }
+
   static Future<dynamic> getUserFromFirestore() async {
     await _auth.signInWithEmailAndPassword(
         email: "michaelwong306@gmail.com", password: "thisispassword");
     firebase_auth.User? user = _auth.currentUser;
     cloud_firestore.DocumentReference userRef = _userCollection.doc(user!.uid);
-    print(user);
     User userData = await userRef
         .get()
         .then((value) => User.fromJson(value.data() as Map<String, dynamic>));
 
+    String photoUrl = await getDownloadUrl(userData.uid);
+    userData.photoUrl = photoUrl;
+
     // return user;
     return userData;
+  }
+
+  static Future<bool> verifyPassword(String email, String password) async {
+    if (email.isEmpty || password.isEmpty) {
+      return false;
+    }
+
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   static Future<void> updateUserToFirestore(
@@ -110,6 +142,91 @@ class UserService {
         .update(user.toJson())
         .whenComplete(() => print('User updated'))
         .catchError((e) => print(e));
+  }
+
+  static Future<String> uploadImage(String path) async {
+    var user = _auth.currentUser;
+    var storageRef = _storage.ref().child("users/images/${user!.uid}.png");
+    storageRef
+        .putFile(File(path))
+        .whenComplete(() => storageRef.getDownloadURL());
+    return "default.png";
+  }
+
+  static Future<bool> updatePassword(String email, String newpassword) async {
+    var user = _auth.currentUser;
+    bool result = await user!.updatePassword(newpassword).then((value) {
+      return true;
+    }).catchError((e) {
+      return false;
+    });
+    return result;
+  }
+
+  static Future<int> getTaskDoneCount() async {
+    var firstDayOfWeek =
+        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
+    var user = _auth.currentUser;
+    int count = 0;
+    // QuerySnapshot tasksDone = await cloud_firestore.FirebaseFirestore.instance
+    //     .collection("tblTask")
+    //     .doc(user!.uid)
+    //     .collection("myTasks")
+    //     .where("isdone", isEqualTo: true)
+    //     .where("date_time", isGreaterThanOrEqualTo: firstDayOfWeek)
+    //     .where("date_time", isLessThanOrEqualTo: lastDayOfWeek)
+    //     .get()
+    //     .then((value) {
+    //   count = value.docs.length;
+    //   return value;
+    // }).catchError((e) {
+    //   count = 0;
+    // });
+    return count;
+  }
+
+  static Future<int> getTaskPendingCount() async {
+    var firstDayOfWeek =
+        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
+    var user = _auth.currentUser;
+    // QuerySnapshot tasksUndone = await cloud_firestore.FirebaseFirestore.instance
+    //     .collection("tblTask")
+    //     .doc(user!.uid)
+    //     .collection("myTasks")
+    //     .where("isdone", isEqualTo: false)
+    //     .where("date_time", isGreaterThanOrEqualTo: firstDayOfWeek)
+    //     .where("date_time", isLessThanOrEqualTo: lastDayOfWeek)
+    //     .get();
+    return 0;
+  }
+
+  static Future<int> getProjectDoneCount() async {
+    var firstDayOfWeek =
+        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
+    var user = _auth.currentUser;
+    QuerySnapshot projectsDone = await cloud_firestore
+        .FirebaseFirestore.instance
+        .collection("tblProject")
+        .doc(user!.uid)
+        .collection("myProjects")
+        .where("isdone", isEqualTo: true)
+        .get();
+    return projectsDone.docs.length;
+  }
+
+  static Future<int> getProjectPendingCount() async {
+    var user = _auth.currentUser;
+    QuerySnapshot projectsUndone = await cloud_firestore
+        .FirebaseFirestore.instance
+        .collection("tblProject")
+        .doc(user!.uid)
+        .collection("myProjects")
+        .where("isdone", isEqualTo: false)
+        .get();
+    return projectsUndone.docs.length;
   }
 }
 
@@ -125,9 +242,9 @@ class TaskService {
 
   Stream<QuerySnapshot> getData(String uid, String judul) {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
-    .collection('tblTask')
-    .doc(uid)
-    .collection('myTasks');
+        .collection('tblTask')
+        .doc(uid)
+        .collection('myTasks');
 
     if (judul == "")
       return _taskCollection.snapshots();
@@ -137,13 +254,14 @@ class TaskService {
           .startAt([judul]).endAt([judul + '\uf8ff']).snapshots();
   }
 
-  static Future<void> addData(String uid, Task item) async {
+  static Future<void> addData(String uid, dataclass.Task item) async {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
-    .collection('tblTask')
-    .doc(uid)
-    .collection('myTasks');
+        .collection('tblTask')
+        .doc(uid)
+        .collection('myTasks');
 
-    DocumentReference docRef = _taskCollection.doc('${item.title}${item.date_time.toString()}');
+    DocumentReference docRef =
+        _taskCollection.doc('${item.title}${item.date_time.toString()}');
 
     await docRef
         .set(item.toJson())
@@ -151,13 +269,14 @@ class TaskService {
         .catchError((e) => print(e));
   }
 
-  static Future<void> EditData(String uid, Task item) async {
+  static Future<void> EditData(String uid, dataclass.Task item) async {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
-    .collection('tblTask')
-    .doc(uid)
-    .collection('myTasks');
-    
-    DocumentReference docRef = _taskCollection.doc('${item.title}${item.date_time.toString()}');
+        .collection('tblTask')
+        .doc(uid)
+        .collection('myTasks');
+
+    DocumentReference docRef =
+        _taskCollection.doc('${item.title}${item.date_time.toString()}');
 
     await docRef
         .update(item.toJson())
@@ -165,14 +284,15 @@ class TaskService {
         .catchError((e) => print(e));
   }
 
-  static Future<void> deleteData(String uid, Task item) async {
+  static Future<void> deleteData(String uid, dataclass.Task item) async {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
-    .collection('tblTask')
-    .doc(uid)
-    .collection('myTasks');
-    
-    DocumentReference docRef = _taskCollection.doc('${item.title}${item.date_time.toString()}');
-    
+        .collection('tblTask')
+        .doc(uid)
+        .collection('myTasks');
+
+    DocumentReference docRef =
+        _taskCollection.doc('${item.title}${item.date_time.toString()}');
+
     await docRef
         .delete()
         .whenComplete(() => print("Data berhasil dihapus"))

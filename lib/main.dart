@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:nuli/pages/EditProfile.dart';
 import 'package:nuli/pages/ProjectDetail.dart';
 import 'package:nuli/pages/SplashScreen.dart';
 import 'package:nuli/pages/TaskDetail.dart';
@@ -34,7 +33,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "NULI - Productive App",
       debugShowCheckedModeBanner: false,
-      initialRoute: '/add_project',
+      initialRoute: '/login',
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/welcome': (context) => const WelcomeScreen(),
