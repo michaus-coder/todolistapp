@@ -111,6 +111,14 @@ class UserService {
         .whenComplete(() => print('User updated'))
         .catchError((e) => print(e));
   }
+
+  static String getCurrentUserFirstName() {
+    firebase_auth.User? user = _auth.currentUser;
+    if (user == null) {
+      return "";
+    }
+    return user.uid.toString();
+  }
 }
 
 // CollectionReference _taskCollection = FirebaseFirestore.instance
@@ -119,15 +127,11 @@ class UserService {
 //     .collection('myTasks');
 
 class TaskService {
-  // String uid;
-
-  // TaskService({required this.uid});
-
   Stream<QuerySnapshot> getData(String uid, String judul) {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
-    .collection('tblTask')
-    .doc(uid)
-    .collection('myTasks');
+        .collection('tblTask')
+        .doc(uid)
+        .collection('myTasks');
 
     if (judul == "")
       return _taskCollection.snapshots();
@@ -139,11 +143,11 @@ class TaskService {
 
   static Future<void> addData(String uid, Task item) async {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
-    .collection('tblTask')
-    .doc(uid)
-    .collection('myTasks');
+        .collection('tblTask')
+        .doc(uid)
+        .collection('myTasks');
 
-    DocumentReference docRef = _taskCollection.doc('${item.title}${item.date_time.toString()}');
+    DocumentReference docRef = _taskCollection.doc(item.taskid);
 
     await docRef
         .set(item.toJson())
@@ -151,13 +155,13 @@ class TaskService {
         .catchError((e) => print(e));
   }
 
-  static Future<void> EditData(String uid, Task item) async {
+  static Future<void> editData(String uid, Task item) async {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
-    .collection('tblTask')
-    .doc(uid)
-    .collection('myTasks');
-    
-    DocumentReference docRef = _taskCollection.doc('${item.title}${item.date_time.toString()}');
+        .collection('tblTask')
+        .doc(uid)
+        .collection('myTasks');
+
+    DocumentReference docRef = _taskCollection.doc(item.taskid);
 
     await docRef
         .update(item.toJson())
@@ -165,19 +169,25 @@ class TaskService {
         .catchError((e) => print(e));
   }
 
-  static Future<void> deleteData(String uid, Task item) async {
+  static Future<void> deleteData(String uid, String taskid) async {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
-    .collection('tblTask')
-    .doc(uid)
-    .collection('myTasks');
-    
-    DocumentReference docRef = _taskCollection.doc('${item.title}${item.date_time.toString()}');
-    
+        .collection('tblTask')
+        .doc(uid)
+        .collection('myTasks');
+
+    DocumentReference docRef = _taskCollection.doc(taskid);
+
     await docRef
         .delete()
         .whenComplete(() => print("Data berhasil dihapus"))
         .catchError((e) => print(e));
   }
+
+  // void countDocuments() async {
+  //   QuerySnapshot _myDoc = await FirebaseFirestore.instance.collection('product').doc();
+  //   List<DocumentSnapshot> _myDocCount = _myDoc.documents;
+  //   print(_myDocCount.length);  // Count of Documents in Collection
+  // }
 }
 
 class ProjectService {
@@ -194,4 +204,92 @@ class ProjectService {
           .orderBy("title")
           .startAt([judul]).endAt([judul + '\uf8ff']).snapshots();
   }
+
+  Stream<QuerySnapshot> getDataDone(String _uid, String judul) {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(_uid)
+        .collection('myProjects');
+
+    if (judul == "")
+      return _taskCollection.snapshots();
+    else
+      return _taskCollection
+          .orderBy("title")
+          .startAt([judul]).endAt([judul + '\uf8ff']).snapshots();
+  }
+
+  static Future<void> addData(String uid, Project item) async {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(uid)
+        .collection('myProjects');
+
+    DocumentReference docRef = _taskCollection.doc(item.projectid);
+
+    await docRef
+        .set(item.toJson())
+        .whenComplete(() => print("Data berhasil ditambahkan"))
+        .catchError((e) => print(e));
+  }
+}
+
+class TaskforProjectServices {
+  Stream<QuerySnapshot> getData(String _uid, String projectid, String judul) {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(_uid)
+        .collection('myProjects')
+        .doc(projectid)
+        .collection('tasks');
+
+    if (judul == "") {
+      return _taskCollection.snapshots();
+    } else {
+      return _taskCollection
+          .orderBy("title")
+          .startAt([judul]).endAt([judul + '\uf8ff']).snapshots();
+    }
+  }
+
+  static Future<void> addData(
+      String uid, String projectid, dataclass.TaskforProject item) async {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(uid)
+        .collection('myProjects')
+        .doc(projectid)
+        .collection('tasks');
+
+    DocumentReference docRef = _taskCollection.doc(item.taskid);
+
+    await docRef
+        .set(item.toJson())
+        .whenComplete(() => print("Data berhasil ditambahkan"))
+        .catchError((e) => print(e));
+  }
+
+  // Future<int> countProgress(String uid, String projectid) async {
+  //   final Query<Map<String, dynamic>> undoneTasks = FirebaseFirestore.instance
+  //       .collection('tblProject')
+  //       .doc(uid)
+  //       .collection('myProjects')
+  //       .doc(projectid)
+  //       .collection('tasks')
+  //       .where('isdone', isEqualTo: false);
+
+  //   Future<int> undone = undoneTasks.snapshots().length;
+
+  //   final Query<Map<String, dynamic>> doneTasks = FirebaseFirestore.instance
+  //       .collection('tblProject')
+  //       .doc(uid)
+  //       .collection('myProjects')
+  //       .doc(projectid)
+  //       .collection('tasks')
+  //       .where('isdone', isEqualTo: false);
+
+  //   Future<int> done = doneTasks.snapshots().length;
+
+  //   int progress = (undone / done) * 100.round();
+  // }
 }

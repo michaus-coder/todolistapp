@@ -29,6 +29,7 @@ class User {
 }
 
 class Task {
+  String taskid;
   String title;
   DateTime date_time;
   String reminder;
@@ -36,7 +37,7 @@ class Task {
   bool isdone;
 
   Task(
-      {
+      {required this.taskid,
       required this.title,
       required this.date_time,
       required this.reminder,
@@ -44,6 +45,7 @@ class Task {
       required this.isdone});
 
   Map<String, dynamic> toJson() => {
+        'taskid': taskid,
         'title': title,
         'date_time': Timestamp.fromMillisecondsSinceEpoch(
             date_time.millisecondsSinceEpoch),
@@ -52,20 +54,11 @@ class Task {
         'isdone': isdone
       };
 
-  // factory Task.fromJson1(Map<String, dynamic> json) => Task(
-  //     title: json['title'],
-  //     date_time: json['date_time'],
-  //     reminder: json['reminder'],
-  //     desc: json['desc'],
-  //     isdone: json['isdone']);
-
   factory Task.fromJson(Map<String, dynamic> json) {
-    // Timestamp timestamp = json['date_time'];
-    // DateTime dateTime = new DateTime.fromMillisecondsSinceEpoch(timestamp);
-
     return Task(
+        taskid: json['taskid'],
         title: json['title'],
-        date_time:json['date_time'],
+        date_time: json['date_time'],
         reminder: json['reminder'],
         desc: json['desc'],
         isdone: json['isdone']);
@@ -75,7 +68,7 @@ class Task {
 class Project {
   String projectid;
   String title;
-  String deadline;
+  DateTime deadline;
   String desc;
   bool isdone;
   String reminder;
@@ -89,9 +82,10 @@ class Project {
       required this.reminder});
 
   Map<String, dynamic> toJson() => {
-        'projectid': '',
+        'projectid': projectid,
         'title': title,
-        'deadline': deadline,
+        'deadline': Timestamp.fromMillisecondsSinceEpoch(
+            deadline.millisecondsSinceEpoch),
         'reminder': reminder,
         'desc': desc,
         'isdone': isdone
@@ -99,11 +93,29 @@ class Project {
 
   factory Project.fromJson(Map<String, dynamic> json) {
     return Project(
-        projectid: '',
+        projectid: json['projectid'],
         title: json['title'],
         deadline: json['deadline'],
         reminder: json['reminder'],
         desc: json['desc'],
-        isdone: json['isdone']);
+        isdone: json['isdone'])
+        ;
+  }
+}
+
+class TaskforProject {
+  String taskid;
+  String title;
+  bool isdone;
+
+  TaskforProject(
+      {required this.taskid, required this.title, required this.isdone});
+
+  Map<String, dynamic> toJson() =>
+      {'taskid': taskid, 'title': title, 'isdone': isdone};
+
+  factory TaskforProject.fromJson(Map<String, dynamic> json) {
+    return TaskforProject(
+        taskid: json['taskid'], title: json['title'], isdone: json['isdone']);
   }
 }

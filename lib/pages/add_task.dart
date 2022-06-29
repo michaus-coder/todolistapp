@@ -78,7 +78,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: Colors.black,
+              color: Colors.white,
               size: 16,
             ),
             onPressed: () {
@@ -371,17 +371,21 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     if (_taskTitleCtrl.text.isNotEmpty) {
                       DateTime dateTime = DateTime(date.year, date.month,
                           date.day, time.hour, time.minute);
-                      var formatted = _dateTimeToTimestamp(dateTime);
-                      String taskid =
-                          _taskTitleCtrl.text + Timestamp.fromMillisecondsSinceEpoch(dateTime.millisecondsSinceEpoch).toString();
+
+                      DateTime now = DateTime.now();
+                      String formattedDate = DateFormat('MM-dd-yyyy HH:mm:ss').format(now);
+                      
+                      String taskid = _taskTitleCtrl.text.toString()+' '+formattedDate;
+                      
                       Task newTask = Task(
+                          taskid: taskid,
                           title: _taskTitleCtrl.text.toString(),
                           date_time: dateTime,
                           desc: _taskDescCtrl.text.toString(),
                           reminder: reminderChosen,
                           isdone: false);
                       TaskService.addData(uid, newTask);
-                      Navigator.pushReplacementNamed(context, '/home');
+                      Navigator.pushReplacementNamed(context, '/tabbarview');
                     } else {
                       const snackBar = SnackBar(
                         content: Text('You should fill the task title'),
