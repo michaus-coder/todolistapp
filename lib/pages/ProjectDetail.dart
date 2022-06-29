@@ -286,7 +286,70 @@ class _ProjectDetailState extends State<ProjectDetail> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black)),
                 ),
+                const SizedBox(height: 20,),
                 //listview
+                Container(
+                  padding: const EdgeInsets.all(5),
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: TaskforProjectServices().getData(uid, widget.projectDet.projectid, ""),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text('ERROR');
+                      } else if (snapshot.hasData || snapshot.data != null) {
+                        return Expanded(
+                            child: ListView.separated(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            // taskCount = snapshot.data!.docs.length;
+                            DocumentSnapshot _data = snapshot.data!.docs[index];
+                            return Container(
+                              // constraints: BoxConstraints(maxWidth: 270),
+                              padding: const EdgeInsets.all(18),
+                              decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment(1, -1),
+                                      end: Alignment(-1, 1),
+                                      colors: [
+                                        Color.fromARGB(255, 250, 153, 85),
+                                        Color.fromARGB(255, 255, 255, 255)
+                                      ]),
+                                  boxShadow: <BoxShadow>[
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 10,
+                                    )
+                                  ],
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                children: [
+                                  Image.asset('assets/nuli/images/unchecked.png', width: 18, height: 18,),
+                                  const SizedBox(width: 15,),
+                                  Text(
+                                    _data['title'],
+                                    style: const TextStyle(
+                                        fontSize: 16,),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 20.0),
+                        ));
+                      }
+                      return const Center(
+                        child: Text(
+                          'No preview available',
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      );
+                    },
+                  )),
 
                 //edit button
                 const SizedBox(
@@ -346,99 +409,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                       ),
                     ),
                   ),
-                )
-
-                // ListView(
-                //   shrinkWrap: true,
-                //   physics: const NeverScrollableScrollPhysics(),
-                //   children: [
-                //     for (var i = 0; i < taskList.length; i++)
-                //       Container(
-                //         padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                //         child: Row(
-                //           children: [
-                //             if (taskList[i].status == "0") ...[
-                //               Container(
-                //                 decoration: BoxDecoration(
-                //                     color: Color(0xFFD9D9D9),
-                //                     borderRadius: BorderRadius.circular(10),
-                //                     border: Border.all(
-                //                         width: 0.5,
-                //                         color: const Color(0xFF0000000))),
-                //                 padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
-                //                 child: Row(
-                //                   children: [
-                //                     Container(
-                //                       padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                //                       child: Icon(Icons.circle_outlined,
-                //                           color:
-                //                               Color.fromARGB(255, 238, 0, 178),
-                //                           size: 30),
-                //                     ),
-                //                     Container(
-                //                       padding:
-                //                           EdgeInsets.fromLTRB(0, 0, 230, 0),
-                //                       child: Text(
-                //                         taskList[i].task_name,
-                //                         style: TextStyle(
-                //                             fontSize: 15,
-                //                             color: Colors.black,
-                //                             fontWeight: FontWeight.bold),
-                //                       ),
-                //                     ),
-                //                     Container(child: Icon(Icons.menu))
-                //                   ],
-                //                 ),
-                //               ),
-                //               // GestureDetector(
-                //               //   onTap: () {
-                //               //     taskList[i].status = "0";
-                //               //   },
-                //               // )
-                //             ] else ...[
-                //               Container(
-                //                 decoration: BoxDecoration(
-                //                     color: Color(0xFFD9D9D9),
-                //                     borderRadius: BorderRadius.circular(10),
-                //                     border: Border.all(
-                //                         width: 0.5,
-                //                         color: const Color(0xFF0000000))),
-                //                 padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
-                //                 child: Row(
-                //                   children: [
-                //                     Container(
-                //                       padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                //                       child: Icon(Icons.circle,
-                //                           color:
-                //                               Color.fromARGB(255, 238, 0, 178),
-                //                           size: 30),
-                //                     ),
-                //                     Container(
-                //                       padding:
-                //                           EdgeInsets.fromLTRB(0, 0, 230, 0),
-                //                       child: Text(
-                //                         taskList[i].task_name,
-                //                         style: TextStyle(
-                //                             fontSize: 15,
-                //                             color: Colors.black,
-                //                             fontWeight: FontWeight.bold),
-                //                       ),
-                //                     ),
-                //                     Container(child: Icon(Icons.menu))
-                //                   ],
-                //                 ),
-                //               ),
-                //               // GestureDetector(
-                //               //   onTap: () {
-                //               //     taskList[i].status = "1";
-                //               //   },
-                //               // )
-                //             ],
-                //           ],
-                //         ),
-                //       ),
-                //   ],
-                // ),
+                ),
               ],
             ),
           ),
