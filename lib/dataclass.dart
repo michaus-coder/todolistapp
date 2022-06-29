@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class User {
   final String email;
   final String fullname;
@@ -30,15 +33,14 @@ class User {
 }
 
 class Task {
-  String taskid;
   String title;
-  String date_time;
+  DateTime date_time;
   String reminder;
   String desc;
   bool isdone;
 
   Task(
-      {required this.taskid,
+      {
       required this.title,
       required this.date_time,
       required this.reminder,
@@ -46,9 +48,9 @@ class Task {
       required this.isdone});
 
   Map<String, dynamic> toJson() => {
-        'taskid': '',
         'title': title,
-        'date_time': date_time,
+        'date_time': Timestamp.fromMillisecondsSinceEpoch(
+            date_time.millisecondsSinceEpoch),
         'reminder': reminder,
         'desc': desc,
         'isdone': isdone
@@ -62,10 +64,12 @@ class Task {
   //     isdone: json['isdone']);
 
   factory Task.fromJson(Map<String, dynamic> json) {
+    // Timestamp timestamp = json['date_time'];
+    // DateTime dateTime = new DateTime.fromMillisecondsSinceEpoch(timestamp);
+
     return Task(
-        taskid: '',
         title: json['title'],
-        date_time: json['date_time'],
+        date_time:json['date_time'],
         reminder: json['reminder'],
         desc: json['desc'],
         isdone: json['isdone']);
@@ -89,7 +93,7 @@ class Project {
       required this.reminder});
 
   Map<String, dynamic> toJson() => {
-        'taskid': '',
+        'projectid': '',
         'title': title,
         'deadline': deadline,
         'reminder': reminder,

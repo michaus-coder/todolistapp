@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nuli/pages/add_task.dart';
+import 'package:nuli/pages/profile.dart';
 
 import 'add_project.dart';
 import 'edit_profile.dart';
@@ -34,7 +36,7 @@ class _TabBarView1State extends State<TabBarView1> with SingleTickerProviderStat
         children: const <Widget>[
           HomePage(),
           HomePage(),
-          EditProfilePage(),
+          Profile(),
         ],
         controller: _tabController,
       ),
@@ -118,6 +120,10 @@ class _TabBarView1State extends State<TabBarView1> with SingleTickerProviderStat
                     title: Text('To do'),
                     onTap: () {
                       Navigator.of(context).pop();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddTaskPage()));
                     },
                   ),
                   ListTile(
@@ -138,7 +144,6 @@ class _TabBarView1State extends State<TabBarView1> with SingleTickerProviderStat
         });
   }
 }
-
 
 class CircularTabIndicator extends Decoration {
   final Color color;

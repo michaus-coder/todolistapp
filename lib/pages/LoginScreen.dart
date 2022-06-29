@@ -96,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     dynamic result = await UserService.signIn(
                         _emailController.text, _passwordController.text);
                     if (result == true) {
-                      Navigator.pushReplacementNamed(context, "/home");
+                      Navigator.pushReplacementNamed(context, "/tabbarview");
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text("Login Successful"),
                       ));

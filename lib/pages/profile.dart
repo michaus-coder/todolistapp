@@ -48,40 +48,40 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       backgroundColor: const Color(0xff1C549D),
       extendBody: true,
-      bottomNavigationBar: FloatingNavbar(
-        unselectedItemColor: const Color(0xff1C549D),
-        selectedItemColor: Colors.black,
-        backgroundColor: Colors.white,
-        margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-        borderRadius: 15.0,
-        elevation: 45,
-        onTap: (int val) {
-          if (val == 0) {
-            Navigator.pushNamed(context, '/home');
-          } else if (val == 1) {
-            Navigator.pushNamed(context, '/profile');
-          } else if (val == 2) {
-            Navigator.pushNamed(context, '/profile');
-          }
-          //returns tab id which is user tapped
-        },
-        currentIndex: 2,
-        items: [
-          FloatingNavbarItem(
-            customWidget: const Image(
-              image: AssetImage('assets/nuli/icon/homeicon.png'),
-              color: Color(0xff1C549D),
-            ),
-          ),
-          FloatingNavbarItem(
-              customWidget: const Image(
-                  image: AssetImage('assets/nuli/icon/addicon.png'))),
-          FloatingNavbarItem(
-            customWidget:
-                const Image(image: AssetImage('assets/nuli/icon/profile.png')),
-          ),
-        ],
-      ),
+      // bottomNavigationBar: FloatingNavbar(
+      //   unselectedItemColor: const Color(0xff1C549D),
+      //   selectedItemColor: Colors.black,
+      //   backgroundColor: Colors.white,
+      //   margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      //   borderRadius: 15.0,
+      //   elevation: 45,
+      //   onTap: (int val) {
+      //     if (val == 0) {
+      //       Navigator.pushNamed(context, '/home');
+      //     } else if (val == 1) {
+      //       Navigator.pushNamed(context, '/profile');
+      //     } else if (val == 2) {
+      //       Navigator.pushNamed(context, '/profile');
+      //     }
+      //     //returns tab id which is user tapped
+      //   },
+      //   currentIndex: 2,
+      //   items: [
+      //     FloatingNavbarItem(
+      //       customWidget: const Image(
+      //         image: AssetImage('assets/nuli/icon/homeicon.png'),
+      //         color: Color(0xff1C549D),
+      //       ),
+      //     ),
+      //     FloatingNavbarItem(
+      //         customWidget: const Image(
+      //             image: AssetImage('assets/nuli/icon/addicon.png'))),
+      //     FloatingNavbarItem(
+      //       customWidget:
+      //           const Image(image: AssetImage('assets/nuli/icon/profile.png')),
+      //     ),
+      //   ],
+      // ),
       body: _progressController
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

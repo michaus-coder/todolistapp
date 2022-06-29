@@ -174,11 +174,11 @@ class TaskService {
 
   // TaskService({required this.uid});
 
-  Stream<QuerySnapshot> getData(String _uid, String judul) {
+  Stream<QuerySnapshot> getData(String uid, String judul) {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
-        .collection('tblTask')
-        .doc(_uid)
-        .collection('myTasks');
+    .collection('tblTask')
+    .doc(uid)
+    .collection('myTasks');
 
     if (judul == "")
       return _taskCollection.snapshots();
@@ -188,22 +188,47 @@ class TaskService {
           .startAt([judul]).endAt([judul + '\uf8ff']).snapshots();
   }
 
-  // static Future<void> addData({required Task item}) async {
-  //   // DocumentReference docRef = _taskCollection.doc(item.cTitle);
+  static Future<void> addData(String uid, Task item) async {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+    .collection('tblTask')
+    .doc(uid)
+    .collection('myTasks');
 
-  //   await docRef
-  //       .set(item.toJson())
-  //       .whenComplete(() => print("Data berhasil ditambahkan"))
-  //       .catchError((e) => print(e));
-  // }
+    DocumentReference docRef = _taskCollection.doc('${item.title}${item.date_time.toString()}');
 
-  // static Future<void> deleteData({required String judulHapus}) async {
-  //   DocumentReference docRef = tblLiked.doc(judulHapus);
-  //   await docRef
-  //       .delete()
-  //       .whenComplete(() => print("Data berhasil dihapus"))
-  //       .catchError((e) => print(e));
-  // }
+    await docRef
+        .set(item.toJson())
+        .whenComplete(() => print("Data berhasil ditambahkan"))
+        .catchError((e) => print(e));
+  }
+
+  static Future<void> EditData(String uid, Task item) async {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+    .collection('tblTask')
+    .doc(uid)
+    .collection('myTasks');
+    
+    DocumentReference docRef = _taskCollection.doc('${item.title}${item.date_time.toString()}');
+
+    await docRef
+        .update(item.toJson())
+        .whenComplete(() => print("Data berhasil diubah"))
+        .catchError((e) => print(e));
+  }
+
+  static Future<void> deleteData(String uid, Task item) async {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+    .collection('tblTask')
+    .doc(uid)
+    .collection('myTasks');
+    
+    DocumentReference docRef = _taskCollection.doc('${item.title}${item.date_time.toString()}');
+    
+    await docRef
+        .delete()
+        .whenComplete(() => print("Data berhasil dihapus"))
+        .catchError((e) => print(e));
+  }
 }
 
 class ProjectService {
