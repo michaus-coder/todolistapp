@@ -40,6 +40,7 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     getCurrentUser();
+    _progressController = true;
   }
 
   @override
@@ -140,9 +141,9 @@ class _ProfileState extends State<Profile> {
                     Stack(
                       children: [
                         Positioned(
-                          bottom: 0,
+                          bottom: -10,
                           child: Container(
-                            height: 70,
+                            height: 80,
                             width: MediaQuery.of(context).size.width,
                             decoration: const BoxDecoration(
                               color: Colors.white,
@@ -154,8 +155,10 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                         Center(
-                          child: Image.asset(
-                            "assets/nuli/images/profile.png",
+                          child: CircleAvatar(
+                            radius: 80,
+                            backgroundImage: NetworkImage(user.photoUrl),
+                            backgroundColor: Colors.transparent,
                           ),
                         ),
                       ],
@@ -210,12 +213,19 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               onPressed: () {
-                                Navigator.of(context).push(
+                                Navigator.of(context)
+                                    .push(
                                   MaterialPageRoute(
                                     builder: (context) =>
                                         EditProfile(user: user),
                                   ),
-                                );
+                                )
+                                    .then((value) {
+                                  setState(() {
+                                    getCurrentUser();
+                                    _progressController = true;
+                                  });
+                                });
                               },
                             ),
                           ),

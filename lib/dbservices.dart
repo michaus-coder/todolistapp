@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:nuli/dataclass.dart' as dataclass;
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart' as cloud_firestore;
@@ -10,6 +13,8 @@ class UserService {
       cloud_firestore.FirebaseFirestore.instance.collection('tblUser');
   static final firebase_auth.FirebaseAuth _auth =
       firebase_auth.FirebaseAuth.instance;
+  static final FirebaseStorage _storage =
+      FirebaseStorage.instanceFor(bucket: "gs://nuli-todolist.appspot.com");
 
   static firebase_auth.User? _userFromFirebase(firebase_auth.User? user) {
     if (user == null) {
@@ -31,6 +36,7 @@ class UserService {
         email: user.email!,
         fullname: fullname,
         uid: user.uid,
+        photoUrl: "",
       ));
       return _userFromFirebase(user);
     } catch (e) {
@@ -40,9 +46,7 @@ class UserService {
 
   static Future signIn(String email, String password) async {
     try {
-      firebase_auth.UserCredential result = await _auth
-          .signInWithEmailAndPassword(email: email, password: password);
-      firebase_auth.User user = result.user!;
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
       return true;
     } catch (e) {
       return false;
@@ -80,6 +84,7 @@ class UserService {
       email: user.email,
       fullname: user.fullname,
       uid: user.uid,
+      photoUrl: user.photoUrl,
     );
     cloud_firestore.DocumentReference userRef = _userCollection.doc(user.uid);
 
@@ -89,18 +94,45 @@ class UserService {
         .catchError((e) => print(e));
   }
 
+  static Future<String> getDownloadUrl(String uid) async {
+    var defaultStorageRef = _storage.ref().child("users/images/default.png");
+    String url = await defaultStorageRef.getDownloadURL();
+    var storageRef = _storage.ref().child("users/images/$uid.png");
+    await storageRef.getDownloadURL().then((value) {
+      if (value.isNotEmpty) {
+        url = value;
+      }
+    });
+    return url;
+  }
+
   static Future<dynamic> getUserFromFirestore() async {
     await _auth.signInWithEmailAndPassword(
         email: "michaelwong306@gmail.com", password: "thisispassword");
     firebase_auth.User? user = _auth.currentUser;
     cloud_firestore.DocumentReference userRef = _userCollection.doc(user!.uid);
-    print(user);
     User userData = await userRef
         .get()
         .then((value) => User.fromJson(value.data() as Map<String, dynamic>));
 
+    String photoUrl = await getDownloadUrl(userData.uid);
+    userData.photoUrl = photoUrl;
+
     // return user;
     return userData;
+  }
+
+  static Future<bool> verifyPassword(String email, String password) async {
+    if (email.isEmpty || password.isEmpty) {
+      return false;
+    }
+
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   static Future<void> updateUserToFirestore(
@@ -110,6 +142,25 @@ class UserService {
         .update(user.toJson())
         .whenComplete(() => print('User updated'))
         .catchError((e) => print(e));
+  }
+
+  static Future<String> uploadImage(String path) async {
+    var user = _auth.currentUser;
+    var storageRef = _storage.ref().child("users/images/${user!.uid}.png");
+    storageRef
+        .putFile(File(path))
+        .whenComplete(() => storageRef.getDownloadURL());
+    return "default.png";
+  }
+
+  static Future<bool> updatePassword(String email, String newpassword) async {
+    var user = _auth.currentUser;
+    bool result = await user!.updatePassword(newpassword).then((value) {
+      return true;
+    }).catchError((e) {
+      return false;
+    });
+    return result;
   }
 }
 

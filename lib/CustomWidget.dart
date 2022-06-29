@@ -7,6 +7,8 @@ class CustomTF {
   static Widget textField(String title,
       {bool isPassword = false,
       bool isNumber = false,
+      String hintText = '',
+      bool isEnable = true,
       int length = 100,
       TextEditingController? textController,
       int lines = 1,
@@ -30,12 +32,14 @@ class CustomTF {
             maxLines: lines,
             controller: textController,
             maxLength: length,
+            enabled: isEnable,
             inputFormatters: [
               LengthLimitingTextInputFormatter(length),
             ],
             obscureText: isPassword,
             keyboardType: isNumber ? TextInputType.number : TextInputType.text,
             decoration: InputDecoration(
+              hintText: hintText,
               counterText: '',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -45,6 +49,14 @@ class CustomTF {
               ),
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              suffix: isPassword
+                  ? InkWell(
+                      onTap: () {},
+                      child: const Text("CHANGE",
+                          style: TextStyle(
+                              color: Color(0xffFA9955), fontSize: 12)),
+                    )
+                  : null,
             ),
           )
         ],
@@ -56,6 +68,8 @@ class CustomTF {
       {bool isPassword = false,
       bool isNumber = false,
       int length = 100,
+      String hintText1 = "",
+      String hintText2 = "",
       TextEditingController? textController,
       TextEditingController? textController2,
       int lines = 1,
@@ -87,6 +101,7 @@ class CustomTF {
                     LengthLimitingTextInputFormatter(length),
                   ],
                   decoration: InputDecoration(
+                    hintText: hintText1,
                     counterText: '',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -112,6 +127,7 @@ class CustomTF {
                   ],
                   decoration: InputDecoration(
                     counterText: '',
+                    hintText: hintText2,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
