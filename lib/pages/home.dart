@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nuli/dataclass.dart';
+import 'package:nuli/pages/ProjectDetail.dart';
 import 'package:nuli/pages/TaskDetail.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -222,90 +223,99 @@ class _HomePageState extends State<HomePage> {
                           itemBuilder: (context, index) {
                             taskCount = snapshot.data!.docs.length;
                             DocumentSnapshot _data = snapshot.data!.docs[index];
-                            return Container(
-                              // constraints: BoxConstraints(maxWidth: 270),
-                              padding: const EdgeInsets.all(15),
-                              decoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment(1, -1),
-                                      end: Alignment(0, 0),
-                                      colors: [
-                                        Color.fromARGB(255, 250, 153, 85),
-                                        Color.fromARGB(255, 255, 255, 255)
-                                      ]),
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 10,
-                                    )
-                                  ],
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(7))),
-                              child: Column(children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      _data['title'],
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Icon(Icons.more_horiz),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 12,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text("Progress",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Color.fromARGB(
-                                                255, 28, 84, 157))),
-                                    const Text("82%",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Color.fromARGB(
-                                                255, 28, 84, 157)))
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 12,
-                                ),
-                                LinearPercentIndicator(
-                                  padding: const EdgeInsets.all(0),
-                                  lineHeight: 7,
-                                  percent: 0.63,
-                                  progressColor:
-                                      const Color.fromARGB(255, 28, 84, 157),
-                                  backgroundColor:
-                                      const Color.fromARGB(40, 0, 0, 0),
-                                  // linearStrokeCap: LinearStrokeCap.roundAll,
-                                  barRadius: const Radius.circular(16),
-                                ),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                        "Due " + getDateText(_data['deadline']),
-                                        style: const TextStyle(fontSize: 14)),
-                                    const Text("7 days left",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color:
-                                                Color.fromARGB(200, 0, 0, 0)))
-                                  ],
-                                ),
-                              ]),
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProjectDetail(projectDet: Project(projectid: _data['projectid'], title: _data['title'], deadline: getDate(_data['deadline']), desc: _data['desc'], isdone: _data['isdone'], reminder: _data['reminder']),)));
+                              },
+                              child: Container(
+                                // constraints: BoxConstraints(maxWidth: 270),
+                                padding: const EdgeInsets.all(15),
+                                decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                        begin: Alignment(1, -1),
+                                        end: Alignment(0, 0),
+                                        colors: [
+                                          Color.fromARGB(255, 250, 153, 85),
+                                          Color.fromARGB(255, 255, 255, 255)
+                                        ]),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 10,
+                                      )
+                                    ],
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(7))),
+                                child: Column(children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        _data['title'],
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Icon(Icons.more_horiz),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text("Progress",
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              color: Color.fromARGB(
+                                                  255, 28, 84, 157))),
+                                      const Text("82%",
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              color: Color.fromARGB(
+                                                  255, 28, 84, 157)))
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
+                                  LinearPercentIndicator(
+                                    padding: const EdgeInsets.all(0),
+                                    lineHeight: 7,
+                                    percent: 0.63,
+                                    progressColor:
+                                        const Color.fromARGB(255, 28, 84, 157),
+                                    backgroundColor:
+                                        const Color.fromARGB(40, 0, 0, 0),
+                                    // linearStrokeCap: LinearStrokeCap.roundAll,
+                                    barRadius: const Radius.circular(16),
+                                  ),
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                          "Due " +
+                                              getDateText(_data['deadline']),
+                                          style: const TextStyle(fontSize: 14)),
+                                      const Text("7 days left",
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              color:
+                                                  Color.fromARGB(200, 0, 0, 0)))
+                                    ],
+                                  ),
+                                ]),
+                              ),
                             );
                           },
                           separatorBuilder: (context, index) =>

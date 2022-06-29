@@ -292,6 +292,17 @@ class TaskService {
   //   List<DocumentSnapshot> _myDocCount = _myDoc.documents;
   //   print(_myDocCount.length);  // Count of Documents in Collection
   // }
+
+  static Future<int> countPendingTask(String uid, String projectid) async {
+    final Query<Map<String, dynamic>> undoneTasks = FirebaseFirestore.instance
+        .collection('tblTask')
+        .doc(uid)
+        .collection('myTasks')
+        .where('isdone', isEqualTo: false);
+
+    Future<int> undone = undoneTasks.snapshots().length;
+    return undone;
+  }
 }
 
 class ProjectService {
@@ -334,6 +345,34 @@ class ProjectService {
     await docRef
         .set(item.toJson())
         .whenComplete(() => print("Data berhasil ditambahkan"))
+        .catchError((e) => print(e));
+  }
+
+  static Future<void> editData(String uid, dataclass.Project item) async {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(uid)
+        .collection('myProjects');
+
+    DocumentReference docRef = _taskCollection.doc(item.projectid);
+
+    await docRef
+        .update(item.toJson())
+        .whenComplete(() => print("Data berhasil diubah"))
+        .catchError((e) => print(e));
+  }
+
+  static Future<void> deleteData(String uid, String projectid) async {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(uid)
+        .collection('myProjects');
+
+    DocumentReference docRef = _taskCollection.doc(projectid);
+
+    await docRef
+        .delete()
+        .whenComplete(() => print("Data berhasil dihapus"))
         .catchError((e) => print(e));
   }
 }
@@ -396,4 +435,17 @@ class TaskforProjectServices {
 
   //   int progress = (undone / done) * 100.round();
   // }
+
+  static Future<int> countPendingTask(String uid, String projectid) async {
+    final Query<Map<String, dynamic>> undoneTasks = FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(uid)
+        .collection('myProjects')
+        .doc(projectid)
+        .collection('tasks')
+        .where('isdone', isEqualTo: false);
+
+    Future<int> undone = undoneTasks.snapshots().length;
+    return undone;
+  }
 }
