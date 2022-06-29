@@ -16,6 +16,10 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   bool _progressController = true;
   late User user;
+  int _taskDoneCount = 0;
+  int _taskPendingCount = 0;
+  int _projectDoneCount = 0;
+  int _projectPendingCount = 0;
   final List<ChartData> chartData = <ChartData>[
     ChartData(0, 10.53),
     ChartData(1, 9.5),
@@ -40,6 +44,7 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     getCurrentUser();
+    _progressController = true;
   }
 
   @override
@@ -142,9 +147,9 @@ class _ProfileState extends State<Profile> {
                     Stack(
                       children: [
                         Positioned(
-                          bottom: 0,
+                          bottom: -10,
                           child: Container(
-                            height: 70,
+                            height: 80,
                             width: MediaQuery.of(context).size.width,
                             decoration: const BoxDecoration(
                               color: Colors.white,
@@ -156,8 +161,10 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                         Center(
-                          child: Image.asset(
-                            "assets/nuli/images/profile.png",
+                          child: CircleAvatar(
+                            radius: 80,
+                            backgroundImage: NetworkImage(user.photoUrl),
+                            backgroundColor: Colors.transparent,
                           ),
                         ),
                       ],
@@ -215,12 +222,19 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
                               onPressed: () {
-                                Navigator.of(context).push(
+                                Navigator.of(context)
+                                    .push(
                                   MaterialPageRoute(
                                     builder: (context) =>
                                         EditProfile(user: user),
                                   ),
-                                );
+                                )
+                                    .then((value) {
+                                  setState(() {
+                                    getCurrentUser();
+                                    _progressController = true;
+                                  });
+                                });
                               },
                             ),
                           ),
@@ -324,24 +338,24 @@ class _ProfileState extends State<Profile> {
                                           Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.end,
-                                            children: const [
+                                            children: [
                                               Text(
-                                                "34",
-                                                style: TextStyle(
+                                                _taskDoneCount.toString(),
+                                                style: const TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              SizedBox(width: 5),
-                                              Text(
+                                              const SizedBox(width: 5),
+                                              const Text(
                                                 "tasks",
                                                 style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                              SizedBox(width: 5),
+                                              const SizedBox(width: 5),
                                             ],
                                           ),
                                           const SizedBox(height: 5),
@@ -392,24 +406,24 @@ class _ProfileState extends State<Profile> {
                                           Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.end,
-                                            children: const [
+                                            children: [
                                               Text(
-                                                "12",
-                                                style: TextStyle(
+                                                _taskPendingCount.toString(),
+                                                style: const TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              SizedBox(width: 5),
-                                              Text(
+                                              const SizedBox(width: 5),
+                                              const Text(
                                                 "tasks",
                                                 style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                              SizedBox(width: 5),
+                                              const SizedBox(width: 5),
                                             ],
                                           ),
                                           const SizedBox(height: 5),
@@ -468,24 +482,24 @@ class _ProfileState extends State<Profile> {
                                           Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.end,
-                                            children: const [
+                                            children: [
                                               Text(
-                                                "17",
-                                                style: TextStyle(
+                                                _projectDoneCount.toString(),
+                                                style: const TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              SizedBox(width: 5),
-                                              Text(
+                                              const SizedBox(width: 5),
+                                              const Text(
                                                 "projects",
                                                 style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                              SizedBox(width: 5),
+                                              const SizedBox(width: 5),
                                             ],
                                           ),
                                           const SizedBox(height: 5),
@@ -535,24 +549,24 @@ class _ProfileState extends State<Profile> {
                                           Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.end,
-                                            children: const [
+                                            children: [
                                               Text(
-                                                "3",
-                                                style: TextStyle(
+                                                _projectPendingCount.toString(),
+                                                style: const TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              SizedBox(width: 5),
-                                              Text(
+                                              const SizedBox(width: 5),
+                                              const Text(
                                                 "projects",
                                                 style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                              SizedBox(width: 5),
+                                              const SizedBox(width: 5),
                                             ],
                                           ),
                                           const SizedBox(height: 5),
@@ -584,6 +598,10 @@ class _ProfileState extends State<Profile> {
 
   void getCurrentUser() async {
     user = await UserService.getUserFromFirestore();
+    _taskDoneCount = await UserService.getTaskDoneCount();
+    _taskPendingCount = await UserService.getTaskPendingCount();
+    _projectDoneCount = await UserService.getProjectDoneCount();
+    _projectPendingCount = await UserService.getProjectPendingCount();
     setState(() {
       _progressController = false;
     });

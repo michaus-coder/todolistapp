@@ -5,11 +5,13 @@ class User {
   final String email;
   final String fullname;
   final String uid;
+  late String photoUrl;
 
   User({
     required this.email,
     required this.fullname,
     required this.uid,
+    required this.photoUrl,
   });
 
   String get firstName => fullname.split(' ')[0];
@@ -19,12 +21,14 @@ class User {
         'email': email,
         'fullname': fullname,
         'uid': uid,
+        'photoUrl': photoUrl,
       };
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         email: json['email'],
         fullname: json['fullname'],
         uid: json['uid'],
+        photoUrl: json['photoUrl'],
       );
 }
 
