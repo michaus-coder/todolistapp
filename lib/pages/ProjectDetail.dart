@@ -17,41 +17,6 @@ class ProjectDetail extends StatefulWidget {
 }
 
 class _ProjectDetailState extends State<ProjectDetail> {
-  List<itemTask> taskList = [
-    itemTask(
-      task_name: "Task 1",
-      status: "1",
-    ),
-    itemTask(
-      task_name: "Task 2",
-      status: "0",
-    ),
-    itemTask(
-      task_name: "Task 3",
-      status: "1",
-    ),
-    itemTask(
-      task_name: "Task 4",
-      status: "1",
-    ),
-    itemTask(
-      task_name: "Task 5",
-      status: "1",
-    ),
-    itemTask(
-      task_name: "Task 6",
-      status: "1",
-    ),
-    itemTask(
-      task_name: "Task 7",
-      status: "0",
-    ),
-    itemTask(
-      task_name: "Task 8",
-      status: "0",
-    ),
-  ];
-
   late String uid;
   late int pendingTaskCount = 0;
 

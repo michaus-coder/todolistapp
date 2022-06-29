@@ -395,6 +395,23 @@ class TaskforProjectServices {
     }
   }
 
+  Stream<QuerySnapshot> getData2(String _uid, String projectid, String judul) {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(_uid)
+        .collection('myProjects')
+        .doc(projectid)
+        .collection('tasks');
+
+    if (judul == "") {
+      return _taskCollection.snapshots();
+    } else {
+      return _taskCollection
+          .orderBy("title")
+          .startAt([judul]).endAt([judul + '\uf8ff']).snapshots();
+    }
+  }
+
   static Future<void> addData(
       String uid, String projectid, dataclass.TaskforProject item) async {
     final CollectionReference _taskCollection = FirebaseFirestore.instance

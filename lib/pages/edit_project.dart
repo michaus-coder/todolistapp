@@ -68,7 +68,7 @@ class _EditProjectPageState extends State<EditProjectPage> {
     return ListTile(
       leading: const Icon(Icons.add),
       title: const Text(
-        'Add to do',
+        'Add task',
         style: TextStyle(color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
       ),
       onTap: () {
@@ -344,6 +344,82 @@ class _EditProjectPageState extends State<EditProjectPage> {
                 //       fontSize: 14, color: Color.fromARGB(190, 0, 0, 0)),
                 // ),
                 _addToDoWidget(),
+                StreamBuilder<QuerySnapshot>(
+                    stream: TaskforProjectServices()
+                        .getData(uid, widget.projectDet.projectid, ""),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        // List<TaskforProject> taskList = snapshot.data!.docs.map((doc)=>TaskforProject.fromJson(doc.data()),
+                        // ).toList();
+                        return Expanded(
+                          child: ListView.separated(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(height: 20.0),
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                DocumentSnapshot _data =
+                                    snapshot.data!.docs[index];
+                                final _controller = TextEditingController();
+                                _controller.text = _data['title'];
+                                final _field = TextField(
+                                  autofocus: true,
+                                  controller: _controller,
+                                  decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      hintText: "To do"),
+                                );
+
+                                _taskCtrl.add(_controller);
+                                _textFields.add(_field);
+
+                                return Container(
+                                  padding: const EdgeInsets.all(15),
+                                  decoration: const BoxDecoration(
+                                      color: Color.fromARGB(255, 181, 181, 181),
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                          color: Colors.black12,
+                                          blurRadius: 10,
+                                        )
+                                      ],
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Image.asset(
+                                        'assets/nuli/images/unchecked.png',
+                                        width: 18,
+                                        height: 18,
+                                      ),
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      Text(
+                                        _data['title'],
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        );
+                      }
+                      return const Center(
+                        child: Text(
+                          'No preview available',
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      );
+                    }),
                 Expanded(child: _listView()),
                 const SizedBox(
                   height: 25,
