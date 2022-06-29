@@ -151,13 +151,33 @@ class TaskService {
         .catchError((e) => print(e));
   }
 
-  // static Future<void> deleteData({required String judulHapus}) async {
-  //   DocumentReference docRef = tblLiked.doc(judulHapus);
-  //   await docRef
-  //       .delete()
-  //       .whenComplete(() => print("Data berhasil dihapus"))
-  //       .catchError((e) => print(e));
-  // }
+  static Future<void> EditData(String uid, Task item) async {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+    .collection('tblTask')
+    .doc(uid)
+    .collection('myTasks');
+    
+    DocumentReference docRef = _taskCollection.doc('${item.title}${item.date_time.toString()}');
+
+    await docRef
+        .update(item.toJson())
+        .whenComplete(() => print("Data berhasil diubah"))
+        .catchError((e) => print(e));
+  }
+
+  static Future<void> deleteData(String uid, Task item) async {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+    .collection('tblTask')
+    .doc(uid)
+    .collection('myTasks');
+    
+    DocumentReference docRef = _taskCollection.doc('${item.title}${item.date_time.toString()}');
+    
+    await docRef
+        .delete()
+        .whenComplete(() => print("Data berhasil dihapus"))
+        .catchError((e) => print(e));
+  }
 }
 
 class ProjectService {

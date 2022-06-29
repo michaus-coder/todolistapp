@@ -326,66 +326,73 @@ class _HomePageState extends State<HomePage> {
                                   color: Colors.red,
                                   child: Text("Delete"),
                                 ),
-                                child: Container(
-                                  padding: const EdgeInsets.all(18),
-                                  decoration: const BoxDecoration(
-                                      gradient: LinearGradient(
-                                          begin: Alignment(1, -1),
-                                          end: Alignment(0, 0),
-                                          colors: [
-                                            Color.fromARGB(255, 237, 233, 98),
-                                            Color.fromARGB(255, 255, 255, 255)
-                                          ]),
-                                      boxShadow: <BoxShadow>[
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 10,
-                                        )
-                                      ],
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(14))),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.brightness_1_outlined,
-                                        color: Color.fromARGB(128, 0, 0, 0),
-                                      ),
-                                      SizedBox(width: 18),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(_data['title'],
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold)),
-                                          SizedBox(
-                                            height: 8,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                  getDateText(
-                                                      _data['date_time']),
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Color.fromARGB(
-                                                          178, 0, 0, 0))),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                  getTimeText(
-                                                      _data['date_time']),
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Color.fromARGB(
-                                                          178, 0, 0, 0))),
-                                            ],
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushReplacementNamed(
+                                        context, '/detail_task');
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(18),
+                                    decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                            begin: Alignment(1, -1),
+                                            end: Alignment(0, 0),
+                                            colors: [
+                                              Color.fromARGB(255, 237, 233, 98),
+                                              Color.fromARGB(255, 255, 255, 255)
+                                            ]),
+                                        boxShadow: <BoxShadow>[
+                                          BoxShadow(
+                                            color: Colors.black12,
+                                            blurRadius: 10,
                                           )
                                         ],
-                                      ),
-                                    ],
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(14))),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.brightness_1_outlined,
+                                          color: Color.fromARGB(128, 0, 0, 0),
+                                        ),
+                                        SizedBox(width: 18),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(_data['title'],
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            SizedBox(
+                                              height: 8,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                    getDateText(
+                                                        _data['date_time']),
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Color.fromARGB(
+                                                            178, 0, 0, 0))),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                    getTimeText(
+                                                        _data['date_time']),
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Color.fromARGB(
+                                                            178, 0, 0, 0))),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
