@@ -10,56 +10,66 @@ class WelcomePage2 extends StatefulWidget {
 class _WelcomePage2State extends State<WelcomePage2> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "NULI - Productive App",
-      home: Scaffold(
-          backgroundColor: Color(0xFFF6FAFD),
-          appBar: AppBar(
-            title: const Text('NULI - Productive App'),
-          ),
-          body: Container(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Image.asset("assets/nuli/images/welcome2-image.png"),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                  margin: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
-                    borderRadius: BorderRadius.circular(10),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6FAFD),
+      body: Container(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            Image.asset("assets/nuli/images/welcome2-image.png"),
+            const SizedBox(height: 70),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+              margin: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFFFFF),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 4,
+                    blurRadius: 5,
+                    offset: const Offset(0, 10), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: const Text(
+                "NULI help you to organize your projects and to do list. Let’s build something amazing with NULI !",
+                style: TextStyle(fontSize: 24, color: Color(0xFF1C549D)),
+                textAlign: TextAlign.left,
+              ),
+            ),
+            const Expanded(
+              child: SizedBox(),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: const Color(0xff1C549D),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    minimumSize: const Size(180, 50),
                   ),
                   child: const Text(
-                    "NULI help you to organize your projects and to do list. Let’s build something amazing with NULI !",
+                    "Get Started",
                     style: TextStyle(
-                        fontSize: 20,
-                        color: Color(0xFF1C549D),
+                        color: Colors.white,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.left,
                   ),
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/login');
+                  },
                 ),
-                Builder(builder: (context) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1C549D),
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    margin: EdgeInsets.all(10),
-                    padding: EdgeInsets.all(10),
-                    child: const Text(
-                      "Get Started",
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Color(0xFFFFFFFF),
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-                })
-              ],
+              ),
             ),
-          )),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:nuli/dbservices.dart';
 
@@ -9,10 +11,11 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _fullnameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _fullnameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   late bool _passwordVisible1;
   late bool _passwordVisible2;
   bool _submitted = false;
@@ -204,7 +207,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               _errorFullname == null ||
                               _errorPassword == null ||
                               _errorConfirmPassword == null) {
-                            print("sign up");
                             dynamic result = await UserService.signUp(
                               email: _emailController.text,
                               fullname: _fullnameController.text,
@@ -223,7 +225,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               Navigator.of(context).pop();
                             }
                           } else {
-                            print("error");
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Sign up failed"),
+                                duration: Duration(seconds: 5),
+                              ),
+                            );
                           }
                         }
                       : null,

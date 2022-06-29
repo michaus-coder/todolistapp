@@ -12,6 +12,9 @@ class User {
     required this.uid,
   });
 
+  String get firstName => fullname.split(' ')[0];
+  String get lastName => fullname.substring(fullname.indexOf(' ') + 1);
+
   Map<String, dynamic> toJson() => {
         'email': email,
         'fullname': fullname,

@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:nuli/pages/AddEditTask.dart';
 import 'package:nuli/pages/EditProfile.dart';
 import 'package:nuli/pages/ProjectDetail.dart';
 import 'package:nuli/pages/SplashScreen.dart';
@@ -12,6 +11,7 @@ import 'package:nuli/pages/LoginScreen.dart';
 import 'package:nuli/pages/add_task.dart';
 import 'package:nuli/pages/home.dart';
 import 'package:nuli/pages/tabbarview.dart';
+import 'package:nuli/pages/profile.dart';
 import 'package:nuli/temp.dart';
 
 void main() async {
@@ -33,23 +33,21 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "NULI - Productive App",
       debugShowCheckedModeBanner: false,
-      initialRoute: '/login',
+      initialRoute: '/profile',
       routes: {
         '/splash': (context) => const SplashScreen(),
-        '/welcome': (context) => WelcomeScreen(),
+        '/welcome': (context) => const WelcomeScreen(),
         '/welcome2': (context) => const WelcomePage2(),
         '/home': (context) => const HomePage(),
-        '/profile/edit': (context) => const EditProfile(),
+        '/profile': (context) => const Profile(),
         '/detail_task': (context) => const TaskDetail(),
         '/detail_project': (context) => const ProjectDetail(),
-        '/add_edit_task': (context) => const AddEditTask(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
         '/temppage': (context) => const TempPage(),
         '/tabbarview': (context) => const TabBarView1(),
         '/add_task': (context) => const AddTaskPage(),
       },
-      home: new TaskDetail(),
     );
   }
 }
