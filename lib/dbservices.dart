@@ -102,7 +102,7 @@ class UserService {
       if (value.isNotEmpty) {
         url = value;
       }
-    });
+    }).catchError((e) {});
     return url;
   }
 
@@ -161,6 +161,72 @@ class UserService {
       return false;
     });
     return result;
+  }
+
+  static Future<int> getTaskDoneCount() async {
+    var firstDayOfWeek =
+        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
+    var user = _auth.currentUser;
+    int count = 0;
+    // QuerySnapshot tasksDone = await cloud_firestore.FirebaseFirestore.instance
+    //     .collection("tblTask")
+    //     .doc(user!.uid)
+    //     .collection("myTasks")
+    //     .where("isdone", isEqualTo: true)
+    //     .where("date_time", isGreaterThanOrEqualTo: firstDayOfWeek)
+    //     .where("date_time", isLessThanOrEqualTo: lastDayOfWeek)
+    //     .get()
+    //     .then((value) {
+    //   count = value.docs.length;
+    //   return value;
+    // }).catchError((e) {
+    //   count = 0;
+    // });
+    return count;
+  }
+
+  static Future<int> getTaskPendingCount() async {
+    var firstDayOfWeek =
+        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
+    var user = _auth.currentUser;
+    // QuerySnapshot tasksUndone = await cloud_firestore.FirebaseFirestore.instance
+    //     .collection("tblTask")
+    //     .doc(user!.uid)
+    //     .collection("myTasks")
+    //     .where("isdone", isEqualTo: false)
+    //     .where("date_time", isGreaterThanOrEqualTo: firstDayOfWeek)
+    //     .where("date_time", isLessThanOrEqualTo: lastDayOfWeek)
+    //     .get();
+    return 0;
+  }
+
+  static Future<int> getProjectDoneCount() async {
+    var firstDayOfWeek =
+        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
+    var user = _auth.currentUser;
+    QuerySnapshot projectsDone = await cloud_firestore
+        .FirebaseFirestore.instance
+        .collection("tblProject")
+        .doc(user!.uid)
+        .collection("myProjects")
+        .where("isdone", isEqualTo: true)
+        .get();
+    return projectsDone.docs.length;
+  }
+
+  static Future<int> getProjectPendingCount() async {
+    var user = _auth.currentUser;
+    QuerySnapshot projectsUndone = await cloud_firestore
+        .FirebaseFirestore.instance
+        .collection("tblProject")
+        .doc(user!.uid)
+        .collection("myProjects")
+        .where("isdone", isEqualTo: false)
+        .get();
+    return projectsUndone.docs.length;
   }
 }
 
