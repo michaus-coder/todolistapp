@@ -6,24 +6,25 @@ import 'package:nuli/dataclass.dart';
 
 import '../dbservices.dart';
 
-class AddProjectPage extends StatefulWidget {
-  const AddProjectPage({Key? key}) : super(key: key);
+class EditProjectPage extends StatefulWidget {
+  Project projectDet;
+  EditProjectPage({Key? key, required this.projectDet}) : super(key: key);
 
   @override
-  State<AddProjectPage> createState() => _AddProjectPageState();
+  State<EditProjectPage> createState() => _EditProjectPageState();
 }
 
-class _AddProjectPageState extends State<AddProjectPage> {
+class _EditProjectPageState extends State<EditProjectPage> {
   late String uid;
 
-  static DateTime date = DateTime.now();
+  late DateTime date;
   static DateFormat formatter = DateFormat('d MMMM y');
-  String curDate = formatter.format(date);
+  late String curDate = formatter.format(date);
 
   TextEditingController _projectTitleCtrl = TextEditingController();
   TextEditingController _projectDescCtrl = TextEditingController();
 
-  String reminderChosen = "1 hour before";
+  late String reminderChosen;
   List listReminderOption = [
     "5 mins before",
     "15 mins before",
@@ -42,6 +43,11 @@ class _AddProjectPageState extends State<AddProjectPage> {
     super.initState();
     _projectTitleCtrl = TextEditingController();
     _projectDescCtrl = TextEditingController();
+
+    _projectTitleCtrl.text = widget.projectDet.title;
+    _projectDescCtrl.text = widget.projectDet.desc;
+    date = widget.projectDet.deadline;
+    reminderChosen = widget.projectDet.reminder;
 
     var user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -62,7 +68,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
     return ListTile(
       leading: const Icon(Icons.add),
       title: const Text(
-        'Add to do',
+        'Add task',
         style: TextStyle(color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
       ),
       onTap: () {
@@ -332,8 +338,88 @@ class _AddProjectPageState extends State<AddProjectPage> {
                 const SizedBox(
                   height: 30,
                 ),
-
+                // const Text(
+                //   "Add task",
+                //   style: TextStyle(
+                //       fontSize: 14, color: Color.fromARGB(190, 0, 0, 0)),
+                // ),
                 _addToDoWidget(),
+                StreamBuilder<QuerySnapshot>(
+                    stream: TaskforProjectServices()
+                        .getData(uid, widget.projectDet.projectid, ""),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        // List<TaskforProject> taskList = snapshot.data!.docs.map((doc)=>TaskforProject.fromJson(doc.data()),
+                        // ).toList();
+                        return Expanded(
+                          child: ListView.separated(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(height: 20.0),
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                DocumentSnapshot _data =
+                                    snapshot.data!.docs[index];
+                                final _controller = TextEditingController();
+                                _controller.text = _data['title'];
+                                final _field = TextField(
+                                  autofocus: true,
+                                  controller: _controller,
+                                  decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      hintText: "To do"),
+                                );
+
+                                _taskCtrl.add(_controller);
+                                _textFields.add(_field);
+
+                                return Container(
+                                  padding: const EdgeInsets.all(15),
+                                  decoration: const BoxDecoration(
+                                      color: Color.fromARGB(255, 181, 181, 181),
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                          color: Colors.black12,
+                                          blurRadius: 10,
+                                        )
+                                      ],
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Image.asset(
+                                        'assets/nuli/images/unchecked.png',
+                                        width: 18,
+                                        height: 18,
+                                      ),
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      Text(
+                                        _data['title'],
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        );
+                      }
+                      return const Center(
+                        child: Text(
+                          'No preview available',
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      );
+                    }),
                 Expanded(child: _listView()),
                 const SizedBox(
                   height: 25,
@@ -358,35 +444,28 @@ class _AddProjectPageState extends State<AddProjectPage> {
                     ),
                   ),
                   onPressed: () async {
-                    DateTime now = DateTime.now();
-                    String formattedDate =
-                        DateFormat('MM-dd-yyyy HH:mm:ss').format(now);
-
-                    String projectid =
-                        _projectTitleCtrl.text.toString() + ' ' + formattedDate;
+                    String projectid = widget.projectDet.projectid;
 
                     if (_projectTitleCtrl.text.isNotEmpty) {
-                      if (_textFields.length > 0) {
-                        List<Map> convertedTask = [];
-                        _taskCtrl.forEach((element) {
-                          if (element.text.isNotEmpty) {
-                            String taskid =
-                                element.text.toString() + ' ' + formattedDate;
-                            TaskforProject newTask = TaskforProject(
-                                taskid: taskid,
-                                title: element.text.toString(),
-                                isdone: false);
-                            TaskforProjectServices.addData(
-                                uid, projectid, newTask);
-                            undoneTaskCount++;
-                          }
-                        });
-                      }
+                      // if (_textFields.length > 0) {
+                      //   List<Map> convertedTask = [];
+                      //   _taskCtrl.forEach((element) {
+                      //     if (element.text.isNotEmpty) {
+                      //       String taskid =
+                      //           element.text.toString() + ' ' + formattedDate;
+                      //       TaskforProject newTask = TaskforProject(
+                      //           taskid: taskid,
+                      //           title: element.text.toString(),
+                      //           isdone: false);
+                      //       TaskforProjectServices.addData(
+                      //           uid, projectid, newTask);
+                      //       undoneTaskCount++;
+                      //     }
+                      //   });
+                      // }
 
                       DateTime dateTime =
                           DateTime(date.year, date.month, date.day);
-                      // Timestamp ts = Timestamp.fromMillisecondsSinceEpoch(
-                      //     dateTime.millisecondsSinceEpoch);
 
                       Project newProject = Project(
                           projectid: projectid,
@@ -395,11 +474,11 @@ class _AddProjectPageState extends State<AddProjectPage> {
                           desc: _projectDescCtrl.text.toString(),
                           isdone: false,
                           reminder: reminderChosen);
-                      ProjectService.addData(uid, newProject);
+                      ProjectService.editData(uid, newProject);
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Project created"),
+                        content: Text("Changes saved"),
                       ));
-                      Navigator.pop(context);
+                      Navigator.pushReplacementNamed(context, '/tabbarview');
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text("You must fill in project title"),

@@ -40,8 +40,6 @@ class _MyAppState extends State<MyApp> {
         '/welcome2': (context) => const WelcomePage2(),
         '/home': (context) => const HomePage(),
         '/profile': (context) => const Profile(),
-        '/detail_task': (context) => const TaskDetail(),
-        '/detail_project': (context) => const ProjectDetail(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
         '/temppage': (context) => const TempPage(),

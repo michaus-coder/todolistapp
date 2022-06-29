@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:nuli/dataclass.dart';
+import 'package:nuli/pages/ProjectDetail.dart';
+import 'package:nuli/pages/TaskDetail.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../dbservices.dart';
@@ -15,24 +18,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // final UserService _userService = UserService();
-  // final uid = UserService.getCurrentUserID();
-
+  late String user_firstname;
   late String uid;
+  int taskCount = 0;
+  String checkboxImgUrl = 'assets/nuli/images/unchecked.png';
 
-  String progressMsg(int progressPercentage) {
-    if (progressPercentage < 50) {
-      return 'Still a long way to go, you got this!';
-    } else {
-      return 'Great, your progress is almost done!';
-    }
-  }
+  // String progressMsg(int progressPercentage) {
+  //   if (progressPercentage < 50) {
+  //     return 'Still a long way to go, you got this!';
+  //   } else {
+  //     return 'Great, your progress is almost done!';
+  //   }
+  // }
 
   String getDateText(Timestamp t) {
     DateTime dt = t.toDate();
     DateFormat formatter = DateFormat('d MMMM y');
     String hasil = formatter.format(dt);
     return hasil;
+  }
+
+  DateTime getDate(Timestamp t) {
+    DateTime dt = t.toDate();
+    return dt;
   }
 
   String getTimeText(Timestamp t) {
@@ -49,16 +57,19 @@ class _HomePageState extends State<HomePage> {
     return hasil;
   }
 
+  // void getCurrentUser() async {
+  //   userData = await UserService.getUserFromFirestore();
+  // }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    User? user = FirebaseAuth.instance.currentUser;
+    var user = FirebaseAuth.instance.currentUser;
 
-    // Check if the user is signed in
     if (user != null) {
       uid = user.uid;
     }
+    // getCurrentUser();
   }
 
   @override
@@ -88,16 +99,19 @@ class _HomePageState extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        children: const [
-                          Text(
-                            "Good Morning, Natasha ",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
-                          Text(
+                        children: [
+                          // StreamBuilder<QuerySnapshot>(
+                          //   stream: UserService().getUserFrom
+                          // ),
+                          // Text(
+                          //   'Hello, ${userData.}',
+                          //   style: TextStyle(
+                          //       fontWeight: FontWeight.bold, fontSize: 16),
+                          // ),
+                          const Text(
                             '👋',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 12),
+                                fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ],
                       ),
@@ -105,11 +119,26 @@ class _HomePageState extends State<HomePage> {
                         height: 15,
                       ),
                       Row(
-                        children: const [
-                          Text('🔥 ', style: TextStyle(fontSize: 12)),
-                          Text(
-                            '2 tasks are waiting for you today',
-                            style: TextStyle(fontSize: 12),
+                        children: [
+                          const Text('🔥 ', style: TextStyle(fontSize: 12)),
+                          StreamBuilder<QuerySnapshot>(
+                            stream: TaskService().getData(uid, ""),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return const Text('ERROR');
+                              } else if (snapshot.hasData) {
+                                taskCount = snapshot.data!.docs.length;
+
+                                if (taskCount == 1) {
+                                  Text(
+                                      '${taskCount.toString()} task is waiting for you today');
+                                } else {
+                                  Text(
+                                      '${taskCount.toString()} tasks are waiting for you today');
+                                }
+                              }
+                              return Text('0 task for today!');
+                            },
                           )
                         ],
                       )
@@ -120,41 +149,41 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 30,
               ),
-              Container(
-                // color: Color.fromRGBO(28, 84, 157, 255),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 28, 84, 157),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                        child: Text(
-                      progressMsg(72),
-                      style: const TextStyle(
-                          color: Colors.white, fontSize: 18, height: 2),
-                    )),
-                    //circular progress
-                    CircularPercentIndicator(
-                      radius: 50,
-                      lineWidth: 12,
-                      percent: 0.72,
-                      progressColor: const Color.fromARGB(255, 250, 153, 85),
-                      backgroundColor: Colors.white,
-                      circularStrokeCap: CircularStrokeCap.round,
-                      center: const Text(
-                        '72%',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
+              // Container(
+              //   // color: Color.fromRGBO(28, 84, 157, 255),
+              //   padding: const EdgeInsets.all(20),
+              //   decoration: BoxDecoration(
+              //     color: const Color.fromARGB(255, 28, 84, 157),
+              //     borderRadius: BorderRadius.circular(12),
+              //   ),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Flexible(
+              //           child: Text(
+              //         progressMsg(72),
+              //         style: const TextStyle(
+              //             color: Colors.white, fontSize: 18, height: 2),
+              //       )),
+              //       //circular progress
+              //       CircularPercentIndicator(
+              //         radius: 50,
+              //         lineWidth: 12,
+              //         percent: 0.72,
+              //         progressColor: const Color.fromARGB(255, 250, 153, 85),
+              //         backgroundColor: Colors.white,
+              //         circularStrokeCap: CircularStrokeCap.round,
+              //         center: const Text(
+              //           '72%',
+              //           style: TextStyle(fontSize: 20, color: Colors.white),
+              //         ),
+              //       )
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: 30,
+              // ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -179,7 +208,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               Container(
-                  padding: EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(5),
                   child: StreamBuilder<QuerySnapshot>(
                     stream: ProjectService().getData(uid, ""),
                     builder: (context, snapshot) {
@@ -192,97 +221,112 @@ class _HomePageState extends State<HomePage> {
                           shrinkWrap: true,
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index) {
+                            taskCount = snapshot.data!.docs.length;
                             DocumentSnapshot _data = snapshot.data!.docs[index];
-                            return Container(
-                              // constraints: BoxConstraints(maxWidth: 270),
-                              padding: const EdgeInsets.all(15),
-                              decoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment(1, -1),
-                                      end: Alignment(0, 0),
-                                      colors: [
-                                        Color.fromARGB(255, 250, 153, 85),
-                                        Color.fromARGB(255, 255, 255, 255)
-                                      ]),
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 10,
-                                    )
-                                  ],
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(7))),
-                              child: Column(children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      _data['title'],
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Icon(Icons.more_horiz),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 12,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text("Progress",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Color.fromARGB(
-                                                255, 28, 84, 157))),
-                                    const Text("82%",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Color.fromARGB(
-                                                255, 28, 84, 157)))
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 12,
-                                ),
-                                LinearPercentIndicator(
-                                  padding: const EdgeInsets.all(0),
-                                  lineHeight: 7,
-                                  percent: 0.63,
-                                  progressColor:
-                                      Color.fromARGB(255, 28, 84, 157),
-                                  backgroundColor: Color.fromARGB(40, 0, 0, 0),
-                                  // linearStrokeCap: LinearStrokeCap.roundAll,
-                                  barRadius: const Radius.circular(16),
-                                ),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("Due " + _data['deadline'],
-                                        style: TextStyle(fontSize: 14)),
-                                    Text("7 days left",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color:
-                                                Color.fromARGB(200, 0, 0, 0)))
-                                  ],
-                                ),
-                              ]),
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProjectDetail(projectDet: Project(projectid: _data['projectid'], title: _data['title'], deadline: getDate(_data['deadline']), desc: _data['desc'], isdone: _data['isdone'], reminder: _data['reminder']),)));
+                              },
+                              child: Container(
+                                // constraints: BoxConstraints(maxWidth: 270),
+                                padding: const EdgeInsets.all(15),
+                                decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                        begin: Alignment(1, -1),
+                                        end: Alignment(0, 0),
+                                        colors: [
+                                          Color.fromARGB(255, 250, 153, 85),
+                                          Color.fromARGB(255, 255, 255, 255)
+                                        ]),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 10,
+                                      )
+                                    ],
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(7))),
+                                child: Column(children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        _data['title'],
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Icon(Icons.more_horiz),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text("Progress",
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              color: Color.fromARGB(
+                                                  255, 28, 84, 157))),
+                                      const Text("82%",
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              color: Color.fromARGB(
+                                                  255, 28, 84, 157)))
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
+                                  LinearPercentIndicator(
+                                    padding: const EdgeInsets.all(0),
+                                    lineHeight: 7,
+                                    percent: 0.63,
+                                    progressColor:
+                                        const Color.fromARGB(255, 28, 84, 157),
+                                    backgroundColor:
+                                        const Color.fromARGB(40, 0, 0, 0),
+                                    // linearStrokeCap: LinearStrokeCap.roundAll,
+                                    barRadius: const Radius.circular(16),
+                                  ),
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                          "Due " +
+                                              getDateText(_data['deadline']),
+                                          style: const TextStyle(fontSize: 14)),
+                                      const Text("7 days left",
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              color:
+                                                  Color.fromARGB(200, 0, 0, 0)))
+                                    ],
+                                  ),
+                                ]),
+                              ),
                             );
                           },
                           separatorBuilder: (context, index) =>
-                              SizedBox(height: 20.0),
+                              const SizedBox(height: 20.0),
                         ));
                       }
                       return const Center(
-                        child: CircularProgressIndicator(),
+                        child: Text(
+                          'No preview available',
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
                       );
                     },
                   )),
@@ -295,7 +339,7 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 18,
                   )),
               Container(
-                  padding: EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(5),
                   child: StreamBuilder<QuerySnapshot>(
                     stream: TaskService().getData(uid, ""),
                     builder: (context, snapshot) {
@@ -317,19 +361,39 @@ class _HomePageState extends State<HomePage> {
                                       const EdgeInsets.fromLTRB(10, 0, 0, 0),
                                   alignment: Alignment.centerLeft,
                                   color: Colors.green,
-                                  child: Text("Done"),
+                                  child: const Text("Done"),
                                 ),
                                 secondaryBackground: Container(
                                   padding:
                                       const EdgeInsets.fromLTRB(0, 0, 10, 0),
                                   alignment: Alignment.centerRight,
                                   color: Colors.red,
-                                  child: Text("Delete"),
+                                  child: const Text("Delete"),
                                 ),
+                                confirmDismiss: (direction) async {
+                                  if (direction ==
+                                      DismissDirection.startToEnd) {
+                                    return false;
+                                  } else {
+                                    TaskService.deleteData(
+                                        uid, _data['taskid']);
+                                    return false;
+                                  }
+                                },
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pushReplacementNamed(
-                                        context, '/detail_task');
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => TaskDetail(
+                                                taskDet: Task(
+                                                    taskid: _data['taskid'],
+                                                    title: _data['title'],
+                                                    date_time: getDate(
+                                                        _data['date_time']),
+                                                    reminder: _data['reminder'],
+                                                    desc: _data['desc'],
+                                                    isdone: _data['isdone']))));
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.all(18),
@@ -351,21 +415,30 @@ class _HomePageState extends State<HomePage> {
                                             Radius.circular(14))),
                                     child: Row(
                                       children: [
-                                        Icon(
-                                          Icons.brightness_1_outlined,
-                                          color: Color.fromARGB(128, 0, 0, 0),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              checkboxImgUrl =
+                                                  'assets/nuli/images/checked.png';
+                                            });
+                                          },
+                                          child: Image.asset(
+                                            checkboxImgUrl,
+                                            width: 25,
+                                            height: 25,
+                                          ),
                                         ),
-                                        SizedBox(width: 18),
+                                        const SizedBox(width: 18),
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(_data['title'],
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     fontSize: 16,
                                                     fontWeight:
                                                         FontWeight.bold)),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 8,
                                             ),
                                             Row(
@@ -373,7 +446,7 @@ class _HomePageState extends State<HomePage> {
                                                 Text(
                                                     getDateText(
                                                         _data['date_time']),
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 14,
                                                         color: Color.fromARGB(
                                                             178, 0, 0, 0))),
@@ -383,7 +456,7 @@ class _HomePageState extends State<HomePage> {
                                                 Text(
                                                     getTimeText(
                                                         _data['date_time']),
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 14,
                                                         color: Color.fromARGB(
                                                             178, 0, 0, 0))),
@@ -398,31 +471,16 @@ class _HomePageState extends State<HomePage> {
                               );
                             },
                             separatorBuilder: (context, index) =>
-                                SizedBox(height: 20.0),
+                                const SizedBox(height: 20.0),
                           ),
                         );
                       }
                       return const Center(
-                        child: CircularProgressIndicator(),
+                        child: Text(
+                          'No preview available',
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
                       );
-
-                      // if (snapshot.hasData)
-                      //   return (Text("Ada"));
-                      // else {
-                      //   return (Text('no data'));
-                      // }
-
-                      // return ListView.builder(
-                      //   itemCount: snapshot.data?.docs.length,
-                      //   itemBuilder: ((context, index) {
-                      //     DocumentSnapshot _data = snapshot.data!.docs[index];
-                      //     return Card(
-                      //       child: ListTile(
-                      //         title: _data['title'],
-                      //       ),
-                      //     );
-                      //   }
-                      // ));
                     },
                   )),
             ],

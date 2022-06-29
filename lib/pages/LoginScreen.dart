@@ -26,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(children: <Widget>[
+          SizedBox(height: 40,),
           const Image(
             image: AssetImage("assets/nuli/images/login-image.png"),
             height: 300,
@@ -37,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const Text(
                   "Log In",
-                  style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 20),
@@ -81,17 +82,24 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 40),
                 ElevatedButton(
-                  child: const Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Login",
-                      style: TextStyle(color: Colors.white),
+                  child: const Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Login",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
                       primary: Colors.blue.shade900,
                       shadowColor: Colors.black,
-                      elevation: 5),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                  ),
                   onPressed: () async {
                     dynamic result = await UserService.signIn(
                         _emailController.text, _passwordController.text);
@@ -108,20 +116,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                   },
                 ),
+                const SizedBox(height: 20,),
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
                         "New to Nuli?",
-                        style: TextStyle(fontSize: 13, color: Colors.black),
+                        style: TextStyle(fontSize: 17, color: Colors.black),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(width: 5),
                       InkWell(
                         child: const Text(
                           'Sign up',
-                          style: TextStyle(fontSize: 13, color: Colors.blue),
+                          style: TextStyle(fontSize: 17, color: Colors.blue, fontWeight: FontWeight.bold),
                         ),
                         onTap: () {
                           Navigator.pushNamed(context, '/signup');

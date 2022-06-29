@@ -8,26 +8,28 @@ import 'package:nuli/dbservices.dart';
 
 import '../dataclass.dart';
 
-class AddTaskPage extends StatefulWidget {
-  const AddTaskPage({Key? key}) : super(key: key);
+class EditTaskPage extends StatefulWidget {
+  Task taskDet;
+
+  EditTaskPage({Key? key, required this.taskDet}) : super(key: key);
 
   @override
-  State<AddTaskPage> createState() => _AddTaskPageState();
+  State<EditTaskPage> createState() => _EditTaskPageState();
 }
 
-class _AddTaskPageState extends State<AddTaskPage> {
-  static DateTime date = DateTime.now();
+class _EditTaskPageState extends State<EditTaskPage> {
+  late DateTime date;
   static DateFormat formatter = DateFormat('d MMMM y');
-  String curDate = formatter.format(date);
+  late String curDate = formatter.format(date);
 
   TextEditingController _taskTitleCtrl = TextEditingController();
   TextEditingController _taskDescCtrl = TextEditingController();
 
-  TimeOfDay time = TimeOfDay(hour: 9, minute: 0);
+  late TimeOfDay time;
 
   late String uid;
 
-  String reminderChosen = "1 hour before";
+  late String reminderChosen;
   List listReminderOption = [
     "5 mins before",
     "15 mins before",
@@ -52,17 +54,20 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }
   }
 
-  Timestamp _dateTimeToTimestamp(DateTime dateTime) {
-    return Timestamp.fromMillisecondsSinceEpoch(
-        dateTime.millisecondsSinceEpoch);
-  }
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _taskTitleCtrl = TextEditingController();
     _taskDescCtrl = TextEditingController();
+
+    _taskTitleCtrl.text = widget.taskDet.title;
+    _taskDescCtrl.text = widget.taskDet.desc;
+    date = widget.taskDet.date_time;
+    time = TimeOfDay(
+        hour: widget.taskDet.date_time.hour,
+        minute: widget.taskDet.date_time.minute);
+    reminderChosen = widget.taskDet.reminder;
 
     var user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -366,38 +371,39 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   height: 25,
                 ),
                 ////////////////////// Save Button
-                ElevatedButton(
-                  onPressed: () {
-                    if (_taskTitleCtrl.text.isNotEmpty) {
-                      DateTime dateTime = DateTime(date.year, date.month,
-                          date.day, time.hour, time.minute);
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_taskTitleCtrl.text.isNotEmpty) {
+                        DateTime dateTime = DateTime(date.year, date.month,
+                            date.day, time.hour, time.minute);
 
-                      DateTime now = DateTime.now();
-                      String formattedDate = DateFormat('MM-dd-yyyy HH:mm:ss').format(now);
-                      
-                      String taskid = _taskTitleCtrl.text.toString()+' '+formattedDate;
-                      
-                      Task newTask = Task(
-                          taskid: taskid,
-                          title: _taskTitleCtrl.text.toString(),
-                          date_time: dateTime,
-                          desc: _taskDescCtrl.text.toString(),
-                          reminder: reminderChosen,
-                          isdone: false);
-                      TaskService.addData(uid, newTask);
-                      Navigator.pushReplacementNamed(context, '/tabbarview');
-                    } else {
-                      const snackBar = SnackBar(
-                        content: Text('You should fill the task title'),
-                      );
-                    }
-                  },
-                  child: Text('SAVE'),
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ))),
+                        String taskid = widget.taskDet.taskid;
+
+                        Task newTask = Task(
+                            taskid: taskid,
+                            title: _taskTitleCtrl.text.toString(),
+                            date_time: dateTime,
+                            desc: _taskDescCtrl.text.toString(),
+                            reminder: reminderChosen,
+                            isdone: false);
+                        TaskService.editData(uid, newTask);
+                        Navigator.pushReplacementNamed(context, '/tabbarview');
+                      } else {
+                        const snackBar = SnackBar(
+                          content: Text('You should fill the task title'),
+                        );
+                      }
+                    },
+                    child: Text('SAVE'),
+                    style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ))),
+                  ),
                 )
               ]),
             ),

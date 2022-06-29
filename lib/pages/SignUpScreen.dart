@@ -79,6 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(children: <Widget>[
+          const SizedBox(height: 30,),
           const Image(
             image: AssetImage("assets/nuli/images/signup-image.png"),
             height: 200,
@@ -90,7 +91,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: [
                 const Text(
                   "Sign Up",
-                  style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 20),
@@ -184,17 +185,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 40),
                 ElevatedButton(
-                  child: const Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(color: Colors.white),
+                  child: const Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Sign Up",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
                       primary: Colors.blue.shade900,
                       shadowColor: Colors.black,
-                      elevation: 5),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                  ),
                   onPressed: _emailController.text.isNotEmpty &&
                           _fullnameController.text.isNotEmpty &&
                           _passwordController.text.isNotEmpty &&
@@ -235,20 +243,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         }
                       : null,
                 ),
+                const SizedBox(height: 20,),
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
                         "Already have an account?",
-                        style: TextStyle(fontSize: 13, color: Colors.black),
+                        style: TextStyle(fontSize: 16, color: Colors.black),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(width: 5),
                       InkWell(
                         child: const Text(
                           'Log in',
-                          style: TextStyle(fontSize: 13, color: Colors.blue),
+                          style: TextStyle(fontSize: 16, color: Colors.blue, fontWeight: FontWeight.bold),
                         ),
                         onTap: () {
                           Navigator.pushNamed(context, '/login');

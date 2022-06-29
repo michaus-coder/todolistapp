@@ -93,6 +93,7 @@ class _ProfileState extends State<Profile> {
                 padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                 child: Column(
                   children: [
+                    const SizedBox(height: 10,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -108,7 +109,7 @@ class _ProfileState extends State<Profile> {
                           user.fullname,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 24,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -142,6 +143,7 @@ class _ProfileState extends State<Profile> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 10,),
                     Stack(
                       children: [
                         Positioned(
@@ -190,23 +192,26 @@ class _ProfileState extends State<Profile> {
                             ),
                             margin: const EdgeInsets.symmetric(horizontal: 20),
                             child: ElevatedButton(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Text(
-                                    "Edit Profile",
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 18),
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: Colors.black,
-                                    size: 17,
-                                  )
-                                ],
+                              child: Padding(
+                                padding: EdgeInsets.all(4),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Text(
+                                      "Edit Profile",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 16),
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.black,
+                                      size: 16,
+                                    )
+                                  ],
+                                ),
                               ),
                               style: ElevatedButton.styleFrom(
                                 primary: Colors.transparent,
@@ -233,6 +238,7 @@ class _ProfileState extends State<Profile> {
                               },
                             ),
                           ),
+                          const SizedBox(height: 10),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 40),
                             child: Row(
@@ -337,7 +343,7 @@ class _ProfileState extends State<Profile> {
                                                 _taskDoneCount.toString(),
                                                 style: const TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 24,
+                                                  fontSize: 20,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -346,7 +352,7 @@ class _ProfileState extends State<Profile> {
                                                 "tasks",
                                                 style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                               const SizedBox(width: 5),
@@ -405,7 +411,7 @@ class _ProfileState extends State<Profile> {
                                                 _taskPendingCount.toString(),
                                                 style: const TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 24,
+                                                  fontSize: 20,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -414,7 +420,7 @@ class _ProfileState extends State<Profile> {
                                                 "tasks",
                                                 style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                               const SizedBox(width: 5),
@@ -481,7 +487,7 @@ class _ProfileState extends State<Profile> {
                                                 _projectDoneCount.toString(),
                                                 style: const TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 24,
+                                                  fontSize: 20,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -490,7 +496,7 @@ class _ProfileState extends State<Profile> {
                                                 "projects",
                                                 style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                               const SizedBox(width: 5),
@@ -548,7 +554,7 @@ class _ProfileState extends State<Profile> {
                                                 _projectPendingCount.toString(),
                                                 style: const TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 24,
+                                                  fontSize: 20,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -557,7 +563,7 @@ class _ProfileState extends State<Profile> {
                                                 "projects",
                                                 style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                               const SizedBox(width: 5),
