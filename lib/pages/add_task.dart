@@ -228,10 +228,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
                             textStyle: const TextStyle(fontSize: 16),
                           ),
                           onPressed: () async {
-                            final initialTime = TimeOfDay(hour: 9, minute: 0);
                             final newTime = await showTimePicker(
                               context: context,
-                              initialTime: time ?? initialTime,
+                              initialTime: time,
                             );
                             if (newTime == null) return;
                             setState(() {
