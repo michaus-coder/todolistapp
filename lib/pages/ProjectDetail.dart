@@ -225,9 +225,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   child: Text(
                     "Description",
                     style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
+                        fontSize: 17,
+                        color: Colors.grey),
                   ),
                 ),
                 const SizedBox(
@@ -237,7 +236,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     widget.projectDet.desc,
-                    style: TextStyle(fontSize: 16, color: Colors.black),
+                    style: TextStyle(fontSize: 18, color: Colors.black),
                     textAlign: TextAlign.justify,
                   ),
                 ),
@@ -248,9 +247,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   alignment: Alignment.centerLeft,
                   child: Text("List of Task",
                       style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black)),
+                          fontSize: 17,
+                          color: Colors.grey)),
                 ),
                 const SizedBox(
                   height: 20,
@@ -276,7 +274,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                                   snapshot.data!.docs[index];
                               return Container(
                                 // constraints: BoxConstraints(maxWidth: 270),
-                                padding: const EdgeInsets.all(18),
+                                padding: const EdgeInsets.all(5),
                                 decoration: const BoxDecoration(
                                     gradient: LinearGradient(
                                         begin: Alignment(1, -1),
@@ -298,7 +296,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                                   children: [
                                     Checkbox(
                                         activeColor:
-                                            Color.fromARGB(255, 71, 221, 0),
+                                            Colors.green,
                                         checkColor: Colors.white,
                                         shape: CircleBorder(),
                                         value: _data['isdone'],

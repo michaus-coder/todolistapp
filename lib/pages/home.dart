@@ -363,24 +363,35 @@ class _HomePageState extends State<HomePage> {
                               DocumentSnapshot _data =
                                   snapshot.data!.docs[index];
                               return Dismissible(
-                                key: Key(_data['title']),
+                                key: Key(_data['taskid']),
                                 background: Container(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 0, 0, 0),
                                   alignment: Alignment.centerLeft,
                                   color: Colors.green,
-                                  child: const Text("Done"),
+                                  child: const Text("Done", style: TextStyle(color: Colors.white),),
                                 ),
                                 secondaryBackground: Container(
                                   padding:
                                       const EdgeInsets.fromLTRB(0, 0, 10, 0),
                                   alignment: Alignment.centerRight,
                                   color: Colors.red,
-                                  child: const Text("Delete"),
+                                  child: const Text("Delete", style: TextStyle(color: Colors.white),),
                                 ),
                                 confirmDismiss: (direction) async {
                                   if (direction ==
                                       DismissDirection.startToEnd) {
+                                    final isdone = TaskService()
+                                        .toggleTodoStatus(
+                                            uid,
+                                            Task(
+                                                taskid: _data['taskid'],
+                                                title: _data['title'],
+                                                date_time:
+                                                    getDate(_data['date_time']),
+                                                reminder: _data['reminder'],
+                                                desc: _data['desc'],
+                                                isdone: _data['isdone']));
                                     return false;
                                   } else {
                                     TaskService.deleteData(
@@ -416,7 +427,7 @@ class _HomePageState extends State<HomePage> {
                                         boxShadow: <BoxShadow>[
                                           BoxShadow(
                                             color: Colors.black12,
-                                            blurRadius: 10,
+                                            blurRadius: 2,
                                           )
                                         ],
                                         borderRadius: BorderRadius.all(
@@ -446,7 +457,7 @@ class _HomePageState extends State<HomePage> {
                                                           isdone:
                                                               _data['isdone']));
                                             }),
-                                        const SizedBox(width: 18),
+                                        const SizedBox(width: 12),
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
