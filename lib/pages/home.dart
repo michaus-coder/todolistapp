@@ -21,7 +21,6 @@ class _HomePageState extends State<HomePage> {
   late String user_firstname;
   late String uid;
   int taskCount = 0;
-  String checkboxImgUrl = 'assets/nuli/images/unchecked.png';
 
   // String progressMsg(int progressPercentage) {
   //   if (progressPercentage < 50) {
@@ -57,9 +56,28 @@ class _HomePageState extends State<HomePage> {
     return hasil;
   }
 
-  // void getCurrentUser() async {
-  //   userData = await UserService.getUserFromFirestore();
-  // }
+  Future showConfirmDialog(String uid, String idDel, String titleDel) =>
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                content: Text('Are you sure you want to delete ${titleDel}?',
+                style: const TextStyle(fontSize: 17, height: 1.5,)),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancel')),
+                  TextButton(
+                      onPressed: () {
+                        TaskService.deleteData(uid, idDel);
+                      },
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ))
+                ],
+              ));
 
   @override
   void initState() {
@@ -228,7 +246,16 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => ProjectDetail(projectDet: Project(projectid: _data['projectid'], title: _data['title'], deadline: getDate(_data['deadline']), desc: _data['desc'], isdone: _data['isdone'], reminder: _data['reminder']),)));
+                                        builder: (context) => ProjectDetail(
+                                              projectDet: Project(
+                                                  projectid: _data['projectid'],
+                                                  title: _data['title'],
+                                                  deadline: getDate(
+                                                      _data['deadline']),
+                                                  desc: _data['desc'],
+                                                  isdone: _data['isdone'],
+                                                  reminder: _data['reminder']),
+                                            )));
                               },
                               child: Container(
                                 // constraints: BoxConstraints(maxWidth: 270),
@@ -355,28 +382,45 @@ class _HomePageState extends State<HomePage> {
                               DocumentSnapshot _data =
                                   snapshot.data!.docs[index];
                               return Dismissible(
-                                key: Key(_data['title']),
+                                key: Key(_data['taskid']),
                                 background: Container(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 0, 0, 0),
                                   alignment: Alignment.centerLeft,
                                   color: Colors.green,
-                                  child: const Text("Done"),
+                                  child: const Text(
+                                    "Done",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
                                 secondaryBackground: Container(
                                   padding:
                                       const EdgeInsets.fromLTRB(0, 0, 10, 0),
                                   alignment: Alignment.centerRight,
                                   color: Colors.red,
-                                  child: const Text("Delete"),
+                                  child: const Text(
+                                    "Delete",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
                                 confirmDismiss: (direction) async {
                                   if (direction ==
                                       DismissDirection.startToEnd) {
+                                    final isdone = TaskService()
+                                        .toggleTodoStatus(
+                                            uid,
+                                            Task(
+                                                taskid: _data['taskid'],
+                                                title: _data['title'],
+                                                date_time:
+                                                    getDate(_data['date_time']),
+                                                reminder: _data['reminder'],
+                                                desc: _data['desc'],
+                                                isdone: _data['isdone']));
                                     return false;
                                   } else {
-                                    TaskService.deleteData(
-                                        uid, _data['taskid']);
+                                    showConfirmDialog(
+                                        uid, _data['taskid'], _data['title']);
                                     return false;
                                   }
                                 },
@@ -408,27 +452,37 @@ class _HomePageState extends State<HomePage> {
                                         boxShadow: <BoxShadow>[
                                           BoxShadow(
                                             color: Colors.black12,
-                                            blurRadius: 10,
+                                            blurRadius: 2,
                                           )
                                         ],
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(14))),
                                     child: Row(
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              checkboxImgUrl =
-                                                  'assets/nuli/images/checked.png';
-                                            });
-                                          },
-                                          child: Image.asset(
-                                            checkboxImgUrl,
-                                            width: 25,
-                                            height: 25,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 18),
+                                        Checkbox(
+                                            activeColor:
+                                                Color.fromARGB(255, 71, 221, 0),
+                                            checkColor: Colors.white,
+                                            shape: CircleBorder(),
+                                            value: _data['isdone'],
+                                            onChanged: (_) {
+                                              final isdone = TaskService()
+                                                  .toggleTodoStatus(
+                                                      uid,
+                                                      Task(
+                                                          taskid:
+                                                              _data['taskid'],
+                                                          title: _data['title'],
+                                                          date_time: getDate(
+                                                              _data[
+                                                                  'date_time']),
+                                                          reminder:
+                                                              _data['reminder'],
+                                                          desc: _data['desc'],
+                                                          isdone:
+                                                              _data['isdone']));
+                                            }),
+                                        const SizedBox(width: 12),
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,

@@ -259,6 +259,13 @@ class TaskService {
         .catchError((e) => print(e));
   }
 
+  bool toggleTodoStatus(String uid, dataclass.Task item) {
+    item.isdone = !item.isdone;
+    TaskService.editData(uid, item);
+
+    return item.isdone;
+  }
+
   static Future<void> editData(String uid, dataclass.Task item) async {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
         .collection('tblTask')
@@ -426,6 +433,48 @@ class TaskforProjectServices {
     await docRef
         .set(item.toJson())
         .whenComplete(() => print("Data berhasil ditambahkan"))
+        .catchError((e) => print(e));
+  }
+
+  bool toggleTodoStatus(
+      String uid, String projectid, dataclass.TaskforProject item) {
+    item.isdone = !item.isdone;
+    TaskforProjectServices.editData(uid, projectid, item);
+
+    return item.isdone;
+  }
+
+  static Future<void> editData(
+      String uid, String projectid, dataclass.TaskforProject item) async {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(uid)
+        .collection('myProjects')
+        .doc(projectid)
+        .collection('tasks');
+
+    DocumentReference docRef = _taskCollection.doc(item.taskid);
+
+    await docRef
+        .update(item.toJson())
+        .whenComplete(() => print("Data berhasil diubah"))
+        .catchError((e) => print(e));
+  }
+
+  static Future<void> deleteData(
+      String uid, String projectid, String taskid) async {
+    final CollectionReference _taskCollection = FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(uid)
+        .collection('myProjects')
+        .doc(projectid)
+        .collection('tasks');
+
+    DocumentReference docRef = _taskCollection.doc(taskid);
+
+    await docRef
+        .delete()
+        .whenComplete(() => print("Data berhasil dihapus"))
         .catchError((e) => print(e));
   }
 

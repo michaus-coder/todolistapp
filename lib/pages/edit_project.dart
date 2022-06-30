@@ -38,11 +38,121 @@ class _EditProjectPageState extends State<EditProjectPage> {
 
   int undoneTaskCount = 0;
 
+  TextEditingController _taskTitleCtrl = TextEditingController();
+  TextEditingController _editTaskCtrl = TextEditingController();
+
+  Future showDialogAdd(String uid, String projectid) => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            title: const Text('Add task to your project'),
+            content: TextField(
+              autofocus: true,
+              controller: _taskTitleCtrl,
+              decoration: InputDecoration(hintText: 'Task title'),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel')),
+              TextButton(
+                  onPressed: () {
+                    if (_taskTitleCtrl.text.isNotEmpty) {
+                      DateTime now = DateTime.now();
+                      String formattedDate =
+                          DateFormat('MM-dd-yyyy HH:mm:ss').format(now);
+                      String taskid =
+                          _taskTitleCtrl.text.toString() + ' ' + formattedDate;
+                      TaskforProject newTask = TaskforProject(
+                          taskid: taskid,
+                          title: _taskTitleCtrl.text.toString(),
+                          isdone: false);
+                      TaskforProjectServices.addData(uid, projectid, newTask);
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: const Text(
+                    'Add',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ))
+            ],
+          ));
+
+  void setEditTextCtrl(String tasktitle) {
+    _editTaskCtrl.text = tasktitle;
+  }
+
+  Future showDialogEdit(String uid, String projectid, TaskforProject item) =>
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: const Text('Add task to your project'),
+                content: TextFormField(
+                  autofocus: true,
+                  controller: _editTaskCtrl,
+                  decoration: const InputDecoration(hintText: 'Task title'),
+                ),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancel')),
+                  TextButton(
+                      onPressed: () {
+                        if (_editTaskCtrl.text.isNotEmpty) {
+                          TaskforProject newTask = TaskforProject(
+                              taskid: item.taskid,
+                              title: _editTaskCtrl.text.toString(),
+                              isdone: item.isdone);
+                          TaskforProjectServices.editData(
+                              uid, projectid, newTask);
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: const Text(
+                        'Add',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ))
+                ],
+              ));
+
+  Future showConfirmDialog(
+          String uid, String idProject, String idDel, String titleDel) =>
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                content: Text('Are you sure you want to delete ${titleDel}?',
+                    style: const TextStyle(
+                      fontSize: 17,
+                      height: 1.5,
+                    )),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancel')),
+                  TextButton(
+                      onPressed: () {
+                        TaskforProjectServices.deleteData(uid, idProject, idDel);
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ))
+                ],
+              ));
+
   @override
   void initState() {
     super.initState();
     _projectTitleCtrl = TextEditingController();
     _projectDescCtrl = TextEditingController();
+    _taskTitleCtrl = TextEditingController();
+    _editTaskCtrl = TextEditingController();
 
     _projectTitleCtrl.text = widget.projectDet.title;
     _projectDescCtrl.text = widget.projectDet.desc;
@@ -62,45 +172,8 @@ class _EditProjectPageState extends State<EditProjectPage> {
     }
     super.dispose();
     _projectTitleCtrl.dispose();
-  }
-
-  Widget _addToDoWidget() {
-    return ListTile(
-      leading: const Icon(Icons.add),
-      title: const Text(
-        'Add task',
-        style: TextStyle(color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
-      ),
-      onTap: () {
-        final _controller = TextEditingController();
-        final _field = TextField(
-          autofocus: true,
-          controller: _controller,
-          decoration: const InputDecoration(
-              border: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              hintText: "To do"),
-        );
-
-        setState(() {
-          _taskCtrl.add(_controller);
-          _textFields.add(_field);
-        });
-      },
-    );
-  }
-
-  Widget _listView() {
-    return ListView.builder(
-        itemCount: _textFields.length,
-        itemBuilder: (context, index) {
-          return Container(
-            child: _textFields[index],
-          );
-        });
+    _projectDescCtrl.dispose();
+    _taskTitleCtrl.dispose();
   }
 
   @override
@@ -144,7 +217,6 @@ class _EditProjectPageState extends State<EditProjectPage> {
                     hintText: "Write project title here",
                   ),
                   cursorColor: const Color.fromRGBO(0, 0, 0, 0.4),
-                  autofocus: true,
                   style: const TextStyle(
                     fontSize: 20,
                   ),
@@ -343,14 +415,23 @@ class _EditProjectPageState extends State<EditProjectPage> {
                 //   style: TextStyle(
                 //       fontSize: 14, color: Color.fromARGB(190, 0, 0, 0)),
                 // ),
-                _addToDoWidget(),
+                ListTile(
+                  leading: const Icon(Icons.add),
+                  title: const Text(
+                    'Add task',
+                    style: TextStyle(
+                        color: Color.fromARGB(120, 0, 0, 0), fontSize: 14),
+                  ),
+                  onTap: () {
+                    // show dialog box
+                    showDialogAdd(uid, widget.projectDet.projectid);
+                  },
+                ),
                 StreamBuilder<QuerySnapshot>(
                     stream: TaskforProjectServices()
                         .getData(uid, widget.projectDet.projectid, ""),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        // List<TaskforProject> taskList = snapshot.data!.docs.map((doc)=>TaskforProject.fromJson(doc.data()),
-                        // ).toList();
                         return Expanded(
                           child: ListView.separated(
                               scrollDirection: Axis.vertical,
@@ -361,53 +442,111 @@ class _EditProjectPageState extends State<EditProjectPage> {
                               itemBuilder: (context, index) {
                                 DocumentSnapshot _data =
                                     snapshot.data!.docs[index];
-                                final _controller = TextEditingController();
-                                _controller.text = _data['title'];
-                                final _field = TextField(
-                                  autofocus: true,
-                                  controller: _controller,
-                                  decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                      hintText: "To do"),
-                                );
 
-                                _taskCtrl.add(_controller);
-                                _textFields.add(_field);
-
-                                return Container(
-                                  padding: const EdgeInsets.all(15),
-                                  decoration: const BoxDecoration(
-                                      color: Color.fromARGB(255, 181, 181, 181),
-                                      boxShadow: <BoxShadow>[
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 10,
-                                        )
-                                      ],
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10))),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Image.asset(
-                                        'assets/nuli/images/unchecked.png',
-                                        width: 18,
-                                        height: 18,
+                                return Dismissible(
+                                  key: Key(_data['taskid']),
+                                  background: Container(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                    alignment: Alignment.centerLeft,
+                                    color: Colors.green,
+                                    child: const Text("Done"),
+                                  ),
+                                  secondaryBackground: Container(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                    alignment: Alignment.centerRight,
+                                    color: Colors.red,
+                                    child: const Text("Delete"),
+                                  ),
+                                  confirmDismiss: (direction) async {
+                                    if (direction ==
+                                        DismissDirection.startToEnd) {
+                                      final isdone = TaskforProjectServices()
+                                          .toggleTodoStatus(
+                                              uid,
+                                              widget.projectDet.projectid,
+                                              TaskforProject(
+                                                  taskid: _data['taskid'],
+                                                  title: _data['title'],
+                                                  isdone: _data['isdone']));
+                                      return false;
+                                    } else {
+                                      showConfirmDialog(
+                                          uid,
+                                          widget.projectDet.projectid,
+                                          _data['taskid'],
+                                          _data['title']);
+                                      return false;
+                                    }
+                                  },
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setEditTextCtrl(_data['title']);
+                                      showDialogEdit(
+                                          uid,
+                                          widget.projectDet.projectid,
+                                          TaskforProject(
+                                              taskid: _data['taskid'],
+                                              title: _data['title'],
+                                              isdone: _data['isdone']));
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: const BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment(-1, 1),
+                                              end: Alignment(1, -1),
+                                              colors: [
+                                                Color.fromARGB(
+                                                    255, 237, 233, 98),
+                                                Color.fromARGB(
+                                                    255, 255, 255, 255)
+                                              ]),
+                                          boxShadow: <BoxShadow>[
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 10,
+                                            )
+                                          ],
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10))),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Checkbox(
+                                              activeColor: Colors.green,
+                                              checkColor: Colors.white,
+                                              shape: CircleBorder(),
+                                              value: _data['isdone'],
+                                              onChanged: (_) {
+                                                final isdone =
+                                                    TaskforProjectServices()
+                                                        .toggleTodoStatus(
+                                                            uid,
+                                                            widget.projectDet
+                                                                .projectid,
+                                                            TaskforProject(
+                                                                taskid: _data[
+                                                                    'taskid'],
+                                                                title: _data[
+                                                                    'title'],
+                                                                isdone: _data[
+                                                                    'isdone']));
+                                              }),
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
+                                          Text(
+                                            _data['title'],
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      const SizedBox(
-                                        width: 15,
-                                      ),
-                                      Text(
-                                        _data['title'],
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 );
                               }),
@@ -420,7 +559,6 @@ class _EditProjectPageState extends State<EditProjectPage> {
                         ),
                       );
                     }),
-                Expanded(child: _listView()),
                 const SizedBox(
                   height: 25,
                 ),

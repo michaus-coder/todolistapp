@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:nuli/pages/NotificationPage.dart';
 import 'package:nuli/pages/ProjectDetail.dart';
 import 'package:nuli/pages/SplashScreen.dart';
 import 'package:nuli/pages/TaskDetail.dart';
@@ -8,15 +9,18 @@ import 'package:nuli/pages/SignUpScreen.dart';
 import 'package:nuli/pages/WelcomeScreen.dart';
 import 'package:nuli/pages/LoginScreen.dart';
 import 'package:nuli/pages/add_project.dart';
+
 import 'package:nuli/pages/add_task.dart';
 import 'package:nuli/pages/home.dart';
 import 'package:nuli/pages/tabbarview.dart';
 import 'package:nuli/pages/profile.dart';
 import 'package:nuli/temp.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 
@@ -46,6 +50,7 @@ class _MyAppState extends State<MyApp> {
         '/tabbarview': (context) => const TabBarView1(),
         '/add_task': (context) => const AddTaskPage(),
         '/add_project': (context) => const AddProjectPage(),
+        '/notif_testing': (context) => const NotificationPage(),
       },
     );
   }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nuli/dataclass.dart';
 import 'package:nuli/dbservices.dart';
-import 'package:nuli/pages/dataClassTask.dart';
 import 'package:nuli/pages/edit_project.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
@@ -30,6 +29,33 @@ class _ProjectDetailState extends State<ProjectDetail> {
     pendingTaskCount = await TaskforProjectServices.countPendingTask(
         uid, widget.projectDet.projectid);
   }
+
+  Future showConfirmDialog(String uid, String idDel, String titleDel) =>
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                content: Text('Are you sure you want to delete ${titleDel}?',
+                    style: const TextStyle(
+                      fontSize: 17,
+                      height: 1.5,
+                    )),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancel')),
+                  TextButton(
+                      onPressed: () {
+                        ProjectService.deleteData(uid, idDel);
+                        Navigator.pushReplacementNamed(context, '/tabbarview');
+                      },
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ))
+                ],
+              ));
 
   @override
   void initState() {
@@ -59,7 +85,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
             },
           ),
           title: const Text(
-            "Project Detail",
+            "Project Details",
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           centerTitle: true,
@@ -135,12 +161,13 @@ class _ProjectDetailState extends State<ProjectDetail> {
                                 height: 30,
                                 decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
+                                  // color: Color(0xFFD9D9D9),
                                   gradient: LinearGradient(
                                       begin: Alignment(-1, -1),
                                       end: Alignment(1, 1),
                                       colors: [
-                                        Color.fromARGB(255, 242, 116, 112),
-                                        Color.fromARGB(255, 255, 201, 201)
+                                        Color(0xFF55C8FA),
+                                        Color(0xFFBCEAFE)
                                       ]),
                                 ),
                                 child: const Icon(
@@ -191,12 +218,12 @@ class _ProjectDetailState extends State<ProjectDetail> {
                                       begin: Alignment(-1, -1),
                                       end: Alignment(1, 1),
                                       colors: [
-                                        Color.fromARGB(255, 242, 116, 112),
-                                        Color.fromARGB(255, 255, 201, 201)
+                                        Color(0xFFFA9955),
+                                        Color(0xFFFFB636)
                                       ]),
                                 ),
                                 child: const Icon(
-                                  Icons.calendar_month_rounded,
+                                  Icons.file_copy_outlined,
                                   size: 18,
                                 ),
                               ),
@@ -220,38 +247,31 @@ class _ProjectDetailState extends State<ProjectDetail> {
                 const SizedBox(
                   height: 30,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      child: Text(
-                        "Description",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      widget.projectDet.desc,
-                      style: TextStyle(fontSize: 16, color: Colors.black),
-                      textAlign: TextAlign.justify,
-                    ),
-                  ],
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Description",
+                    style: TextStyle(fontSize: 17, color: Colors.grey),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    widget.projectDet.desc,
+                    style: TextStyle(fontSize: 18, color: Colors.black),
+                    textAlign: TextAlign.justify,
+                  ),
                 ),
                 const SizedBox(
                   height: 30,
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.centerLeft,
                   child: Text("List of Task",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black)),
+                      style: TextStyle(fontSize: 17, color: Colors.grey)),
                 ),
                 const SizedBox(
                   height: 20,
@@ -275,45 +295,117 @@ class _ProjectDetailState extends State<ProjectDetail> {
                               // taskCount = snapshot.data!.docs.length;
                               DocumentSnapshot _data =
                                   snapshot.data!.docs[index];
-                              return Container(
-                                // constraints: BoxConstraints(maxWidth: 270),
-                                padding: const EdgeInsets.all(18),
-                                decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                        begin: Alignment(1, -1),
-                                        end: Alignment(-1, 1),
-                                        colors: [
-                                          Color.fromARGB(255, 250, 153, 85),
-                                          Color.fromARGB(255, 255, 255, 255)
-                                        ]),
-                                    boxShadow: <BoxShadow>[
-                                      BoxShadow(
-                                        color: Colors.black12,
-                                        blurRadius: 10,
-                                      )
-                                    ],
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10))),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Image.asset(
-                                      'assets/nuli/images/unchecked.png',
-                                      width: 18,
-                                      height: 18,
-                                    ),
-                                    const SizedBox(
-                                      width: 15,
-                                    ),
-                                    Text(
-                                      _data['title'],
-                                      style: const TextStyle(
-                                        fontSize: 16,
+                              if (_data['isdone'] == "true") {
+                                return Container(
+                                  // constraints: BoxConstraints(maxWidth: 270),
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                          begin: Alignment(1, -1),
+                                          end: Alignment(-1, 1),
+                                          colors: [
+                                            Color.fromARGB(255, 250, 153, 85),
+                                            Color.fromARGB(255, 255, 255, 255)
+                                          ]),
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                          color: Colors.black12,
+                                          blurRadius: 10,
+                                        )
+                                      ],
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Checkbox(
+                                          activeColor: Colors.green,
+                                          checkColor: Colors.white,
+                                          shape: CircleBorder(),
+                                          value: _data['isdone'],
+                                          onChanged: (_) {
+                                            final isdone =
+                                                TaskforProjectServices()
+                                                    .toggleTodoStatus(
+                                                        uid,
+                                                        widget.projectDet
+                                                            .projectid,
+                                                        TaskforProject(
+                                                            taskid:
+                                                                _data['taskid'],
+                                                            title:
+                                                                _data['title'],
+                                                            isdone: _data[
+                                                                'isdone']));
+                                          }),
+                                      const SizedBox(
+                                        width: 15,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              );
+                                      Text(
+                                        _data['title'],
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                return Container(
+                                  // constraints: BoxConstraints(maxWidth: 270),
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                          begin: Alignment(1, -1),
+                                          end: Alignment(-1, 1),
+                                          colors: [
+                                            Color.fromARGB(255, 250, 153, 85),
+                                            Color.fromARGB(255, 255, 255, 255)
+                                          ]),
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                          color: Colors.black12,
+                                          blurRadius: 10,
+                                        )
+                                      ],
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Checkbox(
+                                          activeColor: Colors.green,
+                                          checkColor: Colors.white,
+                                          shape: CircleBorder(),
+                                          value: _data['isdone'],
+                                          onChanged: (_) {
+                                            final isdone =
+                                                TaskforProjectServices()
+                                                    .toggleTodoStatus(
+                                                        uid,
+                                                        widget.projectDet
+                                                            .projectid,
+                                                        TaskforProject(
+                                                            taskid:
+                                                                _data['taskid'],
+                                                            title:
+                                                                _data['title'],
+                                                            isdone: _data[
+                                                                'isdone']));
+                                          }),
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      Text(
+                                        _data['title'],
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
                             },
                             separatorBuilder: (context, index) =>
                                 const SizedBox(height: 20.0),
@@ -366,9 +458,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   margin: EdgeInsets.only(bottom: 20),
                   child: ElevatedButton(
                     onPressed: () {
-                      ProjectService.deleteData(
-                          uid, widget.projectDet.projectid);
-                      Navigator.pushReplacementNamed(context, '/tabbarview');
+                      showConfirmDialog(uid, widget.projectDet.projectid,
+                          widget.projectDet.title);
                     },
                     child: const Padding(
                         padding: EdgeInsets.all(15),

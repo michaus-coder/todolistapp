@@ -122,10 +122,8 @@ class _TaskDetailState extends State<TaskDetail> {
                                               begin: Alignment(-1, -1),
                                               end: Alignment(1, 1),
                                               colors: [
-                                                Color.fromARGB(
-                                                    255, 242, 116, 112),
-                                                Color.fromARGB(
-                                                    255, 255, 201, 201)
+                                                Color(0xFF55C8FA),
+                                                Color(0xFFBCEAFE)
                                               ]),
                                         ),
                                         child: const Icon(
@@ -181,10 +179,8 @@ class _TaskDetailState extends State<TaskDetail> {
                                               begin: Alignment(-1, -1),
                                               end: Alignment(1, 1),
                                               colors: [
-                                                Color.fromARGB(
-                                                    255, 242, 116, 112),
-                                                Color.fromARGB(
-                                                    255, 255, 201, 201)
+                                                Color(0xFFFA9955),
+                                                Color(0xFFFFB636)
                                               ]),
                                         ),
                                         child: const Icon(
@@ -245,14 +241,12 @@ class _TaskDetailState extends State<TaskDetail> {
                                               begin: Alignment(-1, -1),
                                               end: Alignment(1, 1),
                                               colors: [
-                                                Color.fromARGB(
-                                                    255, 242, 116, 112),
-                                                Color.fromARGB(
-                                                    255, 255, 201, 201)
+                                                Color(0xFF55C8FA),
+                                                Color(0xFFBCEAFE)
                                               ]),
                                         ),
                                         child: const Icon(
-                                          Icons.notifications_rounded,
+                                          Icons.alarm,
                                           size: 18,
                                         ),
                                       ),
@@ -290,7 +284,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       const Text(
-                                        "Status",
+                                        "Category",
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: Color(0xFF9A9A9A)),
@@ -304,14 +298,12 @@ class _TaskDetailState extends State<TaskDetail> {
                                               begin: Alignment(-1, -1),
                                               end: Alignment(1, 1),
                                               colors: [
-                                                Color.fromARGB(
-                                                    255, 242, 116, 112),
-                                                Color.fromARGB(
-                                                    255, 255, 201, 201)
+                                                Color(0xFFFA9955),
+                                                Color(0xFFFFB636)
                                               ]),
                                         ),
                                         child: const Icon(
-                                          Icons.access_time,
+                                          Icons.category,
                                           size: 18,
                                         ),
                                       ),
