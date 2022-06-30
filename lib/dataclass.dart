@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
   final String email;
@@ -102,8 +101,7 @@ class Project {
         deadline: json['deadline'],
         reminder: json['reminder'],
         desc: json['desc'],
-        isdone: json['isdone'])
-        ;
+        isdone: json['isdone']);
   }
 }
 
