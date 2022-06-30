@@ -59,7 +59,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
             },
           ),
           title: const Text(
-            "Create a new task",
+            "Project Detail",
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           centerTitle: true,
@@ -223,12 +223,14 @@ class _ProjectDetailState extends State<ProjectDetail> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Description",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                    Container(
+                      child: Text(
+                        "Description",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                      ),
                     ),
                     const SizedBox(
                       height: 15,
