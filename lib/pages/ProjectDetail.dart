@@ -59,7 +59,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
             },
           ),
           title: const Text(
-            "Create a new task",
+            "Project Details",
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           centerTitle: true,
@@ -220,30 +220,31 @@ class _ProjectDetailState extends State<ProjectDetail> {
                 const SizedBox(
                   height: 30,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Description",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      widget.projectDet.desc,
-                      style: TextStyle(fontSize: 16, color: Colors.black),
-                      textAlign: TextAlign.justify,
-                    ),
-                  ],
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Description",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    widget.projectDet.desc,
+                    style: TextStyle(fontSize: 16, color: Colors.black),
+                    textAlign: TextAlign.justify,
+                  ),
                 ),
                 const SizedBox(
                   height: 30,
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.centerLeft,
                   child: Text("List of Task",
                       style: TextStyle(
@@ -251,70 +252,87 @@ class _ProjectDetailState extends State<ProjectDetail> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black)),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 //listview
                 Container(
-                  padding: const EdgeInsets.all(5),
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: TaskforProjectServices().getData(uid, widget.projectDet.projectid, ""),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return const Text('ERROR');
-                      } else if (snapshot.hasData || snapshot.data != null) {
-                        return Expanded(
-                            child: ListView.separated(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (context, index) {
-                            // taskCount = snapshot.data!.docs.length;
-                            DocumentSnapshot _data = snapshot.data!.docs[index];
-                            return Container(
-                              // constraints: BoxConstraints(maxWidth: 270),
-                              padding: const EdgeInsets.all(18),
-                              decoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment(1, -1),
-                                      end: Alignment(-1, 1),
-                                      colors: [
-                                        Color.fromARGB(255, 250, 153, 85),
-                                        Color.fromARGB(255, 255, 255, 255)
-                                      ]),
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 10,
-                                    )
+                    padding: const EdgeInsets.all(5),
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: TaskforProjectServices()
+                          .getData(uid, widget.projectDet.projectid, ""),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return const Text('ERROR');
+                        } else if (snapshot.hasData || snapshot.data != null) {
+                          return Expanded(
+                              child: ListView.separated(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              // taskCount = snapshot.data!.docs.length;
+                              DocumentSnapshot _data =
+                                  snapshot.data!.docs[index];
+                              return Container(
+                                // constraints: BoxConstraints(maxWidth: 270),
+                                padding: const EdgeInsets.all(18),
+                                decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                        begin: Alignment(1, -1),
+                                        end: Alignment(-1, 1),
+                                        colors: [
+                                          Color.fromARGB(255, 250, 153, 85),
+                                          Color.fromARGB(255, 255, 255, 255)
+                                        ]),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 10,
+                                      )
+                                    ],
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Checkbox(
+                                        activeColor:
+                                            Color.fromARGB(255, 71, 221, 0),
+                                        checkColor: Colors.white,
+                                        shape: CircleBorder(),
+                                        value: _data['isdone'],
+                                        onChanged: (_) {
+                                          final isdone = TaskforProjectServices()
+                                              .toggleTodoStatus(
+                                                  uid, widget.projectDet.projectid,
+                                                  TaskforProject(taskid: _data['taskid'], title: _data['title'], isdone: _data['isdone']));
+                                        }),
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      _data['title'],
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
                                   ],
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                children: [
-                                  Image.asset('assets/nuli/images/unchecked.png', width: 18, height: 18,),
-                                  const SizedBox(width: 15,),
-                                  Text(
-                                    _data['title'],
-                                    style: const TextStyle(
-                                        fontSize: 16,),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(height: 20.0),
-                        ));
-                      }
-                      return const Center(
-                        child: Text(
-                          'No preview available',
-                          style: TextStyle(fontSize: 18, color: Colors.grey),
-                        ),
-                      );
-                    },
-                  )),
+                                ),
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 20.0),
+                          ));
+                        }
+                        return const Center(
+                          child: Text(
+                            'No preview available',
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          ),
+                        );
+                      },
+                    )),
 
                 //edit button
                 const SizedBox(

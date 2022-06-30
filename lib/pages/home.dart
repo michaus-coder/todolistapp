@@ -21,7 +21,6 @@ class _HomePageState extends State<HomePage> {
   late String user_firstname;
   late String uid;
   int taskCount = 0;
-  String checkboxImgUrl = 'assets/nuli/images/unchecked.png';
 
   // String progressMsg(int progressPercentage) {
   //   if (progressPercentage < 50) {
@@ -228,7 +227,16 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => ProjectDetail(projectDet: Project(projectid: _data['projectid'], title: _data['title'], deadline: getDate(_data['deadline']), desc: _data['desc'], isdone: _data['isdone'], reminder: _data['reminder']),)));
+                                        builder: (context) => ProjectDetail(
+                                              projectDet: Project(
+                                                  projectid: _data['projectid'],
+                                                  title: _data['title'],
+                                                  deadline: getDate(
+                                                      _data['deadline']),
+                                                  desc: _data['desc'],
+                                                  isdone: _data['isdone'],
+                                                  reminder: _data['reminder']),
+                                            )));
                               },
                               child: Container(
                                 // constraints: BoxConstraints(maxWidth: 270),
@@ -415,19 +423,29 @@ class _HomePageState extends State<HomePage> {
                                             Radius.circular(14))),
                                     child: Row(
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              checkboxImgUrl =
-                                                  'assets/nuli/images/checked.png';
-                                            });
-                                          },
-                                          child: Image.asset(
-                                            checkboxImgUrl,
-                                            width: 25,
-                                            height: 25,
-                                          ),
-                                        ),
+                                        Checkbox(
+                                            activeColor:
+                                                Color.fromARGB(255, 71, 221, 0),
+                                            checkColor: Colors.white,
+                                            shape: CircleBorder(),
+                                            value: _data['isdone'],
+                                            onChanged: (_) {
+                                              final isdone = TaskService()
+                                                  .toggleTodoStatus(
+                                                      uid,
+                                                      Task(
+                                                          taskid:
+                                                              _data['taskid'],
+                                                          title: _data['title'],
+                                                          date_time: getDate(
+                                                              _data[
+                                                                  'date_time']),
+                                                          reminder:
+                                                              _data['reminder'],
+                                                          desc: _data['desc'],
+                                                          isdone:
+                                                              _data['isdone']));
+                                            }),
                                         const SizedBox(width: 18),
                                         Column(
                                           crossAxisAlignment:
