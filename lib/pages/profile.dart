@@ -1,4 +1,4 @@
-import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
+// import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:nuli/dbservices.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -20,15 +20,7 @@ class _ProfileState extends State<Profile> {
   int _taskPendingCount = 0;
   int _projectDoneCount = 0;
   int _projectPendingCount = 0;
-  final List<ChartData> chartData = <ChartData>[
-    ChartData(0, 10.53),
-    ChartData(1, 9.5),
-    ChartData(2, 10),
-    ChartData(3, 9.4),
-    ChartData(4, 5.8),
-    ChartData(5, 4.9),
-    ChartData(6, 4.5),
-  ];
+  late List<ChartData> chartData;
 
   List<String> chartDataLabels = <String>[
     'Mon',
@@ -93,7 +85,9 @@ class _ProfileState extends State<Profile> {
                 padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                 child: Column(
                   children: [
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -143,13 +137,15 @@ class _ProfileState extends State<Profile> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Stack(
                       children: [
                         Positioned(
-                          bottom: -10,
+                          bottom: -20,
                           child: Container(
-                            height: 80,
+                            height: 90,
                             width: MediaQuery.of(context).size.width,
                             decoration: const BoxDecoration(
                               color: Colors.white,
@@ -193,7 +189,7 @@ class _ProfileState extends State<Profile> {
                             margin: const EdgeInsets.symmetric(horizontal: 20),
                             child: ElevatedButton(
                               child: Padding(
-                                padding: EdgeInsets.all(4),
+                                padding: const EdgeInsets.all(4),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: const [
@@ -602,6 +598,7 @@ class _ProfileState extends State<Profile> {
     _taskPendingCount = await UserService.getTaskPendingCount();
     _projectDoneCount = await UserService.getProjectDoneCount();
     _projectPendingCount = await UserService.getProjectPendingCount();
+    chartData = await UserService.getChartData();
     setState(() {
       _progressController = false;
     });
@@ -611,5 +608,5 @@ class _ProfileState extends State<Profile> {
 class ChartData {
   ChartData(this.x, this.y);
   final int x;
-  final double y;
+  final int y;
 }

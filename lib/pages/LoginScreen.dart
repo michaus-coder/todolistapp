@@ -26,7 +26,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(children: <Widget>[
-          SizedBox(height: 40,),
+          const SizedBox(
+            height: 40,
+          ),
           const Image(
             image: AssetImage("assets/nuli/images/login-image.png"),
             height: 300,
@@ -93,12 +95,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                      primary: Colors.blue.shade900,
-                      shadowColor: Colors.black,
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
+                    primary: Colors.blue.shade900,
+                    shadowColor: Colors.black,
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
                   ),
                   onPressed: () async {
                     dynamic result = await UserService.signIn(
@@ -116,7 +118,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                   },
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -130,7 +134,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       InkWell(
                         child: const Text(
                           'Sign up',
-                          style: TextStyle(fontSize: 17, color: Colors.blue, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 17,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold),
                         ),
                         onTap: () {
                           Navigator.pushNamed(context, '/signup');

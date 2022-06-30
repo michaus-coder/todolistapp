@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:nuli/dataclass.dart' as dataclass;
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart' as cloud_firestore;
+import 'package:nuli/pages/profile.dart';
 
 import 'dataclass.dart';
 
@@ -88,10 +89,7 @@ class UserService {
     );
     cloud_firestore.DocumentReference userRef = _userCollection.doc(user.uid);
 
-    await userRef
-        .set(userData.toJson())
-        .whenComplete(() => print('User saved'))
-        .catchError((e) => print(e));
+    await userRef.set(userData.toJson());
   }
 
   static Future<String> getDownloadUrl(String uid) async {
@@ -108,7 +106,7 @@ class UserService {
 
   static Future<dynamic> getUserFromFirestore() async {
     await _auth.signInWithEmailAndPassword(
-        email: "michaelwong306@gmail.com", password: "thisispassword");
+        email: "test@gmail.com", password: "test123");
     firebase_auth.User? user = _auth.currentUser;
     cloud_firestore.DocumentReference userRef = _userCollection.doc(user!.uid);
     User userData = await userRef
@@ -138,10 +136,7 @@ class UserService {
   static Future<void> updateUserToFirestore(
       {required dataclass.User user}) async {
     cloud_firestore.DocumentReference userRef = _userCollection.doc(user.uid);
-    await userRef
-        .update(user.toJson())
-        .whenComplete(() => print('User updated'))
-        .catchError((e) => print(e));
+    await userRef.update(user.toJson());
   }
 
   static Future<String> uploadImage(String path) async {
@@ -168,22 +163,19 @@ class UserService {
         DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
     var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
     var user = _auth.currentUser;
-    int count = 0;
-    // QuerySnapshot tasksDone = await cloud_firestore.FirebaseFirestore.instance
-    //     .collection("tblTask")
-    //     .doc(user!.uid)
-    //     .collection("myTasks")
-    //     .where("isdone", isEqualTo: true)
-    //     .where("date_time", isGreaterThanOrEqualTo: firstDayOfWeek)
-    //     .where("date_time", isLessThanOrEqualTo: lastDayOfWeek)
-    //     .get()
-    //     .then((value) {
-    //   count = value.docs.length;
-    //   return value;
-    // }).catchError((e) {
-    //   count = 0;
-    // });
-    return count;
+    try {
+      QuerySnapshot tasksDone = await cloud_firestore.FirebaseFirestore.instance
+          .collection("tblTask")
+          .doc(user!.uid)
+          .collection("myTasks")
+          .where("isdone", isEqualTo: true)
+          .where("date_time", isGreaterThanOrEqualTo: firstDayOfWeek)
+          .where("date_time", isLessThanOrEqualTo: lastDayOfWeek)
+          .get();
+      return tasksDone.docs.length;
+    } catch (e) {
+      return 0;
+    }
   }
 
   static Future<int> getTaskPendingCount() async {
@@ -191,15 +183,20 @@ class UserService {
         DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
     var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
     var user = _auth.currentUser;
-    // QuerySnapshot tasksUndone = await cloud_firestore.FirebaseFirestore.instance
-    //     .collection("tblTask")
-    //     .doc(user!.uid)
-    //     .collection("myTasks")
-    //     .where("isdone", isEqualTo: false)
-    //     .where("date_time", isGreaterThanOrEqualTo: firstDayOfWeek)
-    //     .where("date_time", isLessThanOrEqualTo: lastDayOfWeek)
-    //     .get();
-    return 0;
+    try {
+      QuerySnapshot tasksUndone = await cloud_firestore
+          .FirebaseFirestore.instance
+          .collection("tblTask")
+          .doc(user!.uid)
+          .collection("myTasks")
+          .where("isdone", isEqualTo: false)
+          .where("date_time", isGreaterThanOrEqualTo: firstDayOfWeek)
+          .where("date_time", isLessThanOrEqualTo: lastDayOfWeek)
+          .get();
+      return tasksUndone.docs.length;
+    } catch (e) {
+      return 0;
+    }
   }
 
   static Future<int> getProjectDoneCount() async {
@@ -207,26 +204,74 @@ class UserService {
         DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
     var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
     var user = _auth.currentUser;
-    QuerySnapshot projectsDone = await cloud_firestore
-        .FirebaseFirestore.instance
-        .collection("tblProject")
-        .doc(user!.uid)
-        .collection("myProjects")
-        .where("isdone", isEqualTo: true)
-        .get();
-    return projectsDone.docs.length;
+    try {
+      QuerySnapshot projectsDone = await cloud_firestore
+          .FirebaseFirestore.instance
+          .collection("tblProject")
+          .doc(user!.uid)
+          .collection("myProjects")
+          .where("isdone", isEqualTo: true)
+          .where("deadline", isGreaterThanOrEqualTo: firstDayOfWeek)
+          .where("deadline", isLessThanOrEqualTo: lastDayOfWeek)
+          .get();
+      return projectsDone.docs.length;
+    } catch (e) {
+      return 0;
+    }
   }
 
   static Future<int> getProjectPendingCount() async {
+    var firstDayOfWeek =
+        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
     var user = _auth.currentUser;
-    QuerySnapshot projectsUndone = await cloud_firestore
-        .FirebaseFirestore.instance
-        .collection("tblProject")
-        .doc(user!.uid)
-        .collection("myProjects")
-        .where("isdone", isEqualTo: false)
-        .get();
-    return projectsUndone.docs.length;
+    try {
+      QuerySnapshot projectsUndone = await cloud_firestore
+          .FirebaseFirestore.instance
+          .collection("tblProject")
+          .doc(user!.uid)
+          .collection("myProjects")
+          .where("isdone", isEqualTo: false)
+          .where("deadline", isGreaterThanOrEqualTo: firstDayOfWeek)
+          .where("deadline", isLessThanOrEqualTo: lastDayOfWeek)
+          .get();
+
+      return projectsUndone.docs.length;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  static Future<List<ChartData>> getChartData() async {
+    List<ChartData> chartData = [];
+    var _user = _auth.currentUser;
+    try {
+      for (int i = 0; i < 7; i++) {
+        var now = DateTime.now();
+        var day = DateTime(now.year, now.month, now.day)
+            .subtract(Duration(days: DateTime.now().weekday - 1))
+            .add(Duration(days: i));
+        QuerySnapshot tasks = await cloud_firestore.FirebaseFirestore.instance
+            .collection("tblTask")
+            .doc(_user!.uid)
+            .collection("myTasks")
+            .where("date_time", isGreaterThanOrEqualTo: day)
+            .where("date_time", isLessThan: day.add(const Duration(days: 1)))
+            .get();
+        chartData.add(ChartData(i, tasks.docs.length));
+      }
+      return chartData;
+    } catch (e) {
+      return <ChartData>[
+        ChartData(0, 0),
+        ChartData(1, 0),
+        ChartData(2, 0),
+        ChartData(3, 0),
+        ChartData(4, 0),
+        ChartData(5, 0),
+        ChartData(6, 0),
+      ];
+    }
   }
 }
 
