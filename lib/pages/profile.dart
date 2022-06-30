@@ -20,7 +20,7 @@ class _ProfileState extends State<Profile> {
   int _taskPendingCount = 0;
   int _projectDoneCount = 0;
   int _projectPendingCount = 0;
-  late final List<ChartData> chartData;
+  late List<ChartData> chartData;
 
   List<String> chartDataLabels = <String>[
     'Mon',
