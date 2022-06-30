@@ -118,6 +118,34 @@ class _EditProjectPageState extends State<EditProjectPage> {
                 ],
               ));
 
+  Future showConfirmDialog(
+          String uid, String idProject, String idDel, String titleDel) =>
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                content: Text('Are you sure you want to delete ${titleDel}?',
+                    style: const TextStyle(
+                      fontSize: 17,
+                      height: 1.5,
+                    )),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancel')),
+                  TextButton(
+                      onPressed: () {
+                        TaskforProjectServices.deleteData(uid, idProject, idDel);
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ))
+                ],
+              ));
+
   @override
   void initState() {
     super.initState();
@@ -432,25 +460,26 @@ class _EditProjectPageState extends State<EditProjectPage> {
                                     child: const Text("Delete"),
                                   ),
                                   confirmDismiss: (direction) async {
-                                  if (direction ==
-                                      DismissDirection.startToEnd) {
-                                    final isdone = TaskforProjectServices()
-                                                  .toggleTodoStatus(
-                                                      uid,
-                                                      widget.projectDet.projectid,
-                                                      TaskforProject(
-                                                        taskid: _data['taskid'],
-                                                        title: _data['title'],
-                                                        isdone: _data['isdone']
-                                                      )
-                                                  );
-                                    return false;
-                                  } else {
-                                    TaskforProjectServices.deleteData(
-                                        uid, widget.projectDet.projectid, _data['taskid']);
-                                    return false;
-                                  }
-                                },
+                                    if (direction ==
+                                        DismissDirection.startToEnd) {
+                                      final isdone = TaskforProjectServices()
+                                          .toggleTodoStatus(
+                                              uid,
+                                              widget.projectDet.projectid,
+                                              TaskforProject(
+                                                  taskid: _data['taskid'],
+                                                  title: _data['title'],
+                                                  isdone: _data['isdone']));
+                                      return false;
+                                    } else {
+                                      showConfirmDialog(
+                                          uid,
+                                          widget.projectDet.projectid,
+                                          _data['taskid'],
+                                          _data['title']);
+                                      return false;
+                                    }
+                                  },
                                   child: GestureDetector(
                                     onTap: () {
                                       setEditTextCtrl(_data['title']);
@@ -465,43 +494,47 @@ class _EditProjectPageState extends State<EditProjectPage> {
                                     child: Container(
                                       padding: const EdgeInsets.all(5),
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(
-                                            begin: Alignment(-1, 1),
-                                            end: Alignment(1, -1),
-                                            colors: [
-                                              Color.fromARGB(255, 237, 233, 98),
-                                              Color.fromARGB(255, 255, 255, 255)
-                                            ]),
-                                        boxShadow: <BoxShadow>[
-                                          BoxShadow(
-                                            color: Colors.black12,
-                                            blurRadius: 10,
-                                          )
-                                        ],
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(10))),
+                                          gradient: LinearGradient(
+                                              begin: Alignment(-1, 1),
+                                              end: Alignment(1, -1),
+                                              colors: [
+                                                Color.fromARGB(
+                                                    255, 237, 233, 98),
+                                                Color.fromARGB(
+                                                    255, 255, 255, 255)
+                                              ]),
+                                          boxShadow: <BoxShadow>[
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 10,
+                                            )
+                                          ],
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10))),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
                                           Checkbox(
-                                            activeColor:
-                                                Colors.green,
-                                            checkColor: Colors.white,
-                                            shape: CircleBorder(),
-                                            value: _data['isdone'],
-                                            onChanged: (_) {
-                                              final isdone = TaskforProjectServices()
-                                                  .toggleTodoStatus(
-                                                      uid,
-                                                      widget.projectDet.projectid,
-                                                      TaskforProject(
-                                                        taskid: _data['taskid'],
-                                                        title: _data['title'],
-                                                        isdone: _data['isdone']
-                                                      )
-                                                  );
-                                            }),
+                                              activeColor: Colors.green,
+                                              checkColor: Colors.white,
+                                              shape: CircleBorder(),
+                                              value: _data['isdone'],
+                                              onChanged: (_) {
+                                                final isdone =
+                                                    TaskforProjectServices()
+                                                        .toggleTodoStatus(
+                                                            uid,
+                                                            widget.projectDet
+                                                                .projectid,
+                                                            TaskforProject(
+                                                                taskid: _data[
+                                                                    'taskid'],
+                                                                title: _data[
+                                                                    'title'],
+                                                                isdone: _data[
+                                                                    'isdone']));
+                                              }),
                                           const SizedBox(
                                             width: 15,
                                           ),

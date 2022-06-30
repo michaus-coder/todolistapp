@@ -56,9 +56,28 @@ class _HomePageState extends State<HomePage> {
     return hasil;
   }
 
-  // void getCurrentUser() async {
-  //   userData = await UserService.getUserFromFirestore();
-  // }
+  Future showConfirmDialog(String uid, String idDel, String titleDel) =>
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                content: Text('Are you sure you want to delete ${titleDel}?',
+                style: const TextStyle(fontSize: 17, height: 1.5,)),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancel')),
+                  TextButton(
+                      onPressed: () {
+                        TaskService.deleteData(uid, idDel);
+                      },
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ))
+                ],
+              ));
 
   @override
   void initState() {
@@ -369,14 +388,20 @@ class _HomePageState extends State<HomePage> {
                                       const EdgeInsets.fromLTRB(10, 0, 0, 0),
                                   alignment: Alignment.centerLeft,
                                   color: Colors.green,
-                                  child: const Text("Done", style: TextStyle(color: Colors.white),),
+                                  child: const Text(
+                                    "Done",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
                                 secondaryBackground: Container(
                                   padding:
                                       const EdgeInsets.fromLTRB(0, 0, 10, 0),
                                   alignment: Alignment.centerRight,
                                   color: Colors.red,
-                                  child: const Text("Delete", style: TextStyle(color: Colors.white),),
+                                  child: const Text(
+                                    "Delete",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
                                 confirmDismiss: (direction) async {
                                   if (direction ==
@@ -394,8 +419,8 @@ class _HomePageState extends State<HomePage> {
                                                 isdone: _data['isdone']));
                                     return false;
                                   } else {
-                                    TaskService.deleteData(
-                                        uid, _data['taskid']);
+                                    showConfirmDialog(
+                                        uid, _data['taskid'], _data['title']);
                                     return false;
                                   }
                                 },

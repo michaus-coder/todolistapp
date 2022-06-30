@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nuli/dataclass.dart';
 import 'package:nuli/dbservices.dart';
-import 'package:nuli/pages/dataClassTask.dart';
 import 'package:nuli/pages/edit_project.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
@@ -30,6 +29,33 @@ class _ProjectDetailState extends State<ProjectDetail> {
     pendingTaskCount = await TaskforProjectServices.countPendingTask(
         uid, widget.projectDet.projectid);
   }
+
+  Future showConfirmDialog(String uid, String idDel, String titleDel) =>
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                content: Text('Are you sure you want to delete ${titleDel}?',
+                    style: const TextStyle(
+                      fontSize: 17,
+                      height: 1.5,
+                    )),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancel')),
+                  TextButton(
+                      onPressed: () {
+                        ProjectService.deleteData(uid, idDel);
+                        Navigator.pushReplacementNamed(context, '/tabbarview');
+                      },
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ))
+                ],
+              ));
 
   @override
   void initState() {
@@ -224,9 +250,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Description",
-                    style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.grey),
+                    style: TextStyle(fontSize: 17, color: Colors.grey),
                   ),
                 ),
                 const SizedBox(
@@ -246,9 +270,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Text("List of Task",
-                      style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey)),
+                      style: TextStyle(fontSize: 17, color: Colors.grey)),
                 ),
                 const SizedBox(
                   height: 20,
@@ -295,16 +317,23 @@ class _ProjectDetailState extends State<ProjectDetail> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Checkbox(
-                                        activeColor:
-                                            Colors.green,
+                                        activeColor: Colors.green,
                                         checkColor: Colors.white,
                                         shape: CircleBorder(),
                                         value: _data['isdone'],
                                         onChanged: (_) {
-                                          final isdone = TaskforProjectServices()
-                                              .toggleTodoStatus(
-                                                  uid, widget.projectDet.projectid,
-                                                  TaskforProject(taskid: _data['taskid'], title: _data['title'], isdone: _data['isdone']));
+                                          final isdone =
+                                              TaskforProjectServices()
+                                                  .toggleTodoStatus(
+                                                      uid,
+                                                      widget
+                                                          .projectDet.projectid,
+                                                      TaskforProject(
+                                                          taskid:
+                                                              _data['taskid'],
+                                                          title: _data['title'],
+                                                          isdone:
+                                                              _data['isdone']));
                                         }),
                                     const SizedBox(
                                       width: 15,
@@ -370,9 +399,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   margin: EdgeInsets.only(bottom: 20),
                   child: ElevatedButton(
                     onPressed: () {
-                      ProjectService.deleteData(
-                          uid, widget.projectDet.projectid);
-                      Navigator.pushReplacementNamed(context, '/tabbarview');
+                      showConfirmDialog(uid, widget.projectDet.projectid,
+                          widget.projectDet.title);
                     },
                     child: const Padding(
                         padding: EdgeInsets.all(15),
