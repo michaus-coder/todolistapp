@@ -136,7 +136,8 @@ class _EditProjectPageState extends State<EditProjectPage> {
                       child: const Text('Cancel')),
                   TextButton(
                       onPressed: () {
-                        TaskforProjectServices.deleteData(uid, idProject, idDel);
+                        TaskforProjectServices.deleteData(
+                            uid, idProject, idDel);
                         Navigator.of(context).pop();
                       },
                       child: const Text(
@@ -192,7 +193,7 @@ class _EditProjectPageState extends State<EditProjectPage> {
           },
         ),
         title: const Text(
-          "Create a new project",
+          "Edit project",
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
         centerTitle: true,
@@ -450,14 +451,14 @@ class _EditProjectPageState extends State<EditProjectPage> {
                                         const EdgeInsets.fromLTRB(10, 0, 0, 0),
                                     alignment: Alignment.centerLeft,
                                     color: Colors.green,
-                                    child: const Text("Done"),
+                                    child: const Text("Done", style: TextStyle(color:Colors.white),),
                                   ),
                                   secondaryBackground: Container(
                                     padding:
                                         const EdgeInsets.fromLTRB(0, 0, 10, 0),
                                     alignment: Alignment.centerRight,
                                     color: Colors.red,
-                                    child: const Text("Delete"),
+                                    child: const Text("Delete", style: TextStyle(color:Colors.white),),
                                   ),
                                   confirmDismiss: (direction) async {
                                     if (direction ==
@@ -498,10 +499,8 @@ class _EditProjectPageState extends State<EditProjectPage> {
                                               begin: Alignment(-1, 1),
                                               end: Alignment(1, -1),
                                               colors: [
-                                                Color.fromARGB(
-                                                    255, 237, 233, 98),
-                                                Color.fromARGB(
-                                                    255, 255, 255, 255)
+                                                Color(0xFFFA9955),
+                                                Color(0xFFFFB636)
                                               ]),
                                           boxShadow: <BoxShadow>[
                                             BoxShadow(

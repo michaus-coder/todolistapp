@@ -277,11 +277,26 @@ class UserService {
 }
 
 class TaskService {
-  Stream<QuerySnapshot> getData(String uid, String judul) {
-    final CollectionReference _taskCollection = FirebaseFirestore.instance
+  Stream<QuerySnapshot> getAllData(String uid, String judul) {
+    final _taskCollection = FirebaseFirestore.instance
         .collection('tblTask')
         .doc(uid)
         .collection('myTasks');
+
+    if (judul == "")
+      return _taskCollection.snapshots();
+    else
+      return _taskCollection
+          .orderBy("title")
+          .startAt([judul]).endAt([judul + '\uf8ff']).snapshots();
+  }
+
+  Stream<QuerySnapshot> getData(String uid, String judul) {
+    final _taskCollection = FirebaseFirestore.instance
+        .collection('tblTask')
+        .doc(uid)
+        .collection('myTasks')
+        .where('isdone', isEqualTo: false);
 
     if (judul == "")
       return _taskCollection.snapshots();
