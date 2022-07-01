@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 
@@ -18,8 +20,9 @@ class _NotificationPageState extends State<NotificationPage> {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text("Allow Notifications"),
-              content: Text("Our Apps would like to send you notifications"),
+              title: const Text("Allow Notifications"),
+              content:
+                  const Text("Our Apps would like to send you notifications"),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -27,7 +30,7 @@ class _NotificationPageState extends State<NotificationPage> {
                         .requestPermissionToSendNotifications()
                         .then((_) => Navigator.pop(context));
                   },
-                  child: Text(
+                  child: const Text(
                     "Allow",
                     style: TextStyle(color: Colors.blue),
                   ),
@@ -36,7 +39,7 @@ class _NotificationPageState extends State<NotificationPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text(
+                  child: const Text(
                     "Dont Allow",
                     style: TextStyle(color: Colors.blue),
                   ),
@@ -44,9 +47,7 @@ class _NotificationPageState extends State<NotificationPage> {
               ],
             ),
           );
-        } else {
-          print("Notification allowed");
-        }
+        } else {}
       },
     );
   }
@@ -55,30 +56,28 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notification'),
+        title: const Text('Notification'),
       ),
-      body: Container(
-        child: Column(
-          children: [
-            Builder(builder: (context) {
-              return ElevatedButton(
-                  onPressed: () {
-                    AwesomeNotifications().createNotification(
-                      content: NotificationContent(
-                          id: 10,
-                          channelKey: 'basic_channel',
-                          title: 'Simple Notification',
-                          body: 'Simple body'),
-                      schedule: NotificationInterval(
-                          interval: 10,
-                          timeZone: 'Asia/Jakarta',
-                          preciseAlarm: true),
-                    );
-                  },
-                  child: Text("Notification Test Button"));
-            })
-          ],
-        ),
+      body: Column(
+        children: [
+          Builder(builder: (context) {
+            return ElevatedButton(
+                onPressed: () {
+                  AwesomeNotifications().createNotification(
+                    content: NotificationContent(
+                        id: 10,
+                        channelKey: 'basic_channel',
+                        title: 'Simple Notification',
+                        body: 'Simple body'),
+                    schedule: NotificationInterval(
+                        interval: 10,
+                        timeZone: 'Asia/Jakarta',
+                        preciseAlarm: true),
+                  );
+                },
+                child: const Text("Notification Test Button"));
+          })
+        ],
       ),
     );
   }

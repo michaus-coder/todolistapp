@@ -8,7 +8,6 @@ import 'package:cloud_firestore/cloud_firestore.dart' as cloud_firestore;
 import 'package:nuli/pages/profile.dart';
 import 'dataclass.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:uuid/uuid.dart';
 
 class UserService {
   static final cloud_firestore.CollectionReference _userCollection =
