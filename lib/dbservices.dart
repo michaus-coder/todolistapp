@@ -512,6 +512,67 @@ class TaskforProjectServices {
         .catchError((e) => print(e));
   }
 
+  static Future<List<int>> getProgress() async {
+    var _user = firebase_auth.FirebaseAuth.instance.currentUser;
+    List<int> _progress = [];
+
+    List<dataclass.Project> _projects = await cloud_firestore
+        .FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(_user!.uid)
+        .collection('myProjects')
+        .get()
+        .then((value) => value.docs
+            .map(
+              (doc) => dataclass.Project(
+                projectid: doc.id,
+                title: doc.data()['title'] as String,
+                desc: doc.data()['desc'] as String,
+                deadline: doc.data()['deadline'].toDate(),
+                isdone: doc.data()['isdone'] as bool,
+                reminder: doc.data()['reminder'] as String,
+              ),
+            )
+            .toList());
+
+    for (dataclass.Project project in _projects) {
+      List<dataclass.TaskforProject> _tasks = await cloud_firestore
+          .FirebaseFirestore.instance
+          .collection('tblProject')
+          .doc(_user.uid)
+          .collection('myProjects')
+          .doc(project.projectid)
+          .collection('tasks')
+          .get()
+          .then((value) => value.docs
+              .map((doc) => dataclass.TaskforProject.fromJson(doc.data()))
+              .toList());
+
+      int progress = 0;
+      int total = 0;
+      for (TaskforProject task in _tasks) {
+        if (task.isdone) {
+          progress++;
+        }
+        total++;
+      }
+      if (progress == total) {
+        await cloud_firestore.FirebaseFirestore.instance
+            .collection('tblProject')
+            .doc(_user.uid)
+            .collection('myProjects')
+            .doc(project.projectid)
+            .update({'isdone': true});
+      }
+      try {
+        _progress.add((progress / total * 100).round());
+      } catch (e) {
+        _progress.add(0);
+      }
+    }
+    return _progress;
+  }
+
   bool toggleTodoStatus(
       String uid, String projectid, dataclass.TaskforProject item) {
     item.isdone = !item.isdone;

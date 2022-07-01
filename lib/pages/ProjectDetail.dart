@@ -286,7 +286,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                         if (snapshot.hasError) {
                           return const Text('ERROR');
                         } else if (snapshot.hasData || snapshot.data != null) {
-                          return Expanded(
+                          return Container(
                               child: ListView.separated(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,

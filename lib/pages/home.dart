@@ -28,6 +28,7 @@ class _HomePageState extends State<HomePage> {
   int _taskPendingCount = 0;
   int _projectDoneCount = 0;
   int _projectPendingCount = 0;
+  late List<int> _progressList = [];
 
   // String progressMsg(int progressPercentage) {
   //   if (progressPercentage < 50) {
@@ -100,6 +101,7 @@ class _HomePageState extends State<HomePage> {
     if (curUser != null) {
       uid = curUser.uid;
     }
+    getProgressForProjectTask();
   }
 
   @override
@@ -249,7 +251,7 @@ class _HomePageState extends State<HomePage> {
                               return const Text('ERROR');
                             } else if (snapshot.hasData ||
                                 snapshot.data != null) {
-                              return Expanded(
+                              return Container(
                                   child: ListView.separated(
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
@@ -289,7 +291,11 @@ class _HomePageState extends State<HomePage> {
                                                                 _data['isdone'],
                                                             reminder: _data[
                                                                 'reminder']),
-                                                      )));
+                                                      ))).then((value) {
+                                        setState(() {
+                                          getProgressForProjectTask();
+                                        });
+                                      });
                                     },
                                     child: Container(
                                       // constraints: BoxConstraints(maxWidth: 270),
@@ -338,8 +344,8 @@ class _HomePageState extends State<HomePage> {
                                                     fontSize: 10,
                                                     color: Color.fromARGB(
                                                         255, 28, 84, 157))),
-                                            const Text("82%",
-                                                style: TextStyle(
+                                            Text("${_progressList[index]}%",
+                                                style: const TextStyle(
                                                     fontSize: 10,
                                                     color: Color.fromARGB(
                                                         255, 28, 84, 157)))
@@ -351,7 +357,7 @@ class _HomePageState extends State<HomePage> {
                                         LinearPercentIndicator(
                                           padding: const EdgeInsets.all(0),
                                           lineHeight: 7,
-                                          percent: 0.63,
+                                          percent: _progressList[index] / 100,
                                           progressColor: const Color.fromARGB(
                                               255, 28, 84, 157),
                                           backgroundColor:
@@ -431,7 +437,7 @@ class _HomePageState extends State<HomePage> {
                               return const Text('ERROR');
                             } else if (snapshot.hasData ||
                                 snapshot.data != null) {
-                              return Expanded(
+                              return Container(
                                 child: ListView.separated(
                                   scrollDirection: Axis.vertical,
                                   shrinkWrap: true,
@@ -631,5 +637,10 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _progressController = false;
     });
+  }
+
+  void getProgressForProjectTask() async {
+    _progressList = await TaskforProjectServices.getProgress();
+    setState(() {});
   }
 }
