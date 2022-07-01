@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                       child: const Text('Cancel')),
                   TextButton(
                       onPressed: () {
-                        TaskService.deleteData(uid, idDel);
+                        ProjectService.deleteData(uid, idDel);
                       },
                       child: const Text(
                         'Delete',
@@ -258,6 +258,17 @@ class _HomePageState extends State<HomePage> {
                                   taskCount = snapshot.data!.docs.length;
                                   DocumentSnapshot _data =
                                       snapshot.data!.docs[index];
+                                  DateTime projectDeadline =
+                                      _data['deadline'].toDate();
+                                  DateTime today = DateTime.now();
+                                  int daysLeft =
+                                      projectDeadline.difference(today).inDays;
+                                  String projectDeadlineStr =
+                                      "$daysLeft days left";
+                                  if (daysLeft < 0) {
+                                    projectDeadlineStr = "Overdue";
+                                  }
+
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -361,8 +372,8 @@ class _HomePageState extends State<HomePage> {
                                                         _data['deadline']),
                                                 style: const TextStyle(
                                                     fontSize: 14)),
-                                            const Text("7 days left",
-                                                style: TextStyle(
+                                            Text(projectDeadlineStr,
+                                                style: const TextStyle(
                                                     fontSize: 10,
                                                     color: Color.fromARGB(
                                                         200, 0, 0, 0)))

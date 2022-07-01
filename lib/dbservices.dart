@@ -105,8 +105,6 @@ class UserService {
   }
 
   static Future<dynamic> getUserFromFirestore() async {
-    await _auth.signInWithEmailAndPassword(
-        email: "test@gmail.com", password: "test123");
     firebase_auth.User? user = _auth.currentUser;
     cloud_firestore.DocumentReference userRef = _userCollection.doc(user!.uid);
     User userData = await userRef
@@ -200,9 +198,9 @@ class UserService {
   }
 
   static Future<int> getProjectDoneCount() async {
-    var firstDayOfWeek =
-        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
-    var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
+    // var firstDayOfWeek =
+    //     DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    // var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
     var user = _auth.currentUser;
     try {
       QuerySnapshot projectsDone = await cloud_firestore
@@ -211,8 +209,6 @@ class UserService {
           .doc(user!.uid)
           .collection("myProjects")
           .where("isdone", isEqualTo: true)
-          .where("deadline", isGreaterThanOrEqualTo: firstDayOfWeek)
-          .where("deadline", isLessThanOrEqualTo: lastDayOfWeek)
           .get();
       return projectsDone.docs.length;
     } catch (e) {
@@ -221,9 +217,9 @@ class UserService {
   }
 
   static Future<int> getProjectPendingCount() async {
-    var firstDayOfWeek =
-        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
-    var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
+    // var firstDayOfWeek =
+    //     DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    // var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
     var user = _auth.currentUser;
     try {
       QuerySnapshot projectsUndone = await cloud_firestore
@@ -232,12 +228,11 @@ class UserService {
           .doc(user!.uid)
           .collection("myProjects")
           .where("isdone", isEqualTo: false)
-          .where("deadline", isGreaterThanOrEqualTo: firstDayOfWeek)
-          .where("deadline", isLessThanOrEqualTo: lastDayOfWeek)
           .get();
 
       return projectsUndone.docs.length;
     } catch (e) {
+      print(e);
       return 0;
     }
   }
