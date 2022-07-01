@@ -454,8 +454,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   height: 18,
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  margin: EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  margin: const   EdgeInsets.only(bottom: 20),
                   child: ElevatedButton(
                     onPressed: () {
                       showConfirmDialog(uid, widget.projectDet.projectid,
@@ -468,9 +468,9 @@ class _ProjectDetailState extends State<ProjectDetail> {
                               color: Colors.red,
                             ))),
                     style: ElevatedButton.styleFrom(
-                      minimumSize: Size.fromHeight(40),
+                      minimumSize: const Size.fromHeight(40),
                       primary: Colors.white,
-                      side: BorderSide(color: Colors.red),
+                      side: const BorderSide(color: Colors.red),
                       elevation: 5,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),

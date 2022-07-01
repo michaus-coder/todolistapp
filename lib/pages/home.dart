@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                       child: const Text('Cancel')),
                   TextButton(
                       onPressed: () {
-                        TaskService.deleteData(uid, idDel);
+                        ProjectService.deleteData(uid, idDel);
                       },
                       child: const Text(
                         'Delete',

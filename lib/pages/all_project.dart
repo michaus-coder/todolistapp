@@ -1,6 +1,14 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
+
+import '../dataclass.dart';
+import '../dbservices.dart';
+import 'ProjectDetail.dart';
 
 class AllProjectsPage extends StatefulWidget {
   const AllProjectsPage({Key? key}) : super(key: key);
@@ -11,12 +19,32 @@ class AllProjectsPage extends StatefulWidget {
 
 class _AllProjectsPageState extends State<AllProjectsPage>
     with SingleTickerProviderStateMixin {
+  late String uid;
+  int taskCount = 0;
   late TabController _tabController;
+
+  String getDateText(Timestamp t) {
+    DateTime dt = t.toDate();
+    DateFormat formatter = DateFormat('d MMMM y');
+    String hasil = formatter.format(dt);
+    return hasil;
+  }
+
+  DateTime getDate(Timestamp t) {
+    DateTime dt = t.toDate();
+    return dt;
+  }
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+
+    var curUser = FirebaseAuth.instance.currentUser;
+
+    if (curUser != null) {
+      uid = curUser.uid;
+    }
   }
 
   @override
@@ -68,8 +96,152 @@ class _AllProjectsPageState extends State<AllProjectsPage>
               child: TabBarView(
                 controller: _tabController, 
                 physics: NeverScrollableScrollPhysics(),
-                children: const [
-                Text("hi"),
+                children: [
+                Container(
+                        padding: const EdgeInsets.all(5),
+                        child: StreamBuilder<QuerySnapshot>(
+                          stream: ProjectService().getData(uid, ""),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return const Text('ERROR');
+                            } else if (snapshot.hasData ||
+                                snapshot.data != null) {
+                              return Expanded(
+                                  child: ListView.separated(
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder: (context, index) {
+                                  taskCount = snapshot.data!.docs.length;
+                                  DocumentSnapshot _data =
+                                      snapshot.data!.docs[index];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder:
+                                                  (context) => ProjectDetail(
+                                                        projectDet: Project(
+                                                            projectid: _data[
+                                                                'projectid'],
+                                                            title:
+                                                                _data['title'],
+                                                            deadline: getDate(
+                                                                _data[
+                                                                    'deadline']),
+                                                            desc: _data['desc'],
+                                                            isdone:
+                                                                _data['isdone'],
+                                                            reminder: _data[
+                                                                'reminder']),
+                                                      )));
+                                    },
+                                    child: Container(
+                                      // constraints: BoxConstraints(maxWidth: 270),
+                                      padding: const EdgeInsets.all(15),
+                                      decoration: const BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment(1, -1),
+                                              end: Alignment(0, 0),
+                                              colors: [
+                                                Color.fromARGB(
+                                                    255, 250, 153, 85),
+                                                Color.fromARGB(
+                                                    255, 255, 255, 255)
+                                              ]),
+                                          boxShadow: <BoxShadow>[
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 10,
+                                            )
+                                          ],
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(7))),
+                                      child: Column(children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              _data['title'],
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Icon(Icons.more_horiz),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text("Progress",
+                                                style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: Color.fromARGB(
+                                                        255, 28, 84, 157))),
+                                            const Text("82%",
+                                                style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: Color.fromARGB(
+                                                        255, 28, 84, 157)))
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        LinearPercentIndicator(
+                                          padding: const EdgeInsets.all(0),
+                                          lineHeight: 7,
+                                          percent: 0.63,
+                                          progressColor: const Color.fromARGB(
+                                              255, 28, 84, 157),
+                                          backgroundColor:
+                                              const Color.fromARGB(40, 0, 0, 0),
+                                          // linearStrokeCap: LinearStrokeCap.roundAll,
+                                          barRadius: const Radius.circular(16),
+                                        ),
+                                        const SizedBox(
+                                          height: 16,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                "Due " +
+                                                    getDateText(
+                                                        _data['deadline']),
+                                                style: const TextStyle(
+                                                    fontSize: 14)),
+                                            const Text("7 days left",
+                                                style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: Color.fromARGB(
+                                                        200, 0, 0, 0)))
+                                          ],
+                                        ),
+                                      ]),
+                                    ),
+                                  );
+                                },
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 20.0),
+                              ));
+                            }
+                            return const Center(
+                              child: Text(
+                                'No preview available',
+                                style:
+                                    TextStyle(fontSize: 18, color: Colors.grey),
+                              ),
+                            );
+                          },
+                        )),
                 Text("hi1"),
                 Text("hi2"),
               ]),

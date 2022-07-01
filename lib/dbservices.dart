@@ -211,8 +211,6 @@ class UserService {
           .doc(user!.uid)
           .collection("myProjects")
           .where("isdone", isEqualTo: true)
-          .where("deadline", isGreaterThanOrEqualTo: firstDayOfWeek)
-          .where("deadline", isLessThanOrEqualTo: lastDayOfWeek)
           .get();
       return projectsDone.docs.length;
     } catch (e) {
@@ -232,11 +230,42 @@ class UserService {
           .doc(user!.uid)
           .collection("myProjects")
           .where("isdone", isEqualTo: false)
-          .where("deadline", isGreaterThanOrEqualTo: firstDayOfWeek)
-          .where("deadline", isLessThanOrEqualTo: lastDayOfWeek)
           .get();
 
       return projectsUndone.docs.length;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  static Future<int> getProjectProgress(String projectid) async {
+    var user = _auth.currentUser;
+    try {
+      QuerySnapshot undoneTasks = await cloud_firestore
+          .FirebaseFirestore.instance
+          .collection("tblProject")
+          .doc(user!.uid)
+          .collection("myProjects")
+          .doc(projectid)
+          .collection("tasks")
+          .where("isdone", isEqualTo: false)
+          .get();
+
+      int undoneTasksCount = undoneTasks.docs.length;
+
+      QuerySnapshot allTasks = await cloud_firestore.FirebaseFirestore.instance
+          .collection("tblProject")
+          .doc(user!.uid)
+          .collection("myProjects")
+          .doc(projectid)
+          .collection("tasks")
+          .get();
+
+      int allTasksCount = allTasks.docs.length;
+
+      int hasil = (undoneTasksCount / allTasksCount).round() * 100;
+
+      return hasil;
     } catch (e) {
       return 0;
     }
@@ -399,10 +428,26 @@ class ProjectService {
   }
 
   Stream<QuerySnapshot> getDataDone(String _uid, String judul) {
-    final CollectionReference _taskCollection = FirebaseFirestore.instance
+    final _taskCollection = FirebaseFirestore.instance
         .collection('tblProject')
         .doc(_uid)
-        .collection('myProjects');
+        .collection('myProjects')
+        .where('isdone', isEqualTo: true);
+
+    if (judul == "")
+      return _taskCollection.snapshots();
+    else
+      return _taskCollection
+          .orderBy("title")
+          .startAt([judul]).endAt([judul + '\uf8ff']).snapshots();
+  }
+
+  Stream<QuerySnapshot> getDataUndone(String _uid, String judul) {
+    final _taskCollection = FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(_uid)
+        .collection('myProjects')
+        .where('isdone', isEqualTo: true);
 
     if (judul == "")
       return _taskCollection.snapshots();
