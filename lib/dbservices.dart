@@ -573,6 +573,58 @@ class TaskforProjectServices {
     return _progress;
   }
 
+  static Future<int> getProgressSingle(String projectId) async {
+    var _user = firebase_auth.FirebaseAuth.instance.currentUser;
+
+    List<dataclass.TaskforProject> _tasks = await cloud_firestore
+        .FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(_user!.uid)
+        .collection('myProjects')
+        .doc(projectId)
+        .collection('tasks')
+        .get()
+        .then((value) => value.docs
+            .map((doc) => dataclass.TaskforProject.fromJson(doc.data()))
+            .toList());
+
+    int progress = 0;
+    int total = 0;
+    for (TaskforProject task in _tasks) {
+      if (task.isdone) {
+        progress++;
+      }
+      total++;
+    }
+    if (progress == total) {
+      await cloud_firestore.FirebaseFirestore.instance
+          .collection('tblProject')
+          .doc(_user.uid)
+          .collection('myProjects')
+          .doc(projectId)
+          .update({'isdone': true});
+    }
+    try {
+      return (progress / total * 100).round();
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  static Future<int> getPendingTask(String projectId) async {
+    var _user = firebase_auth.FirebaseAuth.instance.currentUser;
+    QuerySnapshot undoneTasks = await FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(_user!.uid)
+        .collection('myProjects')
+        .doc(projectId)
+        .collection('tasks')
+        .where('isdone', isEqualTo: false)
+        .get();
+
+    return undoneTasks.docs.length;
+  }
+
   bool toggleTodoStatus(
       String uid, String projectid, dataclass.TaskforProject item) {
     item.isdone = !item.isdone;

@@ -136,8 +136,8 @@ class _HomePageState extends State<HomePage> {
                             Row(
                               children: [
                                 Text(
-                                  'Hello, ${user.fullname}',
-                                  style: TextStyle(
+                                  'Hello, ${user.firstName}',
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
                                 ),
@@ -165,14 +165,14 @@ class _HomePageState extends State<HomePage> {
                                       taskCount = snapshot.data!.docs.length;
 
                                       if (taskCount == 1) {
-                                        Text(
+                                        return Text(
                                             '${taskCount.toString()} task is waiting for you today');
                                       } else {
-                                        Text(
+                                        return Text(
                                             '${taskCount.toString()} tasks are waiting for you today');
                                       }
                                     }
-                                    return Text('0 task for today!');
+                                    return const Text('0 task for today!');
                                   },
                                 )
                               ],

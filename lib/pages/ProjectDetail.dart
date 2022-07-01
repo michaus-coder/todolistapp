@@ -18,6 +18,7 @@ class ProjectDetail extends StatefulWidget {
 class _ProjectDetailState extends State<ProjectDetail> {
   late String uid;
   late int pendingTaskCount = 0;
+  late int progress = 0;
 
   String getDateText(DateTime dt) {
     DateFormat formatter = DateFormat('d MMMM y');
@@ -26,8 +27,9 @@ class _ProjectDetailState extends State<ProjectDetail> {
   }
 
   void getPendingTaskCount() async {
-    pendingTaskCount = await TaskforProjectServices.countPendingTask(
-        uid, widget.projectDet.projectid);
+    pendingTaskCount = await TaskforProjectServices.getPendingTask(
+        widget.projectDet.projectid);
+    setState(() {});
   }
 
   Future showConfirmDialog(String uid, String idDel, String titleDel) =>
@@ -65,8 +67,9 @@ class _ProjectDetailState extends State<ProjectDetail> {
 
     if (user != null) {
       uid = user.uid;
-      getPendingTaskCount();
     }
+    getPendingTaskCount();
+    getProgress();
   }
 
   @override
@@ -111,7 +114,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                           ),
                           SizedBox(height: 15),
                           Text(
-                            "In progress",
+                            widget.projectDet.isdone ? "Done" : "In progress",
                             style: TextStyle(fontSize: 18, color: Colors.black),
                           ),
                         ],
@@ -119,13 +122,13 @@ class _ProjectDetailState extends State<ProjectDetail> {
                       CircularPercentIndicator(
                         radius: 42,
                         lineWidth: 12,
-                        percent: 0.36,
+                        percent: progress / 100,
                         progressColor: Color(0xFFFF5C00),
                         backgroundColor: Color(0xFFBEC5CC),
                         circularStrokeCap: CircularStrokeCap.round,
-                        center: const Text(
-                          '36%',
-                          style: TextStyle(
+                        center: Text(
+                          '$progress%',
+                          style: const TextStyle(
                               fontSize: 17,
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
@@ -327,16 +330,18 @@ class _ProjectDetailState extends State<ProjectDetail> {
                                             final isdone =
                                                 TaskforProjectServices()
                                                     .toggleTodoStatus(
-                                                        uid,
-                                                        widget.projectDet
-                                                            .projectid,
-                                                        TaskforProject(
-                                                            taskid:
-                                                                _data['taskid'],
-                                                            title:
-                                                                _data['title'],
-                                                            isdone: _data[
-                                                                'isdone']));
+                                              uid,
+                                              widget.projectDet.projectid,
+                                              TaskforProject(
+                                                taskid: _data['taskid'],
+                                                title: _data['title'],
+                                                isdone: _data['isdone'],
+                                              ),
+                                            );
+                                            setState(() {
+                                              getPendingTaskCount();
+                                              getProgress();
+                                            });
                                           }),
                                       const SizedBox(
                                         width: 15,
@@ -482,5 +487,13 @@ class _ProjectDetailState extends State<ProjectDetail> {
             ),
           ),
         ));
+  }
+
+  void getProgress() async {
+    progress = await TaskforProjectServices.getProgressSingle(
+        widget.projectDet.projectid);
+    setState(() {
+      print(progress);
+    });
   }
 }
