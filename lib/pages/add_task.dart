@@ -393,11 +393,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     }
                   },
                   child: Text('SAVE'),
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ))),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue.shade900,
+                    shadowColor: Colors.black,
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
                 )
               ]),
             ),

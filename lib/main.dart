@@ -66,7 +66,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "NULI - Productive App",
       debugShowCheckedModeBanner: false,
-      initialRoute: '/notif_testing',
+      initialRoute: '/login',
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/welcome': (context) => const WelcomeScreen(),

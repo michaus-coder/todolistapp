@@ -27,6 +27,9 @@ class _AllProjectsPageState extends State<AllProjectsPage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(
+              height: 30,
+            ),
             const Text(
               'Projects',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),

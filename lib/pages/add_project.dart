@@ -23,11 +23,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
   TextEditingController _projectTitleCtrl = TextEditingController();
   TextEditingController _projectDescCtrl = TextEditingController();
 
-  String reminderChosen = "1 hour before";
+  String reminderChosen = "1 day before";
   List listReminderOption = [
-    "5 mins before",
-    "15 mins before",
-    "1 hour before",
     "1 day before",
     "No Reminder"
   ];
