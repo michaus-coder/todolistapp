@@ -6,8 +6,9 @@ import 'package:nuli/dataclass.dart' as dataclass;
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart' as cloud_firestore;
 import 'package:nuli/pages/profile.dart';
-
 import 'dataclass.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:uuid/uuid.dart';
 
 class UserService {
   static final cloud_firestore.CollectionReference _userCollection =
@@ -302,12 +303,16 @@ class TaskService {
         .set(item.toJson())
         .whenComplete(() => print("Data berhasil ditambahkan"))
         .catchError((e) => print(e));
+
+    NotificationServices.checkTasks(
+        notifId: (item.date_time.microsecondsSinceEpoch ~/ 1000000));
   }
 
   bool toggleTodoStatus(String uid, dataclass.Task item) {
     item.isdone = !item.isdone;
     TaskService.editData(uid, item);
-
+    NotificationServices.checkTasks(
+        notifId: (item.date_time.microsecondsSinceEpoch ~/ 1000000));
     return item.isdone;
   }
 
@@ -323,6 +328,9 @@ class TaskService {
         .update(item.toJson())
         .whenComplete(() => print("Data berhasil diubah"))
         .catchError((e) => print(e));
+
+    NotificationServices.checkTasks(
+        notifId: (item.date_time.microsecondsSinceEpoch ~/ 1000000));
   }
 
   static Future<void> deleteData(String uid, String taskid) async {
@@ -332,6 +340,10 @@ class TaskService {
         .collection('myTasks');
 
     DocumentReference docRef = _taskCollection.doc(taskid);
+    dataclass.Task task = await docRef.get().then((value) =>
+        dataclass.Task.fromJson(value.data() as Map<String, dynamic>));
+    NotificationServices.checkTasks(
+        notifId: (task.date_time.microsecondsSinceEpoch ~/ 1000000));
 
     await docRef
         .delete()
@@ -398,6 +410,9 @@ class ProjectService {
         .set(item.toJson())
         .whenComplete(() => print("Data berhasil ditambahkan"))
         .catchError((e) => print(e));
+
+    NotificationServices.checkProjects(
+        notifId: item.deadline.microsecondsSinceEpoch ~/ 10000000);
   }
 
   static Future<void> editData(String uid, dataclass.Project item) async {
@@ -412,6 +427,9 @@ class ProjectService {
         .update(item.toJson())
         .whenComplete(() => print("Data berhasil diubah"))
         .catchError((e) => print(e));
+
+    NotificationServices.checkProjects(
+        notifId: item.deadline.microsecondsSinceEpoch ~/ 10000000);
   }
 
   static Future<void> deleteData(String uid, String projectid) async {
@@ -421,6 +439,10 @@ class ProjectService {
         .collection('myProjects');
 
     DocumentReference docRef = _taskCollection.doc(projectid);
+    dataclass.Project item = await docRef.get().then((value) =>
+        dataclass.Project.fromJson(value.data() as Map<String, dynamic>));
+    NotificationServices.checkProjects(
+        notifId: item.deadline.microsecondsSinceEpoch ~/ 10000000);
 
     await docRef
         .delete()
@@ -558,5 +580,179 @@ class TaskforProjectServices {
 
     Future<int> undone = undoneTasks.snapshots().length;
     return undone;
+  }
+}
+
+class NotificationServices {
+  static Future<void> checkTasks({int notifId = 0}) async {
+    AwesomeNotifications().cancel(notifId);
+    var now = DateTime.now();
+    var day = DateTime(now.year, now.month, now.day);
+    var user = firebase_auth.FirebaseAuth.instance.currentUser;
+    try {
+      List<dataclass.Task> tasksUndone = await cloud_firestore
+          .FirebaseFirestore.instance
+          .collection("tblTask")
+          .doc(user!.uid)
+          .collection("myTasks")
+          .where("isdone", isEqualTo: false)
+          .where("date_time", isGreaterThanOrEqualTo: day)
+          .where("date_time", isLessThan: day.add(const Duration(days: 2)))
+          .get()
+          .then((value) => value.docs
+              .map(
+                (doc) => dataclass.Task(
+                  date_time: doc.data()['date_time'].toDate(),
+                  isdone: doc.data()['isdone'],
+                  title: doc.data()['title'],
+                  taskid: doc.data()['taskid'],
+                  desc: doc.data()['desc'],
+                  reminder: doc.data()['reminder'],
+                ),
+              )
+              .toList());
+      for (var task in tasksUndone) {
+        var taskDate = task.date_time;
+        bool noReminder = false;
+        var reminder = taskDate;
+        switch (task.reminder) {
+          case "5 mins before":
+            reminder = taskDate.subtract(const Duration(minutes: 5));
+            break;
+          case "15 mins before":
+            reminder = taskDate.subtract(const Duration(minutes: 15));
+            break;
+          case "1 hour before":
+            reminder = taskDate.subtract(const Duration(hours: 1));
+            break;
+          case "1 day before":
+            reminder = taskDate.subtract(const Duration(days: 1));
+            break;
+          case "No Reminder":
+            noReminder = true;
+            break;
+          default:
+        }
+
+        if (!noReminder) {
+          int diff = reminder.difference(DateTime.now()).inSeconds;
+          if (diff < 0) {
+            continue;
+          }
+          int secId = taskDate.microsecondsSinceEpoch ~/ 1000000;
+          String due = () {
+            if (taskDate.day == DateTime.now().day) {
+              return "Today";
+            } else if (taskDate.day == DateTime.now().day + 1) {
+              return "Tomorrow";
+            } else {
+              return taskDate.day.toString();
+            }
+          }();
+          AwesomeNotifications().createNotification(
+            content: NotificationContent(
+              id: secId,
+              channelKey: 'task_channel',
+              title: 'Task Reminder',
+              body:
+                  'Your task "${task.title}" is due at $due, ${taskDate.hour}:${taskDate.minute}',
+            ),
+            schedule: NotificationInterval(
+              interval: diff,
+              timeZone: 'Asia/Jakarta',
+              preciseAlarm: true,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      return;
+    }
+  }
+
+  static Future<void> checkProjects({int notifId = 0}) async {
+    AwesomeNotifications().cancel(notifId);
+    var now = DateTime.now();
+    var day = DateTime(now.year, now.month, now.day);
+    var user = firebase_auth.FirebaseAuth.instance.currentUser;
+    try {
+      List<dataclass.Project> projects = await cloud_firestore
+          .FirebaseFirestore.instance
+          .collection("tblProject")
+          .doc(user!.uid)
+          .collection("myProjects")
+          .where("isdone", isEqualTo: false)
+          .where("deadline", isGreaterThanOrEqualTo: day)
+          .where("deadline", isLessThan: day.add(const Duration(days: 2)))
+          .get()
+          .then((value) => value.docs
+              .map(
+                (doc) => dataclass.Project(
+                  deadline: doc.data()['date_time'].toDate(),
+                  isdone: doc.data()['isdone'],
+                  title: doc.data()['title'],
+                  projectid: doc.data()['taskid'],
+                  desc: doc.data()['desc'],
+                  reminder: doc.data()['reminder'],
+                ),
+              )
+              .toList());
+      for (var project in projects) {
+        var projectDate = project.deadline;
+        bool noReminder = false;
+        var reminder = projectDate;
+        switch (project.reminder) {
+          case "5 mins before":
+            reminder = projectDate.subtract(const Duration(minutes: 5));
+            break;
+          case "15 mins before":
+            reminder = projectDate.subtract(const Duration(minutes: 15));
+            break;
+          case "1 hour before":
+            reminder = projectDate.subtract(const Duration(hours: 1));
+            break;
+          case "1 day before":
+            reminder = projectDate.subtract(const Duration(days: 1));
+            break;
+          case "No Reminder":
+            noReminder = true;
+            break;
+          default:
+        }
+
+        if (!noReminder) {
+          int diff = reminder.difference(DateTime.now()).inSeconds;
+          if (diff < 0) {
+            continue;
+          }
+          int secId = projectDate.microsecondsSinceEpoch ~/ 10000000;
+          String due = () {
+            if (projectDate.day == DateTime.now().day) {
+              return "Today";
+            } else if (projectDate.day == DateTime.now().day + 1) {
+              return "Tomorrow";
+            } else {
+              return projectDate.day.toString();
+            }
+          }();
+          AwesomeNotifications().createNotification(
+            content: NotificationContent(
+              id: secId,
+              channelKey: 'project_channel',
+              title: 'Project Reminder',
+              body:
+                  'Your project "${project.title}" is due at $due, ${projectDate.hour}:${projectDate.minute}',
+            ),
+            schedule: NotificationInterval(
+              interval: diff,
+              timeZone: 'Asia/Jakarta',
+              preciseAlarm: true,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      return;
+    }
   }
 }

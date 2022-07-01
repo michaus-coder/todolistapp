@@ -43,6 +43,7 @@ dependencies:
   intl: ^0.17.0
   percent_indicator: ^4.2.2
   syncfusion_flutter_charts: ^20.1.61
+  uuid: ^3.0.6
 
 dev_dependencies:
   flutter_lints: ^1.0.0

@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:nuli/dbservices.dart';
 import 'package:nuli/pages/NotificationPage.dart';
 import 'package:nuli/pages/ProjectDetail.dart';
 import 'package:nuli/pages/SplashScreen.dart';
@@ -9,7 +10,6 @@ import 'package:nuli/pages/SignUpScreen.dart';
 import 'package:nuli/pages/WelcomeScreen.dart';
 import 'package:nuli/pages/LoginScreen.dart';
 import 'package:nuli/pages/add_project.dart';
-
 import 'package:nuli/pages/add_task.dart';
 import 'package:nuli/pages/home.dart';
 import 'package:nuli/pages/tabbarview.dart';
@@ -24,12 +24,21 @@ void main() async {
     null,
     [
       NotificationChannel(
-          channelGroupKey: 'basic_channel_group',
-          channelKey: 'basic_channel',
-          channelName: 'Basic notifications',
-          channelDescription: 'Notification channel for basic tests',
-          defaultColor: Color(0xFF9D50DD),
-          ledColor: Colors.white)
+        channelGroupKey: 'task_channel_group',
+        channelKey: 'task_channel',
+        channelName: 'Task notifications',
+        channelDescription: 'Notification Channel to check tasks',
+        defaultColor: const Color(0xFF9D50DD),
+        ledColor: Colors.white,
+      ),
+      NotificationChannel(
+        channelGroupKey: 'project_channel_group',
+        channelKey: 'project_channel',
+        channelName: 'Project notifications',
+        channelDescription: 'Notification Channel to check projects',
+        defaultColor: const Color(0xFF9D50DD),
+        ledColor: Colors.white,
+      ),
     ],
     // Channel groups are only visual and are not required
     channelGroups: [
@@ -39,7 +48,6 @@ void main() async {
     ],
     debug: true,
   );
-
   runApp(const MyApp());
 }
 
@@ -58,15 +66,16 @@ class _MyAppState extends State<MyApp> {
           .actionStream
           .listen((ReceivedNotification receivedNotification) {
         Navigator.of(context)
-            .pushNamed('/NotificationPage', arguments: receivedNotification);
+            .pushNamed('/home', arguments: receivedNotification);
       });
     } catch (e) {
       print(e);
     }
+    checkNotification();
     return MaterialApp(
       title: "NULI - Productive App",
       debugShowCheckedModeBanner: false,
-      initialRoute: '/notif_testing',
+      initialRoute: '/login',
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/welcome': (context) => const WelcomeScreen(),
@@ -82,5 +91,10 @@ class _MyAppState extends State<MyApp> {
         '/notif_testing': (context) => const NotificationPage(),
       },
     );
+  }
+
+  void checkNotification() async {
+    await NotificationServices.checkTasks();
+    await NotificationServices.checkProjects();
   }
 }

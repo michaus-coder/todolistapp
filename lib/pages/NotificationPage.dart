@@ -69,8 +69,11 @@ class _NotificationPageState extends State<NotificationPage> {
                           channelKey: 'basic_channel',
                           title: 'Simple Notification',
                           body: 'Simple body'),
+                      schedule: NotificationInterval(
+                          interval: 10,
+                          timeZone: 'Asia/Jakarta',
+                          preciseAlarm: true),
                     );
-                    Navigator.of(context).pushNamed('/profile');
                   },
                   child: Text("Notification Test Button"));
             })
