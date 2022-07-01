@@ -14,11 +14,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   late bool _passwordVisible;
+  var isLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
     _passwordVisible = false;
+    isLoggedIn = UserService.isLoggedIn();
   }
 
   @override

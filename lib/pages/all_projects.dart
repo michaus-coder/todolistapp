@@ -10,14 +10,14 @@ import '../dataclass.dart';
 import '../dbservices.dart';
 import 'ProjectDetail.dart';
 
-class AllProjectsPage extends StatefulWidget {
-  const AllProjectsPage({Key? key}) : super(key: key);
+class AllProjectPage extends StatefulWidget {
+  const AllProjectPage({Key? key}) : super(key: key);
 
   @override
-  State<AllProjectsPage> createState() => _AllProjectsPageState();
+  State<AllProjectPage> createState() => _AllProjectPageState();
 }
 
-class _AllProjectsPageState extends State<AllProjectsPage>
+class _AllProjectPageState extends State<AllProjectPage>
     with SingleTickerProviderStateMixin {
   late String uid;
   int taskCount = 0;
@@ -70,38 +70,6 @@ class _AllProjectsPageState extends State<AllProjectsPage>
               height: 30,
             ),
             Container(
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: TabBar(
-                  controller: _tabController,
-                  labelColor: const Color.fromARGB(255, 28, 84, 157),
-                  unselectedLabelColor: Colors.blueGrey,
-                  labelPadding: const EdgeInsets.only(left: 20, right: 20),
-                  isScrollable: true,
-                  indicator: CircularTabIndicator(
-                      color: Color.fromARGB(255, 28, 84, 157), radius: 4),
-                  tabs: const [
-                    Tab(
-                      text: "On going",
-                    ),
-                    Tab(
-                      text: "Done",
-                    ),
-                    Tab(
-                      text: "All",
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              width: double.maxFinite,
-              height: 300,
-              child: TabBarView(
-                  controller: _tabController,
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    Container(
                         padding: const EdgeInsets.all(5),
                         child: StreamBuilder<QuerySnapshot>(
                           stream: ProjectService().getData(uid, ""),
@@ -135,25 +103,29 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ProjectDetail(
-                                                    projectDet: Project(
-                                                        projectid:
-                                                            _data['projectid'],
-                                                        title: _data['title'],
-                                                        deadline: getDate(
-                                                            _data['deadline']),
-                                                        desc: _data['desc'],
-                                                        isdone: _data['isdone'],
-                                                        reminder:
-                                                            _data['reminder']),
-                                                  ))).then((value) {
+                                              builder:
+                                                  (context) => ProjectDetail(
+                                                        projectDet: Project(
+                                                            projectid: _data[
+                                                                'projectid'],
+                                                            title:
+                                                                _data['title'],
+                                                            deadline: getDate(
+                                                                _data[
+                                                                    'deadline']),
+                                                            desc: _data['desc'],
+                                                            isdone:
+                                                                _data['isdone'],
+                                                            reminder: _data[
+                                                                'reminder']),
+                                                      ))).then((value) {
                                         setState(() {
                                           getProgressForProjectTask();
                                         });
                                       });
                                     },
                                     child: Container(
+                                      // constraints: BoxConstraints(maxWidth: 270),
                                       padding: const EdgeInsets.all(15),
                                       decoration: const BoxDecoration(
                                           gradient: LinearGradient(
@@ -194,32 +166,32 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            const Text("Progress",
-                                                style: TextStyle(
-                                                    fontSize: 10,
-                                                    color: Color.fromARGB(
-                                                        255, 28, 84, 157))),
-                                            Text("${_progressList[index]}%",
-                                                style: const TextStyle(
-                                                    fontSize: 10,
-                                                    color: Color.fromARGB(
-                                                        255, 28, 84, 157)))
+                                            // const Text("Progress",
+                                            //     style: TextStyle(
+                                            //         fontSize: 10,
+                                            //         color: Color.fromARGB(
+                                            //             255, 28, 84, 157))),
+                                            // Text("${_progressList[index]}%",
+                                            //     style: const TextStyle(
+                                            //         fontSize: 10,
+                                            //         color: Color.fromARGB(
+                                            //             255, 28, 84, 157)))
                                           ],
                                         ),
                                         const SizedBox(
                                           height: 12,
                                         ),
-                                        LinearPercentIndicator(
-                                          padding: const EdgeInsets.all(0),
-                                          lineHeight: 7,
-                                          percent: _progressList[index] / 100,
-                                          progressColor: const Color.fromARGB(
-                                              255, 28, 84, 157),
-                                          backgroundColor:
-                                              const Color.fromARGB(40, 0, 0, 0),
-                                          // linearStrokeCap: LinearStrokeCap.roundAll,
-                                          barRadius: const Radius.circular(16),
-                                        ),
+                                        // LinearPercentIndicator(
+                                        //   padding: const EdgeInsets.all(0),
+                                        //   lineHeight: 7,
+                                        //   percent: _progressList[index] / 100,
+                                        //   progressColor: const Color.fromARGB(
+                                        //       255, 28, 84, 157),
+                                        //   backgroundColor:
+                                        //       const Color.fromARGB(40, 0, 0, 0),
+                                        //   // linearStrokeCap: LinearStrokeCap.roundAll,
+                                        //   barRadius: const Radius.circular(16),
+                                        // ),
                                         const SizedBox(
                                           height: 16,
                                         ),
@@ -235,7 +207,7 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                                     fontSize: 14)),
                                             Text(projectDeadlineStr,
                                                 style: const TextStyle(
-                                                    fontSize: 10,
+                                                    fontSize: 14,
                                                     color: Color.fromARGB(
                                                         200, 0, 0, 0)))
                                           ],
@@ -247,9 +219,6 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                 separatorBuilder: (context, index) =>
                                     const SizedBox(height: 20.0),
                               ));
-                            } else if (snapshot.data == null ||
-                                !snapshot.hasData) {
-                              return Text('No data available');
                             }
                             return const Center(
                               child: Text(
@@ -260,10 +229,6 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                             );
                           },
                         )),
-                    Text("hi1"),
-                    Text("hi2"),
-                  ]),
-            )
           ],
         ),
       ),

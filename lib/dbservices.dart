@@ -105,8 +105,6 @@ class UserService {
   }
 
   static Future<dynamic> getUserFromFirestore() async {
-    await _auth.signInWithEmailAndPassword(
-        email: "test@gmail.com", password: "test123");
     firebase_auth.User? user = _auth.currentUser;
     cloud_firestore.DocumentReference userRef = _userCollection.doc(user!.uid);
     User userData = await userRef
@@ -169,8 +167,6 @@ class UserService {
           .doc(user!.uid)
           .collection("myTasks")
           .where("isdone", isEqualTo: true)
-          .where("date_time", isGreaterThanOrEqualTo: firstDayOfWeek)
-          .where("date_time", isLessThanOrEqualTo: lastDayOfWeek)
           .get();
       return tasksDone.docs.length;
     } catch (e) {
@@ -190,8 +186,6 @@ class UserService {
           .doc(user!.uid)
           .collection("myTasks")
           .where("isdone", isEqualTo: false)
-          .where("date_time", isGreaterThanOrEqualTo: firstDayOfWeek)
-          .where("date_time", isLessThanOrEqualTo: lastDayOfWeek)
           .get();
       return tasksUndone.docs.length;
     } catch (e) {
@@ -200,9 +194,9 @@ class UserService {
   }
 
   static Future<int> getProjectDoneCount() async {
-    var firstDayOfWeek =
-        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
-    var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
+    // var firstDayOfWeek =
+    //     DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    // var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
     var user = _auth.currentUser;
     try {
       QuerySnapshot projectsDone = await cloud_firestore
@@ -219,9 +213,9 @@ class UserService {
   }
 
   static Future<int> getProjectPendingCount() async {
-    var firstDayOfWeek =
-        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
-    var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
+    // var firstDayOfWeek =
+    //     DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    // var lastDayOfWeek = firstDayOfWeek.add(const Duration(days: 6));
     var user = _auth.currentUser;
     try {
       QuerySnapshot projectsUndone = await cloud_firestore
@@ -234,6 +228,7 @@ class UserService {
 
       return projectsUndone.docs.length;
     } catch (e) {
+      print(e);
       return 0;
     }
   }
@@ -447,7 +442,7 @@ class ProjectService {
         .collection('tblProject')
         .doc(_uid)
         .collection('myProjects')
-        .where('isdone', isEqualTo: true);
+        .where('isdone', isEqualTo: false);
 
     if (judul == "")
       return _taskCollection.snapshots();
@@ -560,6 +555,127 @@ class TaskforProjectServices {
         .set(item.toJson())
         .whenComplete(() => print("Data berhasil ditambahkan"))
         .catchError((e) => print(e));
+  }
+
+  static Future<List<int>> getProgress() async {
+    // await firebase_auth.FirebaseAuth.instance.signInWithEmailAndPassword(
+    //     email: 'jennangelina09@gmail.com', password: 'jennifer');
+    var _user = firebase_auth.FirebaseAuth.instance.currentUser;
+
+    List<int> _progress = [];
+
+    try {
+      List<dataclass.Project> _projects = await cloud_firestore
+          .FirebaseFirestore.instance
+          .collection('tblProject')
+          .doc(_user!.uid)
+          .collection('myProjects')
+          .get()
+          .then((value) => value.docs
+              .map(
+                (doc) => dataclass.Project(
+                  projectid: doc.id,
+                  title: doc.data()['title'] as String,
+                  desc: doc.data()['desc'] as String,
+                  deadline: doc.data()['deadline'].toDate(),
+                  isdone: doc.data()['isdone'] as bool,
+                  reminder: doc.data()['reminder'] as String,
+                ),
+              )
+              .toList());
+
+      for (dataclass.Project project in _projects) {
+        List<dataclass.TaskforProject> _tasks = await cloud_firestore
+            .FirebaseFirestore.instance
+            .collection('tblProject')
+            .doc(_user.uid)
+            .collection('myProjects')
+            .doc(project.projectid)
+            .collection('tasks')
+            .get()
+            .then((value) => value.docs
+                .map((doc) => dataclass.TaskforProject.fromJson(doc.data()))
+                .toList());
+
+        int progress = 0;
+        int total = 0;
+        for (TaskforProject task in _tasks) {
+          if (task.isdone) {
+            progress++;
+          }
+          total++;
+        }
+        if (progress == total) {
+          await cloud_firestore.FirebaseFirestore.instance
+              .collection('tblProject')
+              .doc(_user.uid)
+              .collection('myProjects')
+              .doc(project.projectid)
+              .update({'isdone': true});
+        }
+        try {
+          _progress.add((progress / total * 100).round());
+        } catch (e) {
+          _progress.add(0);
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    return _progress;
+  }
+
+  static Future<int> getProgressSingle(String projectId) async {
+    var _user = firebase_auth.FirebaseAuth.instance.currentUser;
+
+    List<dataclass.TaskforProject> _tasks = await cloud_firestore
+        .FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(_user!.uid)
+        .collection('myProjects')
+        .doc(projectId)
+        .collection('tasks')
+        .get()
+        .then((value) => value.docs
+            .map((doc) => dataclass.TaskforProject.fromJson(doc.data()))
+            .toList());
+
+    int progress = 0;
+    int total = 0;
+    for (TaskforProject task in _tasks) {
+      if (task.isdone) {
+        progress++;
+      }
+      total++;
+    }
+    if (progress == total) {
+      await cloud_firestore.FirebaseFirestore.instance
+          .collection('tblProject')
+          .doc(_user.uid)
+          .collection('myProjects')
+          .doc(projectId)
+          .update({'isdone': true});
+    }
+    try {
+      return (progress / total * 100).round();
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  static Future<int> getPendingTask(String projectId) async {
+    var _user = firebase_auth.FirebaseAuth.instance.currentUser;
+    QuerySnapshot undoneTasks = await FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(_user!.uid)
+        .collection('myProjects')
+        .doc(projectId)
+        .collection('tasks')
+        .where('isdone', isEqualTo: false)
+        .get();
+
+    return undoneTasks.docs.length;
   }
 
   bool toggleTodoStatus(

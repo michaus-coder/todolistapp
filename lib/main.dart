@@ -11,6 +11,7 @@ import 'package:nuli/pages/WelcomeScreen.dart';
 import 'package:nuli/pages/LoginScreen.dart';
 import 'package:nuli/pages/add_project.dart';
 import 'package:nuli/pages/add_task.dart';
+import 'package:nuli/pages/all_projects.dart';
 import 'package:nuli/pages/home.dart';
 import 'package:nuli/pages/tabbarview.dart';
 import 'package:nuli/pages/profile.dart';
@@ -89,6 +90,7 @@ class _MyAppState extends State<MyApp> {
         '/add_task': (context) => const AddTaskPage(),
         '/add_project': (context) => const AddProjectPage(),
         '/notif_testing': (context) => const NotificationPage(),
+        '/allprojects': (context) => const AllProjectPage(),
       },
     );
   }

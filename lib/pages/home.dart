@@ -10,6 +10,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../dbservices.dart';
 import 'all_project.dart';
+import 'all_projects.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -28,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   int _taskPendingCount = 0;
   int _projectDoneCount = 0;
   int _projectPendingCount = 0;
+  late List<int> _progressList = [];
 
   // String progressMsg(int progressPercentage) {
   //   if (progressPercentage < 50) {
@@ -100,15 +102,14 @@ class _HomePageState extends State<HomePage> {
     if (curUser != null) {
       uid = curUser.uid;
     }
+    getProgressForProjectTask();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _progressController
-          ? Center(
-              child: Image.asset('assets/nuli/images/nuli-logo.png'),
-            )
+          ? const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),))
           : SingleChildScrollView(
               child: Container(
                 color: Color.fromARGB(255, 246, 250, 253),
@@ -134,8 +135,8 @@ class _HomePageState extends State<HomePage> {
                             Row(
                               children: [
                                 Text(
-                                  'Hello, ${user.fullname}',
-                                  style: TextStyle(
+                                  'Hello, ${user.firstName}',
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
                                 ),
@@ -163,14 +164,14 @@ class _HomePageState extends State<HomePage> {
                                       taskCount = snapshot.data!.docs.length;
 
                                       if (taskCount == 1) {
-                                        Text(
+                                        return Text(
                                             '${taskCount.toString()} task is waiting for you today');
                                       } else {
-                                        Text(
+                                        return Text(
                                             '${taskCount.toString()} tasks are waiting for you today');
                                       }
                                     }
-                                    return Text('0 task for today!');
+                                    return const Text('0 task for today!');
                                   },
                                 )
                               ],
@@ -182,41 +183,6 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(
                       height: 30,
                     ),
-                    // Container(
-                    //   // color: Color.fromRGBO(28, 84, 157, 255),
-                    //   padding: const EdgeInsets.all(20),
-                    //   decoration: BoxDecoration(
-                    //     color: const Color.fromARGB(255, 28, 84, 157),
-                    //     borderRadius: BorderRadius.circular(12),
-                    //   ),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //     children: [
-                    //       Flexible(
-                    //           child: Text(
-                    //         progressMsg(72),
-                    //         style: const TextStyle(
-                    //             color: Colors.white, fontSize: 18, height: 2),
-                    //       )),
-                    //       //circular progress
-                    //       CircularPercentIndicator(
-                    //         radius: 50,
-                    //         lineWidth: 12,
-                    //         percent: 0.72,
-                    //         progressColor: const Color.fromARGB(255, 250, 153, 85),
-                    //         backgroundColor: Colors.white,
-                    //         circularStrokeCap: CircularStrokeCap.round,
-                    //         center: const Text(
-                    //           '72%',
-                    //           style: TextStyle(fontSize: 20, color: Colors.white),
-                    //         ),
-                    //       )
-                    //     ],
-                    //   ),
-                    // ),
-                    // const SizedBox(
-                    //   height: 30,
-                    // ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -230,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => AllProjectsPage()));
+                                    builder: (context) => AllProjectPage()));
                           },
                           child: const Text("See all",
                               style: TextStyle(
@@ -249,7 +215,7 @@ class _HomePageState extends State<HomePage> {
                               return const Text('ERROR');
                             } else if (snapshot.hasData ||
                                 snapshot.data != null) {
-                              return Expanded(
+                              return Container(
                                   child: ListView.separated(
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
@@ -258,6 +224,17 @@ class _HomePageState extends State<HomePage> {
                                   taskCount = snapshot.data!.docs.length;
                                   DocumentSnapshot _data =
                                       snapshot.data!.docs[index];
+                                  DateTime projectDeadline =
+                                      _data['deadline'].toDate();
+                                  DateTime today = DateTime.now();
+                                  int daysLeft =
+                                      projectDeadline.difference(today).inDays;
+                                  String projectDeadlineStr =
+                                      "$daysLeft days left";
+                                  if (daysLeft < 0) {
+                                    projectDeadlineStr = "Overdue";
+                                  }
+
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -278,11 +255,15 @@ class _HomePageState extends State<HomePage> {
                                                                 _data['isdone'],
                                                             reminder: _data[
                                                                 'reminder']),
-                                                      )));
+                                                      ))).then((value) {
+                                        setState(() {
+                                          getProgressForProjectTask();
+                                        });
+                                      });
                                     },
                                     child: Container(
                                       // constraints: BoxConstraints(maxWidth: 270),
-                                      padding: const EdgeInsets.all(15),
+                                      padding: const EdgeInsets.all(20),
                                       decoration: const BoxDecoration(
                                           gradient: LinearGradient(
                                               begin: Alignment(1, -1),
@@ -312,7 +293,6 @@ class _HomePageState extends State<HomePage> {
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                            Icon(Icons.more_horiz),
                                           ],
                                         ),
                                         const SizedBox(
@@ -327,8 +307,8 @@ class _HomePageState extends State<HomePage> {
                                                     fontSize: 10,
                                                     color: Color.fromARGB(
                                                         255, 28, 84, 157))),
-                                            const Text("82%",
-                                                style: TextStyle(
+                                            Text("${_progressList[index]}%",
+                                                style: const TextStyle(
                                                     fontSize: 10,
                                                     color: Color.fromARGB(
                                                         255, 28, 84, 157)))
@@ -340,7 +320,7 @@ class _HomePageState extends State<HomePage> {
                                         LinearPercentIndicator(
                                           padding: const EdgeInsets.all(0),
                                           lineHeight: 7,
-                                          percent: 0.63,
+                                          percent: _progressList[index] / 100,
                                           progressColor: const Color.fromARGB(
                                               255, 28, 84, 157),
                                           backgroundColor:
@@ -361,9 +341,9 @@ class _HomePageState extends State<HomePage> {
                                                         _data['deadline']),
                                                 style: const TextStyle(
                                                     fontSize: 14)),
-                                            const Text("7 days left",
-                                                style: TextStyle(
-                                                    fontSize: 10,
+                                            Text(projectDeadlineStr,
+                                                style: const TextStyle(
+                                                    fontSize: 12,
                                                     color: Color.fromARGB(
                                                         200, 0, 0, 0)))
                                           ],
@@ -420,7 +400,7 @@ class _HomePageState extends State<HomePage> {
                               return const Text('ERROR');
                             } else if (snapshot.hasData ||
                                 snapshot.data != null) {
-                              return Expanded(
+                              return Container(
                                 child: ListView.separated(
                                   scrollDirection: Axis.vertical,
                                   shrinkWrap: true,
@@ -594,6 +574,9 @@ class _HomePageState extends State<HomePage> {
                                       const SizedBox(height: 20.0),
                                 ),
                               );
+                            } else if (!snapshot.hasData ||
+                                snapshot.data == null) {
+                              return Text('No data');
                             }
                             return const Center(
                               child: Text(
@@ -620,5 +603,10 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _progressController = false;
     });
+  }
+
+  void getProgressForProjectTask() async {
+    _progressList = await TaskforProjectServices.getProgress();
+    setState(() {});
   }
 }
