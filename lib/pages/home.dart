@@ -372,17 +372,26 @@ class _HomePageState extends State<HomePage> {
                                           ],
                                         ),
                                         GestureDetector(
-                                          onTap: () {
-                                            
-                                          },
+
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: const [
-                                              Text('See pending tasks', style: TextStyle(fontSize: 15, color: Colors.grey),),
-                                              Icon(Icons.arrow_downward_rounded, size: 15, color: Colors.grey,)
+                                              Text(
+                                                'Pending tasks',
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: Colors.grey),
+                                              ),
+                                              Icon(
+                                                Icons.arrow_downward_rounded,
+                                                size: 15,
+                                                color: Colors.grey,
+                                              )
                                             ],
                                           ),
-                                        )
+                                        ),
+                                        
                                       ]),
                                     ),
                                   );
@@ -624,6 +633,8 @@ class _HomePageState extends State<HomePage> {
                             ));
                           },
                         )),
+                    Text("Pending Task for Project"),
+                    
                   ],
                 ),
               ),
