@@ -321,39 +321,39 @@ class _HomePageState extends State<HomePage> {
                                         const SizedBox(
                                           height: 28,
                                         ),
-                                        // Row(
-                                        //   mainAxisAlignment:
-                                        //       MainAxisAlignment.spaceBetween,
-                                        //   children: [
-                                        //     const Text("Progress",
-                                        //         style: TextStyle(
-                                        //             fontSize: 10,
-                                        //             color: Color.fromARGB(
-                                        //                 255, 28, 84, 157))),
-                                        //     Text("${_progressList[index]}%",
-                                        //         style: const TextStyle(
-                                        //             fontSize: 10,
-                                        //             color: Color.fromARGB(
-                                        //                 255, 28, 84, 157)))
-                                        //   ],
-                                        // ),
-                                        // const SizedBox(
-                                        //   height: 12,
-                                        // ),
-                                        // LinearPercentIndicator(
-                                        //   padding: const EdgeInsets.all(0),
-                                        //   lineHeight: 7,
-                                        //   percent: _progressList[index] / 100,
-                                        //   progressColor: const Color.fromARGB(
-                                        //       255, 28, 84, 157),
-                                        //   backgroundColor:
-                                        //       const Color.fromARGB(40, 0, 0, 0),
-                                        //   // linearStrokeCap: LinearStrokeCap.roundAll,
-                                        //   barRadius: const Radius.circular(16),
-                                        // ),
-                                        // const SizedBox(
-                                        //   height: 16,
-                                        // ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text("Progress",
+                                                style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: Color.fromARGB(
+                                                        255, 28, 84, 157))),
+                                            Text("${_progressList[index]}%",
+                                                style: const TextStyle(
+                                                    fontSize: 10,
+                                                    color: Color.fromARGB(
+                                                        255, 28, 84, 157)))
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        LinearPercentIndicator(
+                                          padding: const EdgeInsets.all(0),
+                                          lineHeight: 7,
+                                          percent: _progressList[index] / 100,
+                                          progressColor: const Color.fromARGB(
+                                              255, 28, 84, 157),
+                                          backgroundColor:
+                                              const Color.fromARGB(40, 0, 0, 0),
+                                          // linearStrokeCap: LinearStrokeCap.roundAll,
+                                          barRadius: const Radius.circular(16),
+                                        ),
+                                        const SizedBox(
+                                          height: 16,
+                                        ),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -519,8 +519,9 @@ class _HomePageState extends State<HomePage> {
                                           child: Row(
                                             children: [
                                               Checkbox(
-                                                  activeColor: const Color.fromARGB(
-                                                      255, 71, 221, 0),
+                                                  activeColor:
+                                                      const Color.fromARGB(
+                                                          255, 71, 221, 0),
                                                   checkColor: Colors.white,
                                                   shape: CircleBorder(),
                                                   value: _data['isdone'],
