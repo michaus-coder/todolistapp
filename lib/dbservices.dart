@@ -378,10 +378,13 @@ class TaskService {
         .collection('myTasks');
 
     DocumentReference docRef = _taskCollection.doc(taskid);
-    dataclass.Task task = await docRef.get().then((value) =>
-        dataclass.Task.fromJson(value.data() as Map<String, dynamic>));
-    NotificationServices.checkTasks(
-        notifId: (task.date_time.microsecondsSinceEpoch ~/ 1000000));
+    var docSnapshot = await docRef.get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+      NotificationServices.checkTasks(
+          notifId:
+              (data["date_time"].toDate().microsecondsSinceEpoch ~/ 1000000));
+    }
 
     await docRef
         .delete()
@@ -493,10 +496,13 @@ class ProjectService {
         .collection('myProjects');
 
     DocumentReference docRef = _taskCollection.doc(projectid);
-    dataclass.Project item = await docRef.get().then((value) =>
-        dataclass.Project.fromJson(value.data() as Map<String, dynamic>));
-    NotificationServices.checkProjects(
-        notifId: item.deadline.microsecondsSinceEpoch ~/ 10000000);
+    var docSnapshot = await docRef.get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+      NotificationServices.checkTasks(
+          notifId:
+              (data["deadline"].toDate().microsecondsSinceEpoch ~/ 1000000));
+    }
 
     await docRef
         .delete()

@@ -74,6 +74,7 @@ class _HomePageState extends State<HomePage> {
                       child: const Text('Cancel')),
                   TextButton(
                       onPressed: () {
+                        Navigator.of(context).pop();
                         ProjectService.deleteData(uid, idDel);
                       },
                       child: const Text(
@@ -100,6 +101,7 @@ class _HomePageState extends State<HomePage> {
                       child: const Text('Cancel')),
                   TextButton(
                       onPressed: () {
+                        Navigator.of(context).pop();
                         TaskService.deleteData(uid, idDel);
                       },
                       child: const Text(
