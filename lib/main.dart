@@ -65,7 +65,7 @@ class _MyAppState extends State<MyApp> {
           .actionStream
           .listen((ReceivedNotification receivedNotification) {
         Navigator.of(context)
-            .pushNamed('/home', arguments: receivedNotification);
+            .pushNamed('/tabbarview', arguments: receivedNotification);
       });
     } catch (e) {
       print(e);
