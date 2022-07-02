@@ -115,7 +115,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
                           const SizedBox(height: 15),
                           Text(
                             widget.projectDet.isdone ? "Done" : "In progress",
-                            style: const TextStyle(fontSize: 18, color: Colors.black),
+                            style: const TextStyle(
+                                fontSize: 18, color: Colors.black),
                           ),
                         ],
                       ),
@@ -338,7 +339,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                                                 isdone: _data['isdone'],
                                               ),
                                             );
-                                            setState(() {
+                                            setState(() async {
                                               getPendingTaskCount();
                                               getProgress();
                                             });
@@ -397,6 +398,11 @@ class _ProjectDetailState extends State<ProjectDetail> {
                                                                 _data['title'],
                                                             isdone: _data[
                                                                 'isdone']));
+
+                                            setState(() async {
+                                              getPendingTaskCount();
+                                              getProgress();
+                                            });
                                           }),
                                       const SizedBox(
                                         width: 15,
@@ -460,7 +466,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  margin: const   EdgeInsets.only(bottom: 20),
+                  margin: const EdgeInsets.only(bottom: 20),
                   child: ElevatedButton(
                     onPressed: () {
                       showConfirmDialog(uid, widget.projectDet.projectid,
