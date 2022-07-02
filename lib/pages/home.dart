@@ -31,14 +31,6 @@ class _HomePageState extends State<HomePage> {
   int _projectPendingCount = 0;
   List<int> _progressList = [0, 0, 0, 0, 0, 0, 0];
 
-  // String progressMsg(int progressPercentage) {
-  //   if (progressPercentage < 50) {
-  //     return 'Still a long way to go, you got this!';
-  //   } else {
-  //     return 'Great, your progress is almost done!';
-  //   }
-  // }
-
   String getDateText(Timestamp t) {
     DateTime dt = t.toDate();
     DateFormat formatter = DateFormat('d MMMM y');
@@ -83,6 +75,32 @@ class _HomePageState extends State<HomePage> {
                   TextButton(
                       onPressed: () {
                         ProjectService.deleteData(uid, idDel);
+                      },
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ))
+                ],
+              ));
+
+  Future showConfirmDialogTask(String uid, String idDel, String titleDel) =>
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                content: Text('Are you sure you want to delete ${titleDel}?',
+                    style: const TextStyle(
+                      fontSize: 17,
+                      height: 1.5,
+                    )),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancel')),
+                  TextButton(
+                      onPressed: () {
+                        TaskService.deleteData(uid, idDel);
                       },
                       child: const Text(
                         'Delete',
@@ -199,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => AllProjectPage()));
+                                    builder: (context) => AllProjectsPage()));
                           },
                           child: const Text("See all",
                               style: TextStyle(
@@ -212,7 +230,7 @@ class _HomePageState extends State<HomePage> {
                     Container(
                         padding: const EdgeInsets.all(5),
                         child: StreamBuilder<QuerySnapshot>(
-                          stream: ProjectService().getData(uid, ""),
+                          stream: ProjectService().getDataUndone(uid, ""),
                           builder: (context, snapshot) {
                             if (snapshot.hasError) {
                               return const Text('ERROR');
@@ -358,14 +376,16 @@ class _HomePageState extends State<HomePage> {
                                 separatorBuilder: (context, index) =>
                                     const SizedBox(height: 20.0),
                               ));
+                            } else if (!snapshot.hasData ||
+                                snapshot.data == null) {
+                              return const Text('You have no ongoing project',
+                                  style: TextStyle(color: Colors.grey));
                             }
                             return const Center(
-                              child: Text(
-                                'No preview available',
-                                style:
-                                    TextStyle(fontSize: 18, color: Colors.grey),
-                              ),
-                            );
+                                child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.grey),
+                            ));
                           },
                         )),
                     const SizedBox(
@@ -450,7 +470,7 @@ class _HomePageState extends State<HomePage> {
                                                       isdone: _data['isdone']));
                                           return false;
                                         } else {
-                                          showConfirmDialog(uid,
+                                          showConfirmDialogTask(uid,
                                               _data['taskid'], _data['title']);
                                           return false;
                                         }
@@ -579,15 +599,14 @@ class _HomePageState extends State<HomePage> {
                               );
                             } else if (!snapshot.hasData ||
                                 snapshot.data == null) {
-                              return Text('No data');
+                              return const Text('You have no task',
+                                  style: TextStyle(color: Colors.grey));
                             }
                             return const Center(
-                              child: Text(
-                                'No preview available',
-                                style:
-                                    TextStyle(fontSize: 18, color: Colors.grey),
-                              ),
-                            );
+                                child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.grey),
+                            ));
                           },
                         )),
                   ],

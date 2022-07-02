@@ -253,15 +253,14 @@ class _AllTaskPageState extends State<AllTaskPage> {
                       );
                     } else if (!snapshot.hasData || snapshot.data == null) {
                       return const Center(
-                        child: Text('No data available'),
+                        child: Text('You have no task'),
                       );
                     }
                     return const Center(
-                      child: Text(
-                        'No preview available',
-                        style: TextStyle(fontSize: 18, color: Colors.black),
-                      ),
-                    );
+                        child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                    ));
+                    ;
                   },
                 ),
               ),

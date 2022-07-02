@@ -451,14 +451,20 @@ class _EditProjectPageState extends State<EditProjectPage> {
                                         const EdgeInsets.fromLTRB(10, 0, 0, 0),
                                     alignment: Alignment.centerLeft,
                                     color: Colors.green,
-                                    child: const Text("Done", style: TextStyle(color:Colors.white),),
+                                    child: const Text(
+                                      "Done",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                   secondaryBackground: Container(
                                     padding:
                                         const EdgeInsets.fromLTRB(0, 0, 10, 0),
                                     alignment: Alignment.centerRight,
                                     color: Colors.red,
-                                    child: const Text("Delete", style: TextStyle(color:Colors.white),),
+                                    child: const Text(
+                                      "Delete",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                   confirmDismiss: (direction) async {
                                     if (direction ==
@@ -550,13 +556,16 @@ class _EditProjectPageState extends State<EditProjectPage> {
                                 );
                               }),
                         );
+                      } else if (!snapshot.hasData || snapshot.data == null) {
+                        return const Text(
+                          'No task',
+                          style: TextStyle(color: Colors.grey),
+                        );
                       }
                       return const Center(
-                        child: Text(
-                          'No preview available',
-                          style: TextStyle(fontSize: 18, color: Colors.grey),
-                        ),
-                      );
+                          child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                      ));
                     }),
                 const SizedBox(
                   height: 25,

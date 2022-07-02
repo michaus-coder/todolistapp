@@ -85,7 +85,7 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                       text: "On going",
                     ),
                     Tab(
-                      text: "Done",
+                      text: "Finished",
                     ),
                     Tab(
                       text: "All",
@@ -101,6 +101,324 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                   controller: _tabController,
                   physics: NeverScrollableScrollPhysics(),
                   children: [
+                    Container(
+                        padding: const EdgeInsets.all(5),
+                        child: StreamBuilder<QuerySnapshot>(
+                          stream: ProjectService().getDataUndone(uid, ""),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return const Text('ERROR');
+                            } else if (snapshot.hasData ||
+                                snapshot.data != null) {
+                              return Container(
+                                  child: ListView.separated(
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder: (context, index) {
+                                  taskCount = snapshot.data!.docs.length;
+                                  DocumentSnapshot _data =
+                                      snapshot.data!.docs[index];
+                                  DateTime projectDeadline =
+                                      _data['deadline'].toDate();
+                                  DateTime today = DateTime.now();
+                                  int daysLeft =
+                                      projectDeadline.difference(today).inDays;
+                                  String projectDeadlineStr =
+                                      "$daysLeft days left";
+                                  if (daysLeft < 0) {
+                                    projectDeadlineStr = "Overdue";
+                                  }
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProjectDetail(
+                                                    projectDet: Project(
+                                                        projectid:
+                                                            _data['projectid'],
+                                                        title: _data['title'],
+                                                        deadline: getDate(
+                                                            _data['deadline']),
+                                                        desc: _data['desc'],
+                                                        isdone: _data['isdone'],
+                                                        reminder:
+                                                            _data['reminder']),
+                                                  ))).then((value) {
+                                        setState(() {
+                                          getProgressForProjectTask();
+                                        });
+                                      });
+                                    },
+                                    child: Container(
+                                      // constraints: BoxConstraints(maxWidth: 270),
+                                      padding: const EdgeInsets.all(15),
+                                      decoration: const BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment(1, -1),
+                                              end: Alignment(0, 0),
+                                              colors: [
+                                                Color.fromARGB(
+                                                    255, 250, 153, 85),
+                                                Color.fromARGB(
+                                                    255, 255, 255, 255)
+                                              ]),
+                                          boxShadow: <BoxShadow>[
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 10,
+                                            )
+                                          ],
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(7))),
+                                      child: Column(children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              _data['title'],
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Icon(Icons.more_horiz),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // const Text("Progress",
+                                            //     style: TextStyle(
+                                            //         fontSize: 10,
+                                            //         color: Color.fromARGB(
+                                            //             255, 28, 84, 157))),
+                                            // Text("${_progressList[index]}%",
+                                            //     style: const TextStyle(
+                                            //         fontSize: 10,
+                                            //         color: Color.fromARGB(
+                                            //             255, 28, 84, 157)))
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        // LinearPercentIndicator(
+                                        //   padding: const EdgeInsets.all(0),
+                                        //   lineHeight: 7,
+                                        //   percent: _progressList[index] / 100,
+                                        //   progressColor: const Color.fromARGB(
+                                        //       255, 28, 84, 157),
+                                        //   backgroundColor:
+                                        //       const Color.fromARGB(40, 0, 0, 0),
+                                        //   // linearStrokeCap: LinearStrokeCap.roundAll,
+                                        //   barRadius: const Radius.circular(16),
+                                        // ),
+                                        const SizedBox(
+                                          height: 16,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                "Due " +
+                                                    getDateText(
+                                                        _data['deadline']),
+                                                style: const TextStyle(
+                                                    fontSize: 14)),
+                                            Text(projectDeadlineStr,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Color.fromARGB(
+                                                        200, 0, 0, 0)))
+                                          ],
+                                        ),
+                                      ]),
+                                    ),
+                                  );
+                                },
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 20.0),
+                              ));
+                            } else if (!snapshot.hasData ||
+                                snapshot.data == null) {
+                              return const Text('You have no ongoing project',
+                                  style: TextStyle(color: Colors.grey));
+                            }
+                            return const Center(
+                                child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.grey),
+                            ));
+                          },
+                        )),
+                    Container(
+                        padding: const EdgeInsets.all(5),
+                        child: StreamBuilder<QuerySnapshot>(
+                          stream: ProjectService().getDataDone(uid, ""),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return const Text('ERROR');
+                            } else if (snapshot.hasData ||
+                                snapshot.data != null) {
+                              return Container(
+                                  child: ListView.separated(
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder: (context, index) {
+                                  taskCount = snapshot.data!.docs.length;
+                                  DocumentSnapshot _data =
+                                      snapshot.data!.docs[index];
+                                  DateTime projectDeadline =
+                                      _data['deadline'].toDate();
+                                  DateTime today = DateTime.now();
+                                  int daysLeft =
+                                      projectDeadline.difference(today).inDays;
+                                  String projectDeadlineStr =
+                                      "$daysLeft days left";
+                                  if (daysLeft < 0) {
+                                    projectDeadlineStr = "Overdue";
+                                  }
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProjectDetail(
+                                                    projectDet: Project(
+                                                        projectid:
+                                                            _data['projectid'],
+                                                        title: _data['title'],
+                                                        deadline: getDate(
+                                                            _data['deadline']),
+                                                        desc: _data['desc'],
+                                                        isdone: _data['isdone'],
+                                                        reminder:
+                                                            _data['reminder']),
+                                                  ))).then((value) {
+                                        setState(() {
+                                          getProgressForProjectTask();
+                                        });
+                                      });
+                                    },
+                                    child: Container(
+                                      // constraints: BoxConstraints(maxWidth: 270),
+                                      padding: const EdgeInsets.all(15),
+                                      decoration: const BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment(1, -1),
+                                              end: Alignment(0, 0),
+                                              colors: [
+                                                Color.fromARGB(
+                                                    255, 250, 153, 85),
+                                                Color.fromARGB(
+                                                    255, 255, 255, 255)
+                                              ]),
+                                          boxShadow: <BoxShadow>[
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 10,
+                                            )
+                                          ],
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(7))),
+                                      child: Column(children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              _data['title'],
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Icon(Icons.more_horiz),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // const Text("Progress",
+                                            //     style: TextStyle(
+                                            //         fontSize: 10,
+                                            //         color: Color.fromARGB(
+                                            //             255, 28, 84, 157))),
+                                            // Text("${_progressList[index]}%",
+                                            //     style: const TextStyle(
+                                            //         fontSize: 10,
+                                            //         color: Color.fromARGB(
+                                            //             255, 28, 84, 157)))
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        // LinearPercentIndicator(
+                                        //   padding: const EdgeInsets.all(0),
+                                        //   lineHeight: 7,
+                                        //   percent: _progressList[index] / 100,
+                                        //   progressColor: const Color.fromARGB(
+                                        //       255, 28, 84, 157),
+                                        //   backgroundColor:
+                                        //       const Color.fromARGB(40, 0, 0, 0),
+                                        //   // linearStrokeCap: LinearStrokeCap.roundAll,
+                                        //   barRadius: const Radius.circular(16),
+                                        // ),
+                                        const SizedBox(
+                                          height: 16,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                "Due " +
+                                                    getDateText(
+                                                        _data['deadline']),
+                                                style: const TextStyle(
+                                                    fontSize: 14)),
+                                            Text(projectDeadlineStr,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Color.fromARGB(
+                                                        200, 0, 0, 0)))
+                                          ],
+                                        ),
+                                      ]),
+                                    ),
+                                  );
+                                },
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 20.0),
+                              ));
+                            } else if (!snapshot.hasData ||
+                                snapshot.data == null) {
+                              return const Text('You have no finished project',
+                                  style: TextStyle(color: Colors.grey));
+                            }
+                            return const Center(
+                                child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.grey),
+                            ));
+                          },
+                        )),
                     Container(
                         padding: const EdgeInsets.all(5),
                         child: StreamBuilder<QuerySnapshot>(
@@ -154,6 +472,7 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                       });
                                     },
                                     child: Container(
+                                      // constraints: BoxConstraints(maxWidth: 270),
                                       padding: const EdgeInsets.all(15),
                                       decoration: const BoxDecoration(
                                           gradient: LinearGradient(
@@ -194,32 +513,32 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            const Text("Progress",
-                                                style: TextStyle(
-                                                    fontSize: 10,
-                                                    color: Color.fromARGB(
-                                                        255, 28, 84, 157))),
-                                            Text("${_progressList[index]}%",
-                                                style: const TextStyle(
-                                                    fontSize: 10,
-                                                    color: Color.fromARGB(
-                                                        255, 28, 84, 157)))
+                                            // const Text("Progress",
+                                            //     style: TextStyle(
+                                            //         fontSize: 10,
+                                            //         color: Color.fromARGB(
+                                            //             255, 28, 84, 157))),
+                                            // Text("${_progressList[index]}%",
+                                            //     style: const TextStyle(
+                                            //         fontSize: 10,
+                                            //         color: Color.fromARGB(
+                                            //             255, 28, 84, 157)))
                                           ],
                                         ),
                                         const SizedBox(
                                           height: 12,
                                         ),
-                                        LinearPercentIndicator(
-                                          padding: const EdgeInsets.all(0),
-                                          lineHeight: 7,
-                                          percent: _progressList[index] / 100,
-                                          progressColor: const Color.fromARGB(
-                                              255, 28, 84, 157),
-                                          backgroundColor:
-                                              const Color.fromARGB(40, 0, 0, 0),
-                                          // linearStrokeCap: LinearStrokeCap.roundAll,
-                                          barRadius: const Radius.circular(16),
-                                        ),
+                                        // LinearPercentIndicator(
+                                        //   padding: const EdgeInsets.all(0),
+                                        //   lineHeight: 7,
+                                        //   percent: _progressList[index] / 100,
+                                        //   progressColor: const Color.fromARGB(
+                                        //       255, 28, 84, 157),
+                                        //   backgroundColor:
+                                        //       const Color.fromARGB(40, 0, 0, 0),
+                                        //   // linearStrokeCap: LinearStrokeCap.roundAll,
+                                        //   barRadius: const Radius.circular(16),
+                                        // ),
                                         const SizedBox(
                                           height: 16,
                                         ),
@@ -235,7 +554,7 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                                     fontSize: 14)),
                                             Text(projectDeadlineStr,
                                                 style: const TextStyle(
-                                                    fontSize: 10,
+                                                    fontSize: 14,
                                                     color: Color.fromARGB(
                                                         200, 0, 0, 0)))
                                           ],
@@ -247,21 +566,18 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                 separatorBuilder: (context, index) =>
                                     const SizedBox(height: 20.0),
                               ));
-                            } else if (snapshot.data == null ||
-                                !snapshot.hasData) {
-                              return Text('No data available');
+                            } else if (!snapshot.hasData ||
+                                snapshot.data == null) {
+                              return const Text('You have no project',
+                                  style: TextStyle(color: Colors.grey));
                             }
                             return const Center(
-                              child: Text(
-                                'No preview available',
-                                style:
-                                    TextStyle(fontSize: 18, color: Colors.grey),
-                              ),
-                            );
+                                child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.grey),
+                            ));
                           },
                         )),
-                    Text("hi1"),
-                    Text("hi2"),
                   ]),
             )
           ],
