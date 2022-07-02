@@ -371,27 +371,57 @@ class _HomePageState extends State<HomePage> {
                                                         200, 0, 0, 0)))
                                           ],
                                         ),
-                                        GestureDetector(
-
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: const [
-                                              Text(
-                                                'Pending tasks',
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    color: Colors.grey),
-                                              ),
-                                              Icon(
-                                                Icons.arrow_downward_rounded,
-                                                size: 15,
-                                                color: Colors.grey,
-                                              )
-                                            ],
+                                        const SizedBox(
+                                          height: 16,
+                                        ),
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              TaskforProjectServices
+                                                  .movePendingTask(
+                                                      dataclass.Project(
+                                                          projectid: _data[
+                                                              'projectid'],
+                                                          title: _data['title'],
+                                                          deadline: getDate(
+                                                              _data[
+                                                                  'deadline']),
+                                                          desc: _data['desc'],
+                                                          isdone:
+                                                              _data['isdone'],
+                                                          reminder: _data[
+                                                              'reminder']));
+                                              setState(() {});
+                                            },
+                                            child: const Text(
+                                              "Move pending task",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.white),
+                                            ),
                                           ),
                                         ),
-                                        
+                                        // GestureDetector(
+
+                                        //   child: Row(
+                                        //     mainAxisAlignment:
+                                        //         MainAxisAlignment.center,
+                                        //     children: const [
+                                        //       Text(
+                                        //         'Pending tasks',
+                                        //         style: TextStyle(
+                                        //             fontSize: 15,
+                                        //             color: Colors.grey),
+                                        //       ),
+                                        //       Icon(
+                                        //         Icons.arrow_downward_rounded,
+                                        //         size: 15,
+                                        //         color: Colors.grey,
+                                        //       )
+                                        //     ],
+                                        //   ),
+                                        // ),
                                       ]),
                                     ),
                                   );
@@ -633,8 +663,7 @@ class _HomePageState extends State<HomePage> {
                             ));
                           },
                         )),
-                    Text("Pending Task for Project"),
-                    
+                    // Text("Pending Task for Project"),
                   ],
                 ),
               ),

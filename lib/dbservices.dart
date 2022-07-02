@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -120,9 +121,8 @@ class UserService {
   static Future<dynamic> getUserFromFirestore() async {
     firebase_auth.User? user = _auth.currentUser;
     cloud_firestore.DocumentReference userRef = _userCollection.doc(user!.uid);
-    User userData = await userRef
-        .get()
-        .then((value) => User.fromJson(value.data() as Map<String, dynamic>));
+    dataclass.User userData = await userRef.get().then((value) =>
+        dataclass.User.fromJson(value.data() as Map<String, dynamic>));
 
     String photoUrl = await getDownloadUrl(userData.uid);
     userData.photoUrl = photoUrl;
@@ -525,6 +525,42 @@ class ProjectService {
 }
 
 class TaskforProjectServices {
+  static Future<bool> movePendingTask(dataclass.Project project) async {
+    var _user = FirebaseAuth.instance.currentUser;
+
+    List<dataclass.TaskforProject> _tasks = await cloud_firestore
+        .FirebaseFirestore.instance
+        .collection('tblProject')
+        .doc(_user!.uid)
+        .collection('myProjects')
+        .doc(project.projectid)
+        .collection('tasks')
+        .where('isdone', isEqualTo: false)
+        .get()
+        .then((value) => value.docs
+            .map((e) => dataclass.TaskforProject.fromJson(e.data()))
+            .toList());
+
+    for (var task in _tasks) {
+      dataclass.Task newdata = dataclass.Task(
+        taskid: task.taskid,
+        title: task.title,
+        desc: project.desc,
+        date_time: project.deadline,
+        isdone: false,
+        reminder: project.reminder,
+      );
+      await cloud_firestore.FirebaseFirestore.instance
+          .collection('tblTask')
+          .doc(_user.uid)
+          .collection('myTasks')
+          .doc(task.taskid)
+          .set(newdata.toJson())
+          .catchError((e) => false);
+    }
+    return true;
+  }
+
   Stream<QuerySnapshot> getData(String _uid, String projectid, String judul) {
     final CollectionReference _taskCollection = FirebaseFirestore.instance
         .collection('tblProject')
@@ -559,7 +595,8 @@ class TaskforProjectServices {
     }
   }
 
-  Stream<QuerySnapshot> getDataUndone(String _uid, String projectid, String judul) {
+  Stream<QuerySnapshot> getDataUndone(
+      String _uid, String projectid, String judul) {
     final _taskCollection = FirebaseFirestore.instance
         .collection('tblProject')
         .doc(_uid)
@@ -567,7 +604,7 @@ class TaskforProjectServices {
         .doc(projectid)
         .collection('tasks')
         .where('isdone', isEqualTo: false);
-        
+
     if (judul == "") {
       return _taskCollection.snapshots();
     } else {
