@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "NULI - Productive App",
       debugShowCheckedModeBanner: false,
-      initialRoute: UserService.isLoggedIn() ? '/tabbarview' : '/login',
+      initialRoute: UserService.isLoggedIn() ? '/tabbarview' : '/welcome',
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/welcome': (context) => const WelcomeScreen(),

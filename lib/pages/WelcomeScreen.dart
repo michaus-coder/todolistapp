@@ -13,7 +13,7 @@ class WelcomeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Image.asset("bool _progressController = true;"),
+            Image.asset("assets/nuli/images/welcome1-image.png"),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
               margin: const EdgeInsets.all(10),

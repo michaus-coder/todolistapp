@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:nuli/dataclass.dart' as dataclass;
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart' as cloud_firestore;
@@ -27,7 +29,18 @@ class UserService {
   static Future signUp(
       {required String email,
       required String password,
-      required String fullname}) async {
+      required String fullname,
+      required BuildContext context}) async {
+    var checkUser =
+        await _userCollection.where('email', isEqualTo: email).get();
+    if (checkUser.docs.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('User already exists'),
+        ),
+      );
+      return null;
+    }
     try {
       firebase_auth.UserCredential result = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
@@ -41,7 +54,7 @@ class UserService {
       ));
       return _userFromFirebase(user);
     } catch (e) {
-      return e.toString();
+      return null;
     }
   }
 

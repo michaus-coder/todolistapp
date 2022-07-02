@@ -79,7 +79,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(children: <Widget>[
-          const SizedBox(height: 30,),
+          const SizedBox(
+            height: 30,
+          ),
           const Image(
             image: AssetImage("assets/nuli/images/signup-image.png"),
             height: 200,
@@ -196,12 +198,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                      primary: Colors.blue.shade900,
-                      shadowColor: Colors.black,
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
+                    primary: Colors.blue.shade900,
+                    shadowColor: Colors.black,
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
                   ),
                   onPressed: _emailController.text.isNotEmpty &&
                           _fullnameController.text.isNotEmpty &&
@@ -219,6 +221,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               email: _emailController.text,
                               fullname: _fullnameController.text,
                               password: _passwordController.text,
+                              context: context,
                             );
                             if (result != null) {
                               setState(() {
@@ -243,7 +246,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         }
                       : null,
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -257,7 +262,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       InkWell(
                         child: const Text(
                           'Log in',
-                          style: TextStyle(fontSize: 16, color: Colors.blue, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold),
                         ),
                         onTap: () {
                           Navigator.pushNamed(context, '/login');
