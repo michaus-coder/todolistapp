@@ -135,8 +135,8 @@ class _HomePageState extends State<HomePage> {
             ))
           : SingleChildScrollView(
               child: Container(
-                color: Color.fromARGB(255, 246, 250, 253),
-                padding: EdgeInsets.all(20),
+                color: const Color.fromARGB(255, 246, 250, 253),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -230,7 +230,7 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     Container(
-                        padding: const EdgeInsets.all(5),
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
                         child: StreamBuilder<QuerySnapshot>(
                           stream: ProjectService().getDataUndone(uid, ""),
                           builder: (context, snapshot) {
@@ -313,47 +313,47 @@ class _HomePageState extends State<HomePage> {
                                             Text(
                                               _data['title'],
                                               style: const TextStyle(
-                                                  fontSize: 16,
+                                                  fontSize: 17,
                                                   fontWeight: FontWeight.bold),
                                             ),
                                           ],
                                         ),
                                         const SizedBox(
-                                          height: 12,
+                                          height: 28,
                                         ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Text("Progress",
-                                                style: TextStyle(
-                                                    fontSize: 10,
-                                                    color: Color.fromARGB(
-                                                        255, 28, 84, 157))),
-                                            Text("${_progressList[index]}%",
-                                                style: const TextStyle(
-                                                    fontSize: 10,
-                                                    color: Color.fromARGB(
-                                                        255, 28, 84, 157)))
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 12,
-                                        ),
-                                        LinearPercentIndicator(
-                                          padding: const EdgeInsets.all(0),
-                                          lineHeight: 7,
-                                          percent: _progressList[index] / 100,
-                                          progressColor: const Color.fromARGB(
-                                              255, 28, 84, 157),
-                                          backgroundColor:
-                                              const Color.fromARGB(40, 0, 0, 0),
-                                          // linearStrokeCap: LinearStrokeCap.roundAll,
-                                          barRadius: const Radius.circular(16),
-                                        ),
-                                        const SizedBox(
-                                          height: 16,
-                                        ),
+                                        // Row(
+                                        //   mainAxisAlignment:
+                                        //       MainAxisAlignment.spaceBetween,
+                                        //   children: [
+                                        //     const Text("Progress",
+                                        //         style: TextStyle(
+                                        //             fontSize: 10,
+                                        //             color: Color.fromARGB(
+                                        //                 255, 28, 84, 157))),
+                                        //     Text("${_progressList[index]}%",
+                                        //         style: const TextStyle(
+                                        //             fontSize: 10,
+                                        //             color: Color.fromARGB(
+                                        //                 255, 28, 84, 157)))
+                                        //   ],
+                                        // ),
+                                        // const SizedBox(
+                                        //   height: 12,
+                                        // ),
+                                        // LinearPercentIndicator(
+                                        //   padding: const EdgeInsets.all(0),
+                                        //   lineHeight: 7,
+                                        //   percent: _progressList[index] / 100,
+                                        //   progressColor: const Color.fromARGB(
+                                        //       255, 28, 84, 157),
+                                        //   backgroundColor:
+                                        //       const Color.fromARGB(40, 0, 0, 0),
+                                        //   // linearStrokeCap: LinearStrokeCap.roundAll,
+                                        //   barRadius: const Radius.circular(16),
+                                        // ),
+                                        // const SizedBox(
+                                        //   height: 16,
+                                        // ),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -417,7 +417,7 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     Container(
-                        padding: const EdgeInsets.all(5),
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
                         child: StreamBuilder<QuerySnapshot>(
                           stream: TaskService().getData(uid, ""),
                           builder: (context, snapshot) {
@@ -519,7 +519,7 @@ class _HomePageState extends State<HomePage> {
                                           child: Row(
                                             children: [
                                               Checkbox(
-                                                  activeColor: Color.fromARGB(
+                                                  activeColor: const Color.fromARGB(
                                                       255, 71, 221, 0),
                                                   checkColor: Colors.white,
                                                   shape: CircleBorder(),

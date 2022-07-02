@@ -155,7 +155,7 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                     },
                                     child: Container(
                                       // constraints: BoxConstraints(maxWidth: 270),
-                                      padding: const EdgeInsets.all(15),
+                                      padding: const EdgeInsets.all(20),
                                       decoration: const BoxDecoration(
                                           gradient: LinearGradient(
                                               begin: Alignment(1, -1),
@@ -185,7 +185,6 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                            Icon(Icons.more_horiz),
                                           ],
                                         ),
                                         const SizedBox(
@@ -221,9 +220,6 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                         //   // linearStrokeCap: LinearStrokeCap.roundAll,
                                         //   barRadius: const Radius.circular(16),
                                         // ),
-                                        const SizedBox(
-                                          height: 16,
-                                        ),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -314,7 +310,7 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                     },
                                     child: Container(
                                       // constraints: BoxConstraints(maxWidth: 270),
-                                      padding: const EdgeInsets.all(15),
+                                      padding: const EdgeInsets.all(20),
                                       decoration: const BoxDecoration(
                                           gradient: LinearGradient(
                                               begin: Alignment(1, -1),
@@ -344,7 +340,6 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                            Icon(Icons.more_horiz),
                                           ],
                                         ),
                                         const SizedBox(
@@ -380,9 +375,6 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                         //   // linearStrokeCap: LinearStrokeCap.roundAll,
                                         //   barRadius: const Radius.circular(16),
                                         // ),
-                                        const SizedBox(
-                                          height: 16,
-                                        ),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -473,7 +465,7 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                     },
                                     child: Container(
                                       // constraints: BoxConstraints(maxWidth: 270),
-                                      padding: const EdgeInsets.all(15),
+                                      padding: const EdgeInsets.all(20),
                                       decoration: const BoxDecoration(
                                           gradient: LinearGradient(
                                               begin: Alignment(1, -1),
@@ -503,7 +495,6 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                            Icon(Icons.more_horiz),
                                           ],
                                         ),
                                         const SizedBox(
@@ -539,9 +530,6 @@ class _AllProjectsPageState extends State<AllProjectsPage>
                                         //   // linearStrokeCap: LinearStrokeCap.roundAll,
                                         //   barRadius: const Radius.circular(16),
                                         // ),
-                                        const SizedBox(
-                                          height: 16,
-                                        ),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,

@@ -95,8 +95,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
         ),
         body: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.all(20),
-            margin: EdgeInsets.symmetric(vertical: 10),
+            padding: const EdgeInsets.all(20),
+            margin: const EdgeInsets.symmetric(vertical: 10),
             child: Column(
               children: [
                 Row(
@@ -107,15 +107,15 @@ class _ProjectDetailState extends State<ProjectDetail> {
                         children: [
                           Text(
                             widget.projectDet.title,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black),
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           Text(
                             widget.projectDet.isdone ? "Done" : "In progress",
-                            style: TextStyle(fontSize: 18, color: Colors.black),
+                            style: const TextStyle(fontSize: 18, color: Colors.black),
                           ),
                         ],
                       ),
@@ -123,8 +123,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
                         radius: 42,
                         lineWidth: 12,
                         percent: progress / 100,
-                        progressColor: Color(0xFFFF5C00),
-                        backgroundColor: Color(0xFFBEC5CC),
+                        progressColor: const Color(0xFFFF5C00),
+                        backgroundColor: const Color(0xFFBEC5CC),
                         circularStrokeCap: CircularStrokeCap.round,
                         center: Text(
                           '$progress%',
@@ -145,7 +145,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                       width: 160,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Color(0xFFD9D9D9),
+                        color: const Color(0xFFD9D9D9),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -154,7 +154,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
+                              const Text(
                                 "Deadline",
                                 style: TextStyle(
                                     fontSize: 16, color: Color(0xFF9A9A9A)),
@@ -185,8 +185,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
                           ),
                           Text(
                             getDateText(widget.projectDet.deadline),
-                            style: TextStyle(
-                                fontSize: 18,
+                            style: const TextStyle(
+                                fontSize: 15,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           )
@@ -198,7 +198,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                       padding: const EdgeInsets.all(20),
                       // margin: EdgeInsets.only(left: 10),
                       decoration: BoxDecoration(
-                        color: Color(0xFFD9D9D9),
+                        color: const Color(0xFFD9D9D9),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -207,7 +207,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
+                              const Text(
                                 "Pending Task",
                                 style: TextStyle(
                                     fontSize: 14, color: Color(0xFF9A9A9A)),
@@ -237,7 +237,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                           ),
                           Text(
                             pendingTaskCount.toString(),
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 18,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
@@ -264,7 +264,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     widget.projectDet.desc,
-                    style: TextStyle(fontSize: 18, color: Colors.black),
+                    style: const TextStyle(fontSize: 18, color: Colors.black),
                     textAlign: TextAlign.justify,
                   ),
                 ),
@@ -430,8 +430,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   height: 30,
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  margin: EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  margin: const EdgeInsets.only(bottom: 20),
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
