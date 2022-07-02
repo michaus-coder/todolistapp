@@ -371,6 +371,18 @@ class _HomePageState extends State<HomePage> {
                                                         200, 0, 0, 0)))
                                           ],
                                         ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: const [
+                                              Text('See pending tasks', style: TextStyle(fontSize: 15, color: Colors.grey),),
+                                              Icon(Icons.arrow_downward_rounded, size: 15, color: Colors.grey,)
+                                            ],
+                                          ),
+                                        )
                                       ]),
                                     ),
                                   );
