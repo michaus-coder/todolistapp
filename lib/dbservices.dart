@@ -595,8 +595,6 @@ class TaskforProjectServices {
   }
 
   static Future<List<int>> getProgress() async {
-    // await firebase_auth.FirebaseAuth.instance.signInWithEmailAndPassword(
-    //     email: 'jennangelina09@gmail.com', password: 'jennifer');
     var _user = firebase_auth.FirebaseAuth.instance.currentUser;
 
     List<int> _progress = [];
@@ -607,6 +605,7 @@ class TaskforProjectServices {
           .collection('tblProject')
           .doc(_user!.uid)
           .collection('myProjects')
+          .where('isdone', isEqualTo: false)
           .get()
           .then((value) => value.docs
               .map(
