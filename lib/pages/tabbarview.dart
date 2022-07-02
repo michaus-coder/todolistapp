@@ -7,13 +7,14 @@ import 'edit_profile.dart';
 import 'home.dart';
 
 class TabBarView1 extends StatefulWidget {
-  const TabBarView1({ Key? key }) : super(key: key);
+  const TabBarView1({Key? key}) : super(key: key);
 
   @override
   State<TabBarView1> createState() => _TabBarView1State();
 }
 
-class _TabBarView1State extends State<TabBarView1> with SingleTickerProviderStateMixin {
+class _TabBarView1State extends State<TabBarView1>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -58,7 +59,7 @@ class _TabBarView1State extends State<TabBarView1> with SingleTickerProviderStat
                 ]),
             child: TabBar(
               indicator: CircularTabIndicator(
-                      color: Color.fromARGB(255, 28, 84, 157), radius: 4),
+                  color: Color.fromARGB(255, 28, 84, 157), radius: 4),
               labelColor: const Color.fromARGB(255, 28, 84, 157),
               unselectedLabelColor: const Color.fromRGBO(0, 0, 0, 0.6),
               tabs: [

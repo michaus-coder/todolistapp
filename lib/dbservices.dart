@@ -250,7 +250,7 @@ class UserService {
 
       QuerySnapshot allTasks = await cloud_firestore.FirebaseFirestore.instance
           .collection("tblProject")
-          .doc(user!.uid)
+          .doc(user.uid)
           .collection("myProjects")
           .doc(projectid)
           .collection("tasks")

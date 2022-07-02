@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   int _taskPendingCount = 0;
   int _projectDoneCount = 0;
   int _projectPendingCount = 0;
-  late List<int> _progressList = [];
+  List<int> _progressList = [0, 0, 0, 0, 0, 0, 0];
 
   // String progressMsg(int progressPercentage) {
   //   if (progressPercentage < 50) {
@@ -109,7 +109,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _progressController
-          ? const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),))
+          ? const Center(
+              child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+            ))
           : SingleChildScrollView(
               child: Container(
                 color: Color.fromARGB(255, 246, 250, 253),
