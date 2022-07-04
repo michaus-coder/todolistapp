@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nuli/dataclass.dart';
+import 'package:nuli/pages/tabbarview.dart';
 
 import '../dbservices.dart';
 
@@ -24,10 +25,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
   TextEditingController _projectDescCtrl = TextEditingController();
 
   String reminderChosen = "1 day before";
-  List listReminderOption = [
-    "1 day before",
-    "No Reminder"
-  ];
+  List listReminderOption = ["1 day before", "No Reminder"];
 
   List<TextEditingController> _taskCtrl = [];
   List<TextField> _textFields = [];
@@ -397,6 +395,8 @@ class _AddProjectPageState extends State<AddProjectPage> {
                         content: Text("Project created"),
                       ));
                       Navigator.pop(context);
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const TabBarView1()));
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text("You must fill in project title"),

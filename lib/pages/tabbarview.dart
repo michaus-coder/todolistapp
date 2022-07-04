@@ -133,9 +133,12 @@ class _TabBarView1State extends State<TabBarView1>
                     onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddProjectPage()));
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddProjectPage()))
+                          .then((value) {
+                        setState(() {});
+                      });
                     },
                   ),
                 ],
